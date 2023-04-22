@@ -92,7 +92,7 @@ function createESXPlayer(identifier, playerId, data)
 end
 
 if not Config.Multichar then
-    AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
+    AddEventHandler('playerConnecting', function(_, _, deferrals)
         deferrals.defer()
         local playerId = source
         local identifier = ESX.GetIdentifier(playerId)
@@ -125,7 +125,7 @@ end
 function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
-    local job, grade, jobObject, gradeObject = result.job, tostring(result.job_grade)
+    local job, grade, jobObject, gradeObject = result.job, tostring(result.job_grade), {}, {}
     local foundAccounts, foundItems = {}, {}
 
     -- Accounts
@@ -345,12 +345,13 @@ function loadESXPlayer(identifier, playerId, isNew)
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
 
-AddEventHandler('chatMessage', function(playerId, author, message)
-    local xPlayer = ESX.GetPlayerFromId(playerId)
+AddEventHandler('chatMessage', function(playerId, _, message)
     if message:sub(1, 1) == '/' and playerId > 0 then
         CancelEvent()
+
         local commandName = message:sub(1):gmatch("%w+")()
-        xPlayer.showNotification(_U('commanderror_invalidcommand', commandName))
+
+        TriggerClientEvent('esx:showNotification', playerId, _U('commanderror_invalidcommand', commandName))
     end
 end)
 
@@ -446,7 +447,7 @@ if not Config.OxInventory then
                         targetXPlayer.setWeaponTint(itemName, weaponTint)
                     end
                     if weaponComponents then
-                        for k, v in pairs(weaponComponents) do
+                        for _, v in pairs(weaponComponents) do
                             targetXPlayer.addWeaponComponent(itemName, v)
                         end
                     end
@@ -468,7 +469,7 @@ if not Config.OxInventory then
             end
         elseif type == 'item_ammo' then
             if sourceXPlayer.hasWeapon(itemName) then
-                local weaponNum, weapon = sourceXPlayer.getWeapon(itemName)
+                local _, weapon = sourceXPlayer.getWeapon(itemName)
 
                 if targetXPlayer.hasWeapon(itemName) then
                     local _, weaponObject = ESX.GetWeapon(itemName)
@@ -533,7 +534,7 @@ if not Config.OxInventory then
             if xPlayer.hasWeapon(itemName) then
                 local _, weapon = xPlayer.getWeapon(itemName)
                 local _, weaponObject = ESX.GetWeapon(itemName)
-                local components, pickupLabel = ESX.Table.Clone(weapon.components)
+                local components, pickupLabel = ESX.Table.Clone(weapon.components), ''
                 xPlayer.removeWeapon(itemName)
 
                 if weaponObject.ammo and weapon.ammo > 0 then
@@ -586,7 +587,7 @@ if not Config.OxInventory then
                     xPlayer.addWeapon(pickup.name, pickup.count)
                     xPlayer.setWeaponTint(pickup.name, pickup.tintIndex)
 
-                    for k, v in ipairs(pickup.components) do
+                    for _, v in ipairs(pickup.components) do
                         xPlayer.addWeaponComponent(pickup.name, v)
                     end
                 end
@@ -619,12 +620,12 @@ ESX.RegisterServerCallback('esx:isUserAdmin', function(source, cb)
     cb(Core.IsPlayerAdmin(source))
 end)
 
-ESX.RegisterServerCallback('esx:getGameBuild', function(source, cb)
+ESX.RegisterServerCallback('esx:getGameBuild', function(_, cb)
     ---@diagnostic disable-next-line: param-type-mismatch
     cb(tonumber(GetConvar("sv_enforceGameBuild", 1604)))
 end)
 
-ESX.RegisterServerCallback('esx:getOtherPlayerData', function(source, cb, target)
+ESX.RegisterServerCallback('esx:getOtherPlayerData', function(_, cb, target)
     local xPlayer = ESX.GetPlayerFromId(target)
 
     cb({
@@ -642,7 +643,7 @@ end)
 ESX.RegisterServerCallback('esx:getPlayerNames', function(source, cb, players)
     players[source] = nil
 
-    for playerId, v in pairs(players) do
+    for playerId in pairs(players) do
         local xPlayer = ESX.GetPlayerFromId(playerId)
 
         if xPlayer then
