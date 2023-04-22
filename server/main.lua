@@ -125,7 +125,7 @@ end
 function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
-    local job, grade, jobObject, gradeObject = result.job, tostring(result.job_grade), {}, {}
+    local job, grade = result.job, tostring(result.job_grade)
     local foundAccounts, foundItems = {}, {}
 
     -- Accounts
@@ -152,13 +152,12 @@ function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Job
-    if ESX.DoesJobExist(job, grade) then
-        jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
-    else
+    if not ESX.DoesJobExist(job, grade) then
         print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
         job, grade = 'unemployed', '0'
-        jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
     end
+
+    local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
     userData.job.id = jobObject.id
     userData.job.name = jobObject.name
@@ -534,17 +533,18 @@ if not Config.OxInventory then
             if xPlayer.hasWeapon(itemName) then
                 local _, weapon = xPlayer.getWeapon(itemName)
                 local _, weaponObject = ESX.GetWeapon(itemName)
-                local components, pickupLabel = ESX.Table.Clone(weapon.components), ''
+                local components = ESX.Table.Clone(weapon.components)
+                local weaponAmmo = false
                 xPlayer.removeWeapon(itemName)
 
                 if weaponObject.ammo and weapon.ammo > 0 then
-                    local ammoLabel = weaponObject.ammo.label
-                    pickupLabel = ('%s [%s %s]'):format(weapon.label, weapon.ammo, ammoLabel)
-                    xPlayer.showNotification(_U('threw_weapon_ammo', weapon.label, weapon.ammo, ammoLabel))
+                    weaponAmmo = weaponObject.ammo.label
+                    xPlayer.showNotification(_U('threw_weapon_ammo', weapon.label, weapon.ammo, weaponAmmo))
                 else
-                    pickupLabel = ('%s'):format(weapon.label)
                     xPlayer.showNotification(_U('threw_weapon', weapon.label))
                 end
+
+                local pickupLabel = weaponAmmo and ('%s [%s %s]'):format(weapon.label, weapon.ammo, weaponAmmo) or ('%s'):format(weapon.label)
 
                 ESX.CreatePickup('item_weapon', itemName, weapon.ammo, pickupLabel, playerId, components, weapon.tintIndex)
             end
