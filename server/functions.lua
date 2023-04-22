@@ -6,7 +6,7 @@ end
 
 function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     if type(name) == 'table' then
-        for k, v in ipairs(name) do
+        for _, v in ipairs(name) do
             ESX.RegisterCommand(v, group, cb, allowConsole, suggestion)
         end
 
@@ -34,7 +34,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 
     Core.RegisteredCommands[name] = { group = group, cb = cb, allowConsole = allowConsole, suggestion = suggestion }
 
-    RegisterCommand(name, function(playerId, args, rawCommand)
+    RegisterCommand(name, function(playerId, args, _)
         local command = Core.RegisteredCommands[name]
 
         if not command.allowConsole and playerId == 0 then
@@ -135,7 +135,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end, true)
 
     if type(group) == 'table' then
-        for k, v in ipairs(group) do
+        for _, v in ipairs(group) do
             ExecuteCommand(('add_ace group.%s command.%s allow'):format(v, name))
         end
     else
@@ -216,7 +216,7 @@ ESX.GetPlayers = GetPlayers
 
 function ESX.GetExtendedPlayers(key, val)
     local xPlayers = {}
-    for k, v in pairs(ESX.Players) do
+    for _, v in pairs(ESX.Players) do
         if key then
             if (key == 'job' and v.job.name == val) or v[key] == val then
                 xPlayers[#xPlayers + 1] = v
@@ -241,7 +241,7 @@ function ESX.GetIdentifier(playerId)
     if fxDk == 1 then
         return "ESX-DEBUG-LICENCE"
     end
-    for k, v in ipairs(GetPlayerIdentifiers(playerId)) do
+    for _, v in ipairs(GetPlayerIdentifiers(playerId)) do
         if string.match(v, 'license:') then
             local identifier = string.gsub(v, 'license:', '')
             return identifier
@@ -249,7 +249,7 @@ function ESX.GetIdentifier(playerId)
     end
 end
 
----@param model string|number
+---@param model string | number
 ---@param player number playerId
 ---@param cb function
 ---@diagnostic disable-next-line: duplicate-set-field
