@@ -479,7 +479,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             if v.name == weaponName then
                 weaponLabel = v.label
 
-                for _k2, v2 in ipairs(v.components) do
+                for _, v2 in ipairs(v.components) do
                     self.removeWeaponComponent(weaponName, v2)
                 end
 
