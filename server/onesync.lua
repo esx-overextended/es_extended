@@ -90,7 +90,7 @@ end
 ---@param cb function
 function ESX.OneSync.SpawnObject(model, coords, heading, cb)
     if type(model) == 'string' then model = joaat(model) end
-    local coords = type(coords) == "vector3" and coords or vector3(coords.x, coords.y, coords.z)
+    coords = type(coords) == "vector3" and coords or vector3(coords.x, coords.y, coords.z)
     CreateThread(function()
         local entity = CreateObject(model, coords.x, coords.y, coords.z, true, true, false)
         while not DoesEntityExist(entity) do Wait(50) end
@@ -167,7 +167,7 @@ function ESX.OneSync.GetVehiclesInArea(coords, maxDistance, modelFilter)
 end
 
 local function getClosestEntity(entities, coords, modelFilter, isPed)
-    local distance, closestEntity, closestCoords = maxDistance or 100, nil, nil
+    local distance, closestEntity, closestCoords = 100, nil, nil
     coords = type(coords) == 'number' and GetEntityCoords(GetPlayerPed(coords)) or vector3(coords.x, coords.y, coords.z)
 
     for _, entity in pairs(entities) do
@@ -205,6 +205,6 @@ function ESX.OneSync.GetClosestVehicle(coords, modelFilter)
     return getClosestEntity(GetAllVehicles(), coords, modelFilter)
 end
 
-ESX.RegisterServerCallback("esx:Onesync:SpawnObject", function(source, cb, model, coords, heading)
+ESX.RegisterServerCallback("esx:Onesync:SpawnObject", function(_, cb, model, coords, heading)
     ESX.OneSync.SpawnObject(model, coords, heading, cb)
 end)

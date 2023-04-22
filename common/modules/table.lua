@@ -13,7 +13,7 @@ end
 
 function ESX.Table.Set(t)
     local set = {}
-    for k, v in ipairs(t) do set[v] = true end
+    for _, v in ipairs(t) do set[v] = true end
     return set
 end
 
@@ -119,7 +119,7 @@ function ESX.Table.Concat(t1, t2)
 end
 
 function ESX.Table.Join(t, sep)
-    local sep = sep or ','
+    sep = sep or ','
     local str = ''
 
     for i = 1, #t, 1 do
