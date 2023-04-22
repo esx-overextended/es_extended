@@ -447,7 +447,7 @@ if not Config.OxInventory and Config.EnableDefaultInventory then
         end
     end, false)
 
-    RegisterKeyMapping('showinv', TranslateCap('keymap_showinventory'), 'keyboard', 'F2')
+    RegisterKeyMapping('showinv', _U('keymap_showinventory'), 'keyboard', 'F2')
 end
 
 -- disable wanted level
@@ -487,7 +487,7 @@ if not Config.OxInventory then
                             end
                         end
 
-                        label = ('%s~n~%s'):format(label, TranslateCap('threw_pickup_prompt'))
+                        label = ('%s~n~%s'):format(label, _U('threw_pickup_prompt'))
                     end
 
                     ESX.Game.Utils.DrawText3D({
@@ -522,7 +522,7 @@ AddEventHandler("esx:tpm", function()
         end
         local blipMarker = GetFirstBlipInfoId(8)
         if not DoesBlipExist(blipMarker) then
-            ESX.ShowNotification(TranslateCap('tpm_nowaypoint'), "error")
+            ESX.ShowNotification(_U('tpm_nowaypoint'), "error")
             return 'marker'
         end
 
@@ -585,12 +585,12 @@ AddEventHandler("esx:tpm", function()
             -- If we can't find the coords, set the coords to the old ones.
             -- We don't unpack them before since they aren't in a loop and only called once.
             SetPedCoordsKeepVehicle(ped, oldCoords['x'], oldCoords['y'], oldCoords['z'] - 1.0)
-            ESX.ShowNotification(TranslateCap('tpm_success'), "success")
+            ESX.ShowNotification(_U('tpm_success'), "success")
         end
 
         -- If Z coord was found, set coords in found coords.
         SetPedCoordsKeepVehicle(ped, x, y, groundZ)
-        ESX.ShowNotification(TranslateCap('tpm_success'), "success")
+        ESX.ShowNotification(_U('tpm_success'), "success")
     end)
 end)
 
@@ -656,7 +656,7 @@ AddEventHandler("esx:noclip", function()
             CreateThread(noclipThread)
         end
 
-        ESX.ShowNotification(TranslateCap('noclip_message', noclip and "enabled" or "disabled"))
+        ESX.ShowNotification(_U('noclip_message', noclip and "enabled" or "disabled"))
     end)
 end)
 

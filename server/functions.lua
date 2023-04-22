@@ -38,14 +38,14 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
         local command = Core.RegisteredCommands[name]
 
         if not command.allowConsole and playerId == 0 then
-            print(('[^3WARNING^7] ^5%s'):format(TranslateCap('commanderror_console')))
+            print(('[^3WARNING^7] ^5%s'):format(_U('commanderror_console')))
         else
             local xPlayer, error = ESX.Players[playerId], nil
 
             if command.suggestion then
                 if command.suggestion.validate then
                     if #args ~= #command.suggestion.arguments then
-                        error = TranslateCap('commanderror_argumentmismatch', #args, #command.suggestion.arguments)
+                        error = _U('commanderror_argumentmismatch', #args, #command.suggestion.arguments)
                     end
                 end
 
@@ -60,7 +60,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
                                 if newArg then
                                     newArgs[v.name] = newArg
                                 else
-                                    error = TranslateCap('commanderror_argumentmismatch_number', k)
+                                    error = _U('commanderror_argumentmismatch_number', k)
                                 end
                             elseif v.type == 'player' or v.type == 'playerId' then
                                 local targetPlayer = tonumber(args[k])
@@ -79,10 +79,10 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
                                             newArgs[v.name] = targetPlayer
                                         end
                                     else
-                                        error = TranslateCap('commanderror_invalidplayerid')
+                                        error = _U('commanderror_invalidplayerid')
                                     end
                                 else
-                                    error = TranslateCap('commanderror_argumentmismatch_number', k)
+                                    error = _U('commanderror_argumentmismatch_number', k)
                                 end
                             elseif v.type == 'string' then
                                 newArgs[v.name] = args[k]
@@ -90,13 +90,13 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
                                 if ESX.Items[args[k]] then
                                     newArgs[v.name] = args[k]
                                 else
-                                    error = TranslateCap('commanderror_invaliditem')
+                                    error = _U('commanderror_invaliditem')
                                 end
                             elseif v.type == 'weapon' then
                                 if ESX.GetWeapon(args[k]) then
                                     newArgs[v.name] = string.upper(args[k])
                                 else
-                                    error = TranslateCap('commanderror_invalidweapon')
+                                    error = _U('commanderror_invalidweapon')
                                 end
                             elseif v.type == 'any' then
                                 newArgs[v.name] = args[k]
