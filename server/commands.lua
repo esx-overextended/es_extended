@@ -1,4 +1,4 @@
-ESX.RegisterCommand('setcoords', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('setcoords', 'admin', function(xPlayer, args, _)
     xPlayer.setCoords({ x = args.x, y = args.y, z = args.z })
 end, false, {
     help = TranslateCap('command_setcoords'),
@@ -42,7 +42,7 @@ local upgrades = Config.SpawnVehMaxUpgrades and
         windowTint = 1
     } or {}
 
-ESX.RegisterCommand('car', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('car', 'admin', function(xPlayer, args, _)
     if not xPlayer then
         return print('[^1ERROR^7] The xPlayer value is nil')
     end
@@ -69,7 +69,7 @@ ESX.RegisterCommand('car', 'admin', function(xPlayer, args, showError)
     ESX.OneSync.SpawnVehicle(args.car, playerCoords, playerHeading, upgrades, function(networkId)
         if networkId then
             local vehicle = NetworkGetEntityFromNetworkId(networkId)
-            for i = 1, 20 do
+            for _ = 1, 20 do
                 Wait(0)
                 SetPedIntoVehicle(playerPed, vehicle, -1)
 
@@ -90,7 +90,7 @@ end, false, {
     }
 })
 
-ESX.RegisterCommand({ 'cardel', 'dv' }, 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand({ 'cardel', 'dv' }, 'admin', function(xPlayer, args, _)
     local PedVehicle = GetVehiclePedIsIn(GetPlayerPed(xPlayer.source), false)
     if DoesEntityExist(PedVehicle) then
         DeleteEntity(PedVehicle)
@@ -110,7 +110,7 @@ end, false, {
     }
 })
 
-ESX.RegisterCommand('setaccountmoney', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('setaccountmoney', 'admin', function(_, args, showError)
     if args.playerId.getAccount(args.account) then
         args.playerId.setAccountMoney(args.account, args.amount, "Government Grant")
     else
@@ -126,7 +126,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('giveaccountmoney', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('giveaccountmoney', 'admin', function(_, args, showError)
     if args.playerId.getAccount(args.account) then
         args.playerId.addAccountMoney(args.account, args.amount, "Government Grant")
     else
@@ -143,7 +143,7 @@ end, true, {
 })
 
 if not Config.OxInventory then
-    ESX.RegisterCommand('giveitem', 'admin', function(xPlayer, args, showError)
+    ESX.RegisterCommand('giveitem', 'admin', function(_, args, _)
         args.playerId.addInventoryItem(args.item, args.count)
     end, true, {
         help = TranslateCap('command_giveitem'),
@@ -155,7 +155,7 @@ if not Config.OxInventory then
         }
     })
 
-    ESX.RegisterCommand('giveweapon', 'admin', function(xPlayer, args, showError)
+    ESX.RegisterCommand('giveweapon', 'admin', function(_, args, showError)
         if args.playerId.hasWeapon(args.weapon) then
             showError(TranslateCap('command_giveweapon_hasalready'))
         else
@@ -171,7 +171,7 @@ if not Config.OxInventory then
         }
     })
 
-    ESX.RegisterCommand('giveammo', 'admin', function(xPlayer, args, showError)
+    ESX.RegisterCommand('giveammo', 'admin', function(_, args, showError)
         if args.playerId.hasWeapon(args.weapon) then
             args.playerId.addWeaponAmmo(args.weapon, args.ammo)
         else
@@ -187,7 +187,7 @@ if not Config.OxInventory then
         }
     })
 
-    ESX.RegisterCommand('giveweaponcomponent', 'admin', function(xPlayer, args, showError)
+    ESX.RegisterCommand('giveweaponcomponent', 'admin', function(_, args, showError)
         if args.playerId.hasWeapon(args.weaponName) then
             local component = ESX.GetWeaponComponent(args.weaponName, args.componentName)
 
@@ -214,21 +214,21 @@ if not Config.OxInventory then
     })
 end
 
-ESX.RegisterCommand({ 'clear', 'cls' }, 'user', function(xPlayer, args, showError)
+ESX.RegisterCommand({ 'clear', 'cls' }, 'user', function(xPlayer, _, _)
     xPlayer.triggerEvent('chat:clear')
 end, false, { help = TranslateCap('command_clear') })
 
-ESX.RegisterCommand({ 'clearall', 'clsall' }, 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand({ 'clearall', 'clsall' }, 'admin', function(_, _, _)
     TriggerClientEvent('chat:clear', -1)
 end, true, { help = TranslateCap('command_clearall') })
 
-ESX.RegisterCommand("refreshjobs", 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand("refreshjobs", 'admin', function(_, _, _)
     ESX.RefreshJobs()
 end, true, { help = TranslateCap('command_clearall') })
 
 if not Config.OxInventory then
-    ESX.RegisterCommand('clearinventory', 'admin', function(xPlayer, args, showError)
-        for k, v in ipairs(args.playerId.inventory) do
+    ESX.RegisterCommand('clearinventory', 'admin', function(_, args, _)
+        for _, v in ipairs(args.playerId.inventory) do
             if v.count > 0 then
                 args.playerId.setInventoryItem(v.name, 0)
             end
@@ -242,7 +242,7 @@ if not Config.OxInventory then
         }
     })
 
-    ESX.RegisterCommand('clearloadout', 'admin', function(xPlayer, args, showError)
+    ESX.RegisterCommand('clearloadout', 'admin', function(_, args, _)
         for i = #args.playerId.loadout, 1, -1 do
             args.playerId.removeWeapon(args.playerId.loadout[i].name)
         end
@@ -256,7 +256,7 @@ if not Config.OxInventory then
     })
 end
 
-ESX.RegisterCommand('setgroup', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('setgroup', 'admin', function(xPlayer, args, _)
     if not args.playerId then args.playerId = xPlayer.source end
     if args.group == "superadmin" then
         args.group = "admin"
@@ -272,7 +272,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('save', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('save', 'admin', function(_, args, _)
     Core.SavePlayer(args.playerId)
     print("[^2Info^0] Saved Player - ^5" .. args.playerId.source .. "^0")
 end, true, {
@@ -283,26 +283,25 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('saveall', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand('saveall', 'admin', function(_, _, _)
     Core.SavePlayers()
 end, true, { help = TranslateCap('command_saveall') })
 
-ESX.RegisterCommand('group', { "user", "admin" }, function(xPlayer, args, showError)
+ESX.RegisterCommand('group', { "user", "admin" }, function(xPlayer, _, _)
     print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getGroup() .. "^0")
 end, true)
 
-ESX.RegisterCommand('job', { "user", "admin" }, function(xPlayer, args, showError)
+ESX.RegisterCommand('job', { "user", "admin" }, function(xPlayer, _, _)
     print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getJob().name .. "^0 - ^5" .. xPlayer.getJob().grade_label .. "^0")
 end, true)
 
-ESX.RegisterCommand('info', { "user", "admin" }, function(xPlayer, args, showError)
+ESX.RegisterCommand('info', { "user", "admin" }, function(xPlayer, _, _)
     local job = xPlayer.getJob().name
-    local jobgrade = xPlayer.getJob().grade_name
     print("^2ID : ^5" .. xPlayer.source .. " ^0| ^2Name:^5" .. xPlayer.getName() .. " ^0 | ^2Group:^5" ..
         xPlayer.getGroup() .. "^0 | ^2Job:^5" .. job .. "^0")
 end, true)
 
-ESX.RegisterCommand('coords', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('coords', "admin", function(xPlayer, _, _)
     local ped = GetPlayerPed(xPlayer.source)
     local coords = GetEntityCoords(ped, false)
     local heading = GetEntityHeading(ped)
@@ -310,11 +309,11 @@ ESX.RegisterCommand('coords', "admin", function(xPlayer, args, showError)
     print("Coords - Vector4: ^5" .. vector4(coords.x, coords.y, coords.z, heading) .. "^0")
 end, true)
 
-ESX.RegisterCommand('tpm', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('tpm', "admin", function(xPlayer, _, _)
     xPlayer.triggerEvent("esx:tpm")
 end, true)
 
-ESX.RegisterCommand('goto', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('goto', "admin", function(xPlayer, args, _)
     local targetCoords = args.playerId.getCoords()
     xPlayer.setCoords(targetCoords)
 end, true, {
@@ -325,7 +324,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('bring', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('bring', "admin", function(xPlayer, args, _)
     local playerCoords = xPlayer.getCoords()
     args.playerId.setCoords(playerCoords)
 end, true, {
@@ -336,7 +335,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('kill', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('kill', "admin", function(_, args, _)
     args.playerId.triggerEvent("esx:killPlayer")
 end, true, {
     help = TranslateCap('command_kill'),
@@ -346,7 +345,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('freeze', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('freeze', "admin", function(_, args, _)
     args.playerId.triggerEvent('esx:freezePlayer', "freeze")
 end, true, {
     help = TranslateCap('command_freeze'),
@@ -356,7 +355,7 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('unfreeze', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('unfreeze', "admin", function(_, args, _)
     args.playerId.triggerEvent('esx:freezePlayer', "unfreeze")
 end, true, {
     help = TranslateCap('command_unfreeze'),
@@ -366,11 +365,11 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand("noclip", 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand("noclip", 'admin', function(xPlayer, _, _)
     xPlayer.triggerEvent('esx:noclip')
 end, false)
 
-ESX.RegisterCommand('players', "admin", function(xPlayer, args, showError)
+ESX.RegisterCommand('players', "admin", function(_, _, _)
     local xPlayers = ESX.GetExtendedPlayers() -- Returns all xPlayers
     print("^5" .. #xPlayers .. " ^2online player(s)^0")
     for i = 1, #(xPlayers) do
