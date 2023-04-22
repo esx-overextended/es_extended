@@ -6,8 +6,8 @@ Config.DiscordLogs = {
         UserActions = '',
         Resources = ''
     },
-
-    Colors = { -- https://www.spycolor.com/
+    Colors = {
+        -- https://www.spycolor.com/
         default = 14423100,
         blue = 255,
         red = 16711680,

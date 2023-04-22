@@ -1,34 +1,38 @@
 <h1 align='center'>ESX Legacy</a></h1>
-<p align='center'><a href='https://discord.esx-framework.org/'>Discord</a> - <a href='https://esx-framework.org/'>Website</a> - <a href='https://documentation.esx-framework.org/legacy/installation'>Documentation</a></b></h5>
-
-<p align='center'>Want more resources? You can browse the <a href="https://github.com/esx-community/">ESX Community Github</a> or <a href="https://forum.cfx.re/tag/esx">Cfx.re Releases board</a> for more!
-<p align='center'><b>ESX is the leading framework, trusted By thousands of commmunitys for the heighest quality roleplay servers on FiveM</b></p>
+<p align='center'><a href='https://documentation.esx-framework.org/legacy/installation'>Documentation</a></b></h5>
 
 <hr>
 
-### 💗 Supporters
+### ℹ Information
 
-Interested in helping us? [Take a look at our patreon](https://www.patreon.com/esx "Take a look at our patreon")
+ESX is the leading framework, trusted By thousands of commmunitys for the heighest quality roleplay servers on FiveM, a GTA V (Grand Theft Auto) modification platform.
 
-| We would like to sincerely thank the following donors who helped fund the development of ESX.  |
-| ------------ |
-| Mohamad Buhamad - Michael Hein - RoadToSix - Montree Narathong  |
-| Saydoon - Muhannad alyamani - iSentrie - Wecity - Samuel Nicol |
-| Kyle McShea - Artin - Mathias Christoffersen - Jaylan Yilmaz - Callum |
-| CONGRESS KW - Michael Hein - Smery sitbon - daZepelin - CMF Community |
-------
+ESX was initially developed by Gizz back in 2017 for his friend as the were creating an FiveM server and there wasn't any economy roleplaying frameworks available. The original code was written within a week or two and later open sourced. Since then, ESX has undergone continuous enhancements and improvements, with some parts being entirely rewritten to enhance its functionality.
 
-### 📌 License
+### 📌Legal Notices
 
-ESX-legacy - ESX framework for FiveM
+<table>
+<tr>
+<td>
 
-    Copyright (C) 2015-2023 ESX-Framework
+es_extended - ESX framework for FiveM
 
-    This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
+Copyright (C) 2015-2023 ESX-Framework (Jérémie N'gadi)
 
-    This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-    You should have received a copy Of the GNU General Public License along with this program. If Not, see <http://www.gnu.org/licenses/>.
----
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
 
-Powered by [Oxygenserv](https://www.oxygenserv.com/en/)
+</td>
+</tr>
+
+<tr>
+<td>
+
+You should have received a copy of the GNU General Public License along with this program.
+If not, see https://www.gnu.org/licenses/
+
+</td>
+</tr>
+</table>
