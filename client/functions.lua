@@ -72,32 +72,28 @@ end
 
 function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
     lib.notify({
-        title = type(notifyText) == "table" and notifyText[1] or notifyExtra.title,
+        title = type(notifyText) == "table" and notifyText[1] or notifyExtra?.title,
         description = type(notifyText) == "table" and notifyText[2] or notifyText,
         duration = notifyDuration or 3000,
-        position = notifyExtra.position or Config.DefaultNotificationPosition,
+        position = notifyExtra?.position or Config.DefaultNotificationPosition,
         type = notifyType == "info" and "inform" or notifyType,
-        style = notifyExtra.style,
-        icon = notifyExtra.icon,
-        iconColor = notifyExtra.iconColor
+        style = notifyExtra?.style,
+        icon = notifyExtra?.icon,
+        iconColor = notifyExtra?.iconColor
     })
 end
 
-
-function ESX.TextUI(message, type)
-    if GetResourceState("esx_textui") ~= "missing" then
-        return exports["esx_textui"]:TextUI(message, type)
-    end
-
-    print("[^1ERROR^7] ^5ESX TextUI^7 is Missing!")
+function ESX.TextUI(text, textType, textExtra)
+    lib.showTextUI(text, {
+        position = "left-center",
+        icon = textType == "success" and "fa-circle-check" or textType == "error" and "fa-circle-exclamation" or "fa-circle-info",
+        iconColor = textType == "success" and "#2ecc71" or textType == "error" and "#c0392b" or "#2980b9",
+        style = textExtra?.style
+    })
 end
 
 function ESX.HideUI()
-    if GetResourceState("esx_textui") ~= "missing" then
-        return exports["esx_textui"]:HideUI()
-    end
-
-    print("[^1ERROR^7] ^5ESX TextUI^7 is Missing!")
+    lib.hideTextUI()
 end
 
 function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
