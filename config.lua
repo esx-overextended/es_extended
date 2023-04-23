@@ -78,3 +78,4 @@ Config.CustomAIPlates              = 'ESX.A111' -- Custom plates for AI vehicles
 -- A string shorter than 8 characters will be padded on the right.
 
 Config.DefaultNotificationPosition = "center-right" -- 'top' | 'top-right' | 'top-left' | 'bottom' | 'bottom-right' | 'bottom-left' | 'center-right' | 'center-left'
+Config.DefaultTextUIPosition       = "left-center"  -- 'right-center' | 'left-center' | 'top-center'
