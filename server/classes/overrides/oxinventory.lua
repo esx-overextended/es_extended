@@ -9,34 +9,34 @@ end
 Core.PlayerFunctionOverrides.OxInventory = {
     getInventory = function(self)
         return function(minimal)
-        if minimal then
-            local minimalInventory = {}
+            if minimal then
+                local minimalInventory = {}
 
-            for k, v in pairs(self.inventory) do
-                if v.count and v.count > 0 then
-                    local metadata = v.metadata
+                for k, v in pairs(self.inventory) do
+                    if v.count and v.count > 0 then
+                        local metadata = v.metadata
 
-                    if v.metadata and next(v.metadata) == nil then
-                        metadata = nil
+                        if v.metadata and next(v.metadata) == nil then
+                            metadata = nil
+                        end
+
+                        minimalInventory[#minimalInventory+1] = {
+                            name = v.name,
+                            count = v.count,
+                            slot = k,
+                            metadata = metadata
+                        }
                     end
-
-                    minimalInventory[#minimalInventory+1] = {
-                        name = v.name,
-                        count = v.count,
-                        slot = k,
-                        metadata = metadata
-                    }
                 end
+
+                return minimalInventory
             end
 
-            return minimalInventory
-        end
-
-        return self.inventory
+            return self.inventory
         end
     end,
 
-    getLoadout = function(self)
+    getLoadout = function(_)
         return function()
             return {}
         end
@@ -144,49 +144,49 @@ Core.PlayerFunctionOverrides.OxInventory = {
         end
     end,
 
-    addWeapon = function(self)
+    addWeapon = function(_)
         return function() end
     end,
 
-    addWeaponComponent = function(self)
+    addWeaponComponent = function(_)
         return function() end
     end,
 
-    addWeaponAmmo = function(self)
+    addWeaponAmmo = function(_)
         return function() end
     end,
 
-    updateWeaponAmmo = function(self)
+    updateWeaponAmmo = function(_)
         return function() end
     end,
 
-    setWeaponTint = function(self)
+    setWeaponTint = function(_)
         return function() end
     end,
 
-    getWeaponTint = function(self)
+    getWeaponTint = function(_)
         return function() end
     end,
 
-    removeWeapon = function(self)
+    removeWeapon = function(_)
         return function() end
     end,
 
-    removeWeaponComponent = function(self)
+    removeWeaponComponent = function(_)
         return function() end
     end,
 
-    removeWeaponAmmo = function(self)
+    removeWeaponAmmo = function(_)
         return function() end
     end,
 
-    hasWeaponComponent = function(self)
+    hasWeaponComponent = function(_)
         return function()
             return false
         end
     end,
 
-    hasWeapon = function(self)
+    hasWeapon = function(_)
         return function()
             return false
         end
@@ -198,7 +198,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
         end
     end,
 
-    getWeapon = function(self)
+    getWeapon = function(_)
         return function() end
     end,
 

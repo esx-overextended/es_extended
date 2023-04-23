@@ -4,26 +4,26 @@ local DoesEntityExist = DoesEntityExist
 local GetEntityCoords = GetEntityCoords
 local GetEntityHeading = GetEntityHeading
 
-function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, weight, job, loadout, name, coords, metadata)
+function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerCoords, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 
     local self = {}
 
-    self.accounts = accounts
-    self.coords = coords
-    self.group = group
-    self.identifier = identifier
-    self.inventory = inventory
-    self.job = job
-    self.loadout = loadout
-    self.name = name
+    self.accounts = playerAccounts
+    self.coords = playerCoords
+    self.group = playerGroup
+    self.identifier = playerIdentifier
+    self.inventory = playerInventory
+    self.job = playerJob
+    self.loadout = playerLoadout
+    self.name = playerName
     self.playerId = playerId
     self.source = playerId
     self.variables = {}
-    self.weight = weight
+    self.weight = playerInventoryWeight
     self.maxWeight = Config.MaxWeight
-    self.metadata = metadata
-    if Config.Multichar then self.license = 'license'.. identifier:sub(identifier:find(':'), identifier:len()) else self.license = 'license:'..identifier end
+    self.metadata = playerMetadata
+    if Config.Multichar then self.license = 'license'.. playerIdentifier:sub(playerIdentifier:find(':'), playerIdentifier:len()) else self.license = 'license:'..playerIdentifier end
 
     ExecuteCommand(('add_principal identifier.%s group.%s'):format(self.license, self.group))
 
@@ -40,21 +40,20 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.setCoords(coords)
-        local Ped = GetPlayerPed(self.source)
-        local vector = type(coords) == "vector4" and coords or type(coords) == "vector3" and vector4(coords, 0.0) or
-        vec(coords.x, coords.y, coords.z, coords.heading or 0.0)
-        SetEntityCoords(Ped, vector.x, vector.y, vector.z, false, false, false, false)
-        SetEntityHeading(Ped, vector.w)
+        local ped = GetPlayerPed(self.source)
+        local vector = type(coords) == "vector4" and coords or type(coords) == "vector3" and vector4(coords.x, coords.y, coords.z, coords.w or coords.heading or 0.0)
+        SetEntityCoords(ped, vector.x, vector.y, vector.z, false, false, false, false)
+        SetEntityHeading(ped, vector.w)
     end
 
     function self.updateCoords()
         SetTimeout(1000,function()
-            local Ped = GetPlayerPed(self.source)
-            if DoesEntityExist(Ped) then
-                local coords = GetEntityCoords(Ped)
+            local ped = GetPlayerPed(self.source)
+            if DoesEntityExist(ped) then
+                local coords = GetEntityCoords(ped)
                 local distance = #(coords - vector3(self.coords.x, self.coords.y, self.coords.z))
                 if distance > 1.5 then
-                    local heading = GetEntityHeading(Ped)
+                    local heading = GetEntityHeading(ped)
                     self.coords = {
                         x = coords.x,
                         y = coords.y,
@@ -148,7 +147,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         if minimal then
             local minimalInventory = {}
 
-            for k, v in ipairs(self.inventory) do
+            for _, v in ipairs(self.inventory) do
                 if v.count > 0 then
                     minimalInventory[v.name] = v.count
                 end
@@ -165,19 +164,18 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.getLoadout(minimal)
-        if not minimal then
-            return self.loadout
-        end
+        if not minimal then return self.loadout end
+
         local minimalLoadout = {}
 
-        for k, v in ipairs(self.loadout) do
+        for _, v in ipairs(self.loadout) do
             minimalLoadout[v.name] = {ammo = v.ammo}
             if v.tintIndex > 0 then minimalLoadout[v.name].tintIndex = v.tintIndex end
 
             if #v.components > 0 then
                 local components = {}
 
-                for k2,component in ipairs(v.components) do
+                for _, component in ipairs(v.components) do
                     if component ~= 'clip_default' then
                         components[#components + 1] = component
                     end
@@ -269,15 +267,15 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         end
     end
 
-    function self.getInventoryItem(name, metadata)
-        for k, v in ipairs(self.inventory) do
+    function self.getInventoryItem(name)
+        for _, v in ipairs(self.inventory) do
             if v.name == name then
                 return v
             end
         end
     end
 
-    function self.addInventoryItem(name, count, metadata, slot)
+    function self.addInventoryItem(name, count)
         local item = self.getInventoryItem(name)
 
         if item then
@@ -290,7 +288,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         end
     end
 
-    function self.removeInventoryItem(name, count, metadata, slot)
+    function self.removeInventoryItem(name, count)
         local item = self.getInventoryItem(name)
 
         if item then
@@ -311,7 +309,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         end
     end
 
-    function self.setInventoryItem(name, count, metadata)
+    function self.setInventoryItem(name, count)
         local item = self.getInventoryItem(name)
 
         if item and count >= 0 then
@@ -333,7 +331,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         return self.maxWeight
     end
 
-    function self.canCarryItem(name, count, metadata)
+    function self.canCarryItem(name, count)
         if ESX.Items[name] then
             local currentWeight, itemWeight = self.weight, ESX.Items[name].weight
             local newWeight = currentWeight + (itemWeight * count)
@@ -434,7 +432,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.addWeaponAmmo(weaponName, ammoCount)
-        local loadoutNum, weapon = self.getWeapon(weaponName)
+        local _, weapon = self.getWeapon(weaponName)
 
         if weapon then
             weapon.ammo = weapon.ammo + ammoCount
@@ -443,7 +441,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.updateWeaponAmmo(weaponName, ammoCount)
-        local loadoutNum, weapon = self.getWeapon(weaponName)
+        local _, weapon = self.getWeapon(weaponName)
 
         if weapon then
             weapon.ammo = ammoCount
@@ -454,7 +452,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         local loadoutNum, weapon = self.getWeapon(weaponName)
 
         if weapon then
-            local weaponNum, weaponObject = ESX.GetWeapon(weaponName)
+            local _, weaponObject = ESX.GetWeapon(weaponName)
 
             if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
                 self.loadout[loadoutNum].tintIndex = weaponTintIndex
@@ -465,7 +463,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.getWeaponTint(weaponName)
-        local loadoutNum, weapon = self.getWeapon(weaponName)
+        local _, weapon = self.getWeapon(weaponName)
 
         if weapon then
             return weapon.tintIndex
@@ -481,7 +479,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
             if v.name == weaponName then
                 weaponLabel = v.label
 
-                for k2, v2 in ipairs(v.components) do
+                for _, v2 in ipairs(v.components) do
                     self.removeWeaponComponent(weaponName, v2)
                 end
 
@@ -519,7 +517,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.removeWeaponAmmo(weaponName, ammoCount)
-        local loadoutNum, weapon = self.getWeapon(weaponName)
+        local _, weapon = self.getWeapon(weaponName)
 
         if weapon then
             weapon.ammo = weapon.ammo - ammoCount
@@ -528,10 +526,10 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.hasWeaponComponent(weaponName, weaponComponent)
-        local loadoutNum, weapon = self.getWeapon(weaponName)
+        local _, weapon = self.getWeapon(weaponName)
 
         if weapon then
-            for k, v in ipairs(weapon.components) do
+            for _, v in ipairs(weapon.components) do
                 if v == weaponComponent then
                     return true
                 end
@@ -544,7 +542,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
     end
 
     function self.hasWeapon(weaponName)
-        for k, v in ipairs(self.loadout) do
+        for _, v in ipairs(self.loadout) do
             if v.name == weaponName then
                 return true
             end
@@ -553,8 +551,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
         return false
     end
 
-    function self.hasItem(item, metadata)
-        for k, v in ipairs(self.inventory) do
+    function self.hasItem(item)
+        for _, v in ipairs(self.inventory) do
             if (v.name == item) and (v.count >= 1) then
                 return v, v.count
             end
