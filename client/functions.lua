@@ -109,7 +109,7 @@ function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconTyp
     if hudColorIndex then
         ThefeedSetNextPostBackgroundColor(hudColorIndex)
     end
-    EndTextCommandThefeedPostnotifyText(textureDict, textureDict, false, iconType, sender, subject)
+    EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
     EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
