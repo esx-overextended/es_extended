@@ -2,12 +2,13 @@ fx_version 'adamant'
 
 game 'gta5'
 
-description 'ES Extended'
+description 'ES Overextended'
 
 lua54 'yes'
 version '1.9.4'
 
 shared_scripts {
+    '@ox_lib/init.lua',
     'locale.lua',
     'locales/*.lua',
 

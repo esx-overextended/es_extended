@@ -70,12 +70,17 @@ function ESX.Progressbar(message, length, Options)
     print("[^1ERROR^7] ^5ESX Progressbar^7 is Missing!")
 end
 
-function ESX.ShowNotification(message, type, length)
-    if GetResourceState("esx_notify") ~= "missing" then
-        return exports["esx_notify"]:Notify(type, length, message)
-    end
-
-    print("[^1ERROR^7] ^5ESX Notify^7 is Missing!")
+function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
+    lib.notify({
+        title = type(notifyText) == "table" and notifyText[1] or notifyExtra.title,
+        description = type(notifyText) == "table" and notifyText[2] or notifyText,
+        duration = notifyDuration or 3000,
+        position = notifyExtra.position or Config.DefaultNotificationPosition,
+        type = notifyType == "info" and "inform" or notifyType,
+        style = notifyExtra.style,
+        icon = notifyExtra.icon,
+        iconColor = notifyExtra.iconColor
+    })
 end
 
 
@@ -104,7 +109,7 @@ function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconTyp
     if hudColorIndex then
         ThefeedSetNextPostBackgroundColor(hudColorIndex)
     end
-    EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
+    EndTextCommandThefeedPostnotifyText(textureDict, textureDict, false, iconType, sender, subject)
     EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
