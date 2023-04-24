@@ -62,37 +62,71 @@ function ESX.SetPlayerData(key, val)
     end
 end
 
-function ESX.Progressbar(message, length, Options)
-    if GetResourceState("esx_progressbar") ~= "missing" then
-        return exports["esx_progressbar"]:Progressbar(message, length, Options)
-    end
+function ESX.Progressbar(progressText, progressDuration, progressOptions)
+    local progressType = progressOptions?.type or Config.DefaultProgressBarType
+    local animation = progressOptions?.anim or progressOptions?.animation
 
-    print("[^1ERROR^7] ^5ESX Progressbar^7 is Missing!")
+    if lib[progressType == "bar" and "progressBar" or progressType == "circle" and "progressCircle"]({
+        label = progressText,
+        duration = progressDuration,
+        position = progressOptions?.position or Config.DefaultProgressBarPosition,
+        useWhileDead = progressOptions?.useWhileDead or false,
+        allowRagdoll = progressOptions?.allowRagdoll or false,
+        allowCuffed = progressOptions?.allowCuffed or false,
+        allowFalling = progressOptions?.allowFalling or false,
+        canCancel = progressOptions?.canCancel or (progressOptions?.onCancel ~= nil and true),
+        anim = {
+            dict = animation?.dict,
+            clip = animation?.clip or animation?.lib,
+            flag = animation?.flag,
+            blendIn = animation?.blendIn,
+            blendOut = animation?.blendOut,
+            duration = animation?.duration,
+            playbackRate = animation?.playbackRate,
+            lockX = animation?.lockX,
+            lockY = animation?.lockY,
+            lockZ = animation?.lockZ,
+            scenario = animation?.scenario or animation?.Scenario,
+            playEnter = animation?.playEnter,
+        },
+        prop = progressOptions?.prop,
+        disable = progressOptions?.disable or {
+            move = progressOptions?.FreezePlayer,
+            car = progressOptions?.FreezePlayer,
+            combat = progressOptions?.FreezePlayer,
+            mouse = false
+        }
+    }) then
+        return progressOptions?.onFinish and progressOptions.onFinish() or true
+    else
+        return progressOptions?.onCancel and progressOptions.onCancel() or false
+    end
 end
 
-function ESX.ShowNotification(message, type, length)
-    if GetResourceState("esx_notify") ~= "missing" then
-        return exports["esx_notify"]:Notify(type, length, message)
-    end
-
-    print("[^1ERROR^7] ^5ESX Notify^7 is Missing!")
+function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
+    lib.notify({
+        title = type(notifyText) == "table" and notifyText[1] or notifyExtra?.title,
+        description = type(notifyText) == "table" and notifyText[2] or notifyText,
+        duration = notifyDuration or 3000,
+        position = notifyExtra?.position or Config.DefaultNotificationPosition,
+        type = notifyType == "info" and "inform" or notifyType,
+        style = notifyExtra?.style,
+        icon = notifyExtra?.icon,
+        iconColor = notifyExtra?.iconColor
+    })
 end
 
-
-function ESX.TextUI(message, type)
-    if GetResourceState("esx_textui") ~= "missing" then
-        return exports["esx_textui"]:TextUI(message, type)
-    end
-
-    print("[^1ERROR^7] ^5ESX TextUI^7 is Missing!")
+function ESX.TextUI(text, textType, textExtra)
+    lib.showTextUI(text, {
+        position = textExtra?.position or Config.DefaultTextUIPosition,
+        icon = textExtra?.icon or textType == "success" and "fa-circle-check" or textType == "error" and "fa-circle-exclamation" or "fa-circle-info",
+        iconColor = textExtra?.iconColor or textType == "success" and "#2ecc71" or textType == "error" and "#c0392b" or "#2980b9",
+        style = textExtra?.style
+    })
 end
 
 function ESX.HideUI()
-    if GetResourceState("esx_textui") ~= "missing" then
-        return exports["esx_textui"]:HideUI()
-    end
-
-    print("[^1ERROR^7] ^5ESX TextUI^7 is Missing!")
+    lib.hideTextUI()
 end
 
 function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
