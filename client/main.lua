@@ -189,7 +189,9 @@ AddEventHandler('esx:onPlayerLogout', function()
 end)
 
 RegisterNetEvent('esx:setMaxWeight')
-AddEventHandler('esx:setMaxWeight', function(newMaxWeight) ESX.SetPlayerData("maxWeight", newMaxWeight) end)
+AddEventHandler('esx:setMaxWeight', function(newMaxWeight)
+    ESX.SetPlayerData("maxWeight", newMaxWeight)
+end)
 
 local function onPlayerSpawn()
     ESX.SetPlayerData('ped', PlayerPedId())
@@ -342,9 +344,12 @@ if not Config.OxInventory then
     end)
 end
 
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(Job)
+RegisterNetEvent('esx:setJob', function(Job)
     ESX.SetPlayerData('job', Job)
+end)
+
+RegisterNetEvent('esx:setMetadata', function(metadata)
+    ESX.SetPlayerData("metadata", metadata)
 end)
 
 if not Config.OxInventory then
@@ -384,8 +389,7 @@ if not Config.OxInventory then
     RegisterNetEvent('esx:createMissingPickups')
     AddEventHandler('esx:createMissingPickups', function(missingPickups)
         for pickupId, pickup in pairs(missingPickups) do
-            TriggerEvent('esx:createPickup', pickupId, pickup.label, pickup.coords - vector3(0, 0, 1.0), pickup.type, pickup.name, pickup.components,
-                pickup.tintIndex)
+            TriggerEvent('esx:createPickup', pickupId, pickup.label, pickup.coords - vector3(0, 0, 1.0), pickup.type, pickup.name, pickup.components, pickup.tintIndex)
         end
     end)
 end
@@ -701,8 +705,4 @@ end
 
 lib.onCache("ped", function(value)
     ESX.SetPlayerData("ped", value)
-end)
-
-RegisterNetEvent('esx:updatePlayerData', function(key, val)
-    ESX.SetPlayerData(key, val)
 end)
