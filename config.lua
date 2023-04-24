@@ -79,3 +79,5 @@ Config.CustomAIPlates              = 'ESX.A111' -- Custom plates for AI vehicles
 
 Config.DefaultNotificationPosition = "center-right" -- 'top' | 'top-right' | 'top-left' | 'bottom' | 'bottom-right' | 'bottom-left' | 'center-right' | 'center-left'
 Config.DefaultTextUIPosition       = "left-center"  -- 'right-center' | 'left-center' | 'top-center'
+Config.DefaultProgressBarType      = "bar"          -- 'bar' or 'circle'
+Config.DefaultProgressBarPosition  = "bottom"       -- 'middle' or 'bottom'
