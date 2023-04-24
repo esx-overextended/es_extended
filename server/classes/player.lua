@@ -577,109 +577,111 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.triggerEvent('esx:showHelpNotification', msg, thisFrame, beep, duration)
     end
 
-    function self.getMeta(index, subIndex)
-        if index then
+    function self.getMetadata(index, subIndex)
+        if not index then return self.metadata end
 
-            if type(index) ~= "string" then
-                return print("[^1ERROR^7] xPlayer.getMeta ^5index^7 should be ^5string^7!")
-            end
-
-            if self.metadata[index] then
-
-                if subIndex and type(self.metadata[index]) == "table" then
-                    local _type = type(subIndex)
-
-                    if _type == "string" then
-                        if self.metadata[index][subIndex] then
-                            return self.metadata[index][subIndex]
-                        end
-                        return
-                    end
-
-                    if _type == "table" then
-                        local returnValues = {}
-                        for i = 1, #subIndex do
-                            if self.metadata[index][subIndex[i]] then
-                                returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
-                            else
-                                print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist on ^5%s^7!"):format(subIndex[i], index))
-                            end
-                        end
-
-                        return returnValues
-                    end
-
-                end
-
-                return self.metadata[index]
-            else
-                return print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist!"):format(index))
-            end
-
+        if type(index) ~= "string" then
+            return print("[^1ERROR^7] xPlayer.getMetadata ^5index^7 should be ^5string^7!")
         end
 
-        return self.metadata
-    end
+        if self.metadata[index] then
+            if subIndex and type(self.metadata[index]) == "table" then
+                local _type = type(subIndex)
 
-    function self.setMeta(index, value, subValue)
+                if _type == "string" then
+                    if self.metadata[index][subIndex] then
+                        return self.metadata[index][subIndex]
+                    end
+                    return
+                end
+
+                if _type == "table" then
+                    local returnValues = {}
+                    for i = 1, #subIndex do
+                        if self.metadata[index][subIndex[i]] then
+                            returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
+                        else
+                            print(("[^1ERROR^7] xPlayer.getMetadata ^5%s^7 not exist on ^5%s^7!"):format(subIndex[i], index))
+                        end
+                    end
+
+                    return returnValues
+                end
+
+            end
+
+            return self.metadata[index]
+        else
+            return print(("[^1ERROR^7] xPlayer.getMetadata ^5%s^7 not exist!"):format(index))
+        end
+    end
+    self.getMeta = self.getMetadata -- backward compatibility with esx-legacy
+
+    function self.setMetadata(index, value, subValue)
         if not index then
-            return print("[^1ERROR^7] xPlayer.setMeta ^5index^7 is Missing!")
+            return print("[^1ERROR^7] xPlayer.setMetadata ^5index^7 is Missing!")
         end
 
         if type(index) ~= "string" then
-            return print("[^1ERROR^7] xPlayer.setMeta ^5index^7 should be ^5string^7!")
+            return print("[^1ERROR^7] xPlayer.setMetadata ^5index^7 should be ^5string^7!")
         end
 
         if not value then
-            return print(("[^1ERROR^7] xPlayer.setMeta ^5%s^7 is Missing!"):format(value))
+            return print(("[^1ERROR^7] xPlayer.setMetadata ^5%s^7 is Missing!"):format(value))
         end
 
         local _type = type(value)
+        local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
         if not subValue then
 
             if _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                return print(("[^1ERROR^7] xPlayer.setMeta ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
+                return print(("[^1ERROR^7] xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
             end
 
             self.metadata[index] = value
         else
 
             if _type ~= "string" then
-                return print(("[^1ERROR^7] xPlayer.setMeta ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
+                return print(("[^1ERROR^7] xPlayer.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
             end
 
             self.metadata[index][value] = subValue
         end
 
-
-        self.triggerEvent('esx:updatePlayerData', 'metadata', self.metadata)
+        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
+        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
+    self.setMeta = self.setMetadata -- backward compatibility with esx-legacy
 
-    function self.clearMeta(index)
+    function self.clearMetadata(index)
         if not index then
-            return print(("[^1ERROR^7] xPlayer.clearMeta ^5%s^7 is Missing!"):format(index))
+            return print(("[^1ERROR^7] xPlayer.clearMetadata ^5%s^7 is Missing!"):format(index))
         end
 
         if type(index) == 'table' then
             for _, val in pairs(index) do
-                self.clearMeta(val)
+                self.clearMetadata(val)
             end
 
             return
         end
 
         if not self.metadata[index] then
-            return print(("[^1ERROR^7] xPlayer.clearMeta ^5%s^7 not exist!"):format(index))
+            return print(("[^1ERROR^7] xPlayer.clearMetadata ^5%s^7 not exist!"):format(index))
         end
 
+        local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
         self.metadata[index] = nil
-        self.triggerEvent('esx:updatePlayerData', 'metadata', self.metadata)
+
+        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
+        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
+    self.clearMeta = self.clearMetadata -- backward compatibility with esx-legacy
 
-    for fnName,fn in pairs(targetOverrides) do
+    for fnName, fn in pairs(targetOverrides) do
         self[fnName] = fn(self)
     end
 
