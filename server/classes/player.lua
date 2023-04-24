@@ -578,47 +578,42 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     function self.getMeta(index, subIndex)
-        if index then
+        if not index then return self.metadata end
 
-            if type(index) ~= "string" then
-                return print("[^1ERROR^7] xPlayer.getMeta ^5index^7 should be ^5string^7!")
-            end
-
-            if self.metadata[index] then
-
-                if subIndex and type(self.metadata[index]) == "table" then
-                    local _type = type(subIndex)
-
-                    if _type == "string" then
-                        if self.metadata[index][subIndex] then
-                            return self.metadata[index][subIndex]
-                        end
-                        return
-                    end
-
-                    if _type == "table" then
-                        local returnValues = {}
-                        for i = 1, #subIndex do
-                            if self.metadata[index][subIndex[i]] then
-                                returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
-                            else
-                                print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist on ^5%s^7!"):format(subIndex[i], index))
-                            end
-                        end
-
-                        return returnValues
-                    end
-
-                end
-
-                return self.metadata[index]
-            else
-                return print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist!"):format(index))
-            end
-
+        if type(index) ~= "string" then
+            return print("[^1ERROR^7] xPlayer.getMeta ^5index^7 should be ^5string^7!")
         end
 
-        return self.metadata
+        if self.metadata[index] then
+            if subIndex and type(self.metadata[index]) == "table" then
+                local _type = type(subIndex)
+
+                if _type == "string" then
+                    if self.metadata[index][subIndex] then
+                        return self.metadata[index][subIndex]
+                    end
+                    return
+                end
+
+                if _type == "table" then
+                    local returnValues = {}
+                    for i = 1, #subIndex do
+                        if self.metadata[index][subIndex[i]] then
+                            returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
+                        else
+                            print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist on ^5%s^7!"):format(subIndex[i], index))
+                        end
+                    end
+
+                    return returnValues
+                end
+
+            end
+
+            return self.metadata[index]
+        else
+            return print(("[^1ERROR^7] xPlayer.getMeta ^5%s^7 not exist!"):format(index))
+        end
     end
 
     function self.setMeta(index, value, subValue)
@@ -635,6 +630,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
 
         local _type = type(value)
+        local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
         if not subValue then
 
@@ -652,7 +648,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.metadata[index][value] = subValue
         end
 
-
+        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
         self.triggerEvent('esx:setMetadata', self.metadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
@@ -674,7 +670,10 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             return print(("[^1ERROR^7] xPlayer.clearMeta ^5%s^7 not exist!"):format(index))
         end
 
+        local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
         self.metadata[index] = nil
+
+        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
         self.triggerEvent('esx:setMetadata', self.metadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
