@@ -475,8 +475,7 @@ if not Config.OxInventory then
                             if IsPedOnFoot(ESX.PlayerData.ped) and (closestDistance == -1 or closestDistance > 3) and not pickup.inRange then
                                 pickup.inRange = true
 
-                                local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@',
-                                    'plant_floor'
+                                local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
                                 ESX.Streaming.RequestAnimDict(dict)
                                 TaskPlayAnim(ESX.PlayerData.ped, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
                                 RemoveAnimDict(dict)
@@ -699,6 +698,10 @@ for i = 1, #DoNotUse do
         print("[^1ERROR^7] YOU ARE USING A RESOURCE THAT WILL BREAK ^1ESX^7, PLEASE REMOVE ^5" .. DoNotUse[i] .. "^7")
     end
 end
+
+lib.onCache("ped", function(value)
+    ESX.SetPlayerData("ped", value)
+end)
 
 RegisterNetEvent('esx:updatePlayerData', function(key, val)
     ESX.SetPlayerData(key, val)
