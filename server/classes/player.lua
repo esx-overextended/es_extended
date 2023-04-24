@@ -649,7 +649,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
 
         TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
-        self.triggerEvent('esx:setMetadata', self.metadata)
+        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
 
@@ -674,7 +674,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.metadata[index] = nil
 
         TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
-        self.triggerEvent('esx:setMetadata', self.metadata)
+        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
 
