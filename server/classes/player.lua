@@ -41,7 +41,10 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
     function self.setCoords(coords)
         local ped = GetPlayerPed(self.source)
-        local vector = type(coords) == "vector4" and coords or type(coords) == "vector3" and vector4(coords.x, coords.y, coords.z, coords.w or coords.heading or 0.0)
+        local vector = vector4(coords?.x, coords?.y, coords?.z, coords?.w or coords?.heading or 0.0)
+
+        if not vector then return end
+
         SetEntityCoords(ped, vector.x, vector.y, vector.z, false, false, false, false)
         SetEntityHeading(ped, vector.w)
     end
