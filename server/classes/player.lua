@@ -4,13 +4,25 @@ local DoesEntityExist = DoesEntityExist
 local GetEntityCoords = GetEntityCoords
 local GetEntityHeading = GetEntityHeading
 
-function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerCoords, playerMetadata)
+local self_metadata = {
+    __index = function(self, index)
+        if index == "coords" then return self.getCoords() end
+
+        return rawget(self, index)
+    end,
+    __newindex = function(self, index, ...)
+        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource())) end
+
+        rawset(self, index, ...)
+    end
+}
+
+function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 
-    local self = {}
+    local self = setmetatable({}, self_metadata)
 
     self.accounts = playerAccounts
-    self.coords = playerCoords
     self.group = playerGroup
     self.identifier = playerIdentifier
     self.inventory = playerInventory
@@ -49,32 +61,12 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         SetEntityHeading(ped, vector.w)
     end
 
-    function self.updateCoords()
-        SetTimeout(1000,function()
-            local ped = GetPlayerPed(self.source)
-            if DoesEntityExist(ped) then
-                local coords = GetEntityCoords(ped)
-                local distance = #(coords - vector3(self.coords.x, self.coords.y, self.coords.z))
-                if distance > 1.5 then
-                    local heading = GetEntityHeading(ped)
-                    self.coords = {
-                        x = coords.x,
-                        y = coords.y,
-                        z = coords.z,
-                        heading = heading or 0.0
-                    }
-                end
-            end
-            self.updateCoords()
-        end)
-    end
-
     function self.getCoords(vector)
-        if vector then
-            return vector3(self.coords.x, self.coords.y, self.coords.z)
-        else
-            return self.coords
-        end
+        local playerPed = GetPlayerPed(self.source)
+        local coords = GetEntityCoords(playerPed)
+        local heading = GetEntityHeading(playerPed)
+
+        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, w = heading, heading = heading}
     end
 
     function self.kick(reason)
