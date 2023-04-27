@@ -1,9 +1,3 @@
-local SetTimeout = SetTimeout
-local GetPlayerPed = GetPlayerPed
-local DoesEntityExist = DoesEntityExist
-local GetEntityCoords = GetEntityCoords
-local GetEntityHeading = GetEntityHeading
-
 local self_metadata = {
     __index = function(self, index)
         if index == "coords" then return self.getCoords() end
@@ -35,6 +29,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.weight = playerInventoryWeight
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
+
     if Config.Multichar then self.license = 'license'.. playerIdentifier:sub(playerIdentifier:find(':'), playerIdentifier:len()) else self.license = 'license:'..playerIdentifier end
 
     ExecuteCommand(('add_principal identifier.%s group.%s'):format(self.license, self.group))
