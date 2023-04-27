@@ -718,8 +718,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
         xenonColor = GetVehicleXenonLightsColor(vehicle),
         customXenonColor = customXenonColor,
 
-        neonEnabled = {IsVehicleNeonLightEnabled(vehicle, 0), IsVehicleNeonLightEnabled(vehicle, 1),
-                        IsVehicleNeonLightEnabled(vehicle, 2), IsVehicleNeonLightEnabled(vehicle, 3)},
+        neonEnabled = {IsVehicleNeonLightEnabled(vehicle, 0), IsVehicleNeonLightEnabled(vehicle, 1), IsVehicleNeonLightEnabled(vehicle, 2), IsVehicleNeonLightEnabled(vehicle, 3)},
 
         neonColor = table.pack(GetVehicleNeonLightsColour(vehicle)),
         extras = extras,
@@ -808,12 +807,10 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
         SetVehicleDirtLevel(vehicle, props.dirtLevel + 0.0)
     end
     if props.customPrimaryColor ~= nil then
-        SetVehicleCustomPrimaryColour(vehicle, props.customPrimaryColor[1], props.customPrimaryColor[2],
-            props.customPrimaryColor[3])
+        SetVehicleCustomPrimaryColour(vehicle, props.customPrimaryColor[1], props.customPrimaryColor[2], props.customPrimaryColor[3])
     end
     if props.customSecondaryColor ~= nil then
-        SetVehicleCustomSecondaryColour(vehicle, props.customSecondaryColor[1], props.customSecondaryColor[2],
-            props.customSecondaryColor[3])
+        SetVehicleCustomSecondaryColour(vehicle, props.customSecondaryColor[1], props.customSecondaryColor[2], props.customSecondaryColor[3])
     end
     if props.color1 ~= nil then
         SetVehicleColours(vehicle, props.color1, colorSecondary)
