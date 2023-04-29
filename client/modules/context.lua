@@ -47,3 +47,76 @@ if useEsxContext then
 
     return
 end
+
+local contextData
+
+---converts esx_context elements to ox_lib options type
+---@param elements table
+---@param onSelect? function
+local function generateOptions(elements, onSelect)
+    local options = {}
+
+    for i = 1, #elements do
+        local optionData = elements[i]
+        options[i] = optionData
+        options[i].title = optionData.title
+        options[i].description = optionData.description
+        options[i].icon = optionData.icon
+        options[i].disabled = optionData.disabled or optionData.unselectable
+        options[i].onSelect = function()
+            if not optionData.input then
+                return onSelect ~= nil and onSelect(contextData, optionData)
+            end
+        end
+    end
+
+    return options
+end
+
+---@param elements table
+---@param onSelect? function
+---@param onClose? function
+---@param canClose? boolean defaults to true
+function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
+    local options = generateOptions(elements, onSelect)
+    contextData = {
+        id = "esx:contextMenu",
+        title = "Menu",
+        options = options,
+        eles = elements,     -- populate the table for backward-compatibility with esx_context
+        onSelect = onSelect, -- populate the table for backward-compatibility with esx_context
+        onClose = onClose,   -- populate the table for backward-compatibility with esx_context
+        canClose = canClose == nil and true or canClose,
+        onExit = function()
+            contextData = nil
+            return onClose ~= nil and onClose()
+        end,
+    }
+
+    lib.registerContext(contextData)
+    lib.showContext(contextData.id)
+end
+
+function ESX.PreviewContext(_, _, _, _, _)
+    print("[^1ERROR^7] Tried to ^5preview^7 context menu, but ^5ox_lib does not offer such functionality^7 at the moment!")
+end
+
+---@param onExit? boolean defaults to true
+function ESX.CloseContext(onExit)
+    lib.hideContext(onExit == nil and true or onExit)
+end
+
+---@param elements? table
+function ESX.RefreshContext(elements, _)
+    local currentContext = lib.getOpenContextMenu()
+
+    if not currentContext or currentContext ~= contextData?.id then return end -- strict check whether the current context is opened through ESX.OpenContext or not
+
+    if elements then
+        contextData.options = generateOptions(elements, contextData.onSelect)
+    end
+
+    lib.hideContext(true) Wait(0)
+    lib.registerContext(contextData)
+    lib.showContext(contextData.id)
+end
