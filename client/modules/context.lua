@@ -150,7 +150,7 @@ function ESX.RefreshContext(elements, _)
 
     if not currentContextId then return end
     if currentContextId ~= contextData?.id then -- strict check whether the current context is opened through ESX.OpenContext or not
-        return print("[^3WARNING^7] Tried to ^5refresh^7 a context menu, that hasn't been opened through ^2ESX.OpenContext^7.")
+        return print("[^1ERROR^7] Tried to ^5refresh^7 a context menu that hasn't been opened through ^2ESX.OpenContext^7.")
     end
 
     local _contextData = contextData -- save the current context menu data since it will be nil once ESX.CloseContext is called
