@@ -56,8 +56,11 @@ local contextData
 local function generateOptions(elements, onSelect)
     local options = {}
 
-    for i = 1, #elements do
-        local optionData = elements[i]
+    local isFirstElementUnselectable = elements[1]?.unselectable == true
+
+    for index = isFirstElementUnselectable and 2 or 1, #elements do
+        local optionData = elements[index]
+        local i = isFirstElementUnselectable and index-1 or index
         options[i] = optionData
         options[i].title = optionData.title
         options[i].description = optionData.description
@@ -81,7 +84,7 @@ function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
     local options = generateOptions(elements, onSelect)
     contextData = {
         id = "esx:contextMenu",
-        title = "Menu",
+        title = elements[1]?.unselectable and elements[1]?.title or "Menu",
         options = options,
         eles = elements,     -- populate the table for backward-compatibility with esx_context
         onSelect = onSelect, -- populate the table for backward-compatibility with esx_context
