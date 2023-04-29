@@ -63,9 +63,9 @@ local function generateOptions(elements, onSelect)
         local i = isFirstElementUnselectable and index-1 or index
         options[i] = lib.table.deepclone(optionData)
         options[i].title = optionData.title
-        options[i].description = optionData.description or (optionData.inputValue and tostring(optionData.inputValue)) -- this is really weird. sometime it works with number and sometimes doesnt!
-        options[i].metadata = (optionData.description and optionData.inputValue) and {
-            {label = "value", value = optionData.inputValue}
+        options[i].description = optionData.name and (("%s%s"):format(optionData.name, (optionData.inputValue and ": " .. optionData.inputValue) or "")) or (optionData.inputValue and tostring(optionData.inputValue)--[[sometime it works with number and sometimes doesnt!]])
+        options[i].metadata = optionData.description and {
+            {label = "description", value = optionData.description}
         }
         options[i].icon = optionData.icon
         options[i].disabled = optionData.disabled or optionData.unselectable
@@ -86,6 +86,17 @@ local function generateOptions(elements, onSelect)
                     default = tonumber(optionData.inputValue),
                     min = tonumber(optionData.inputMin),
                     max = tonumber(optionData.inputMax),
+                }
+            elseif optionData.inputType == "text" then
+                inputDialogData[1] = {
+                    type = "textarea",
+                    label = optionData.name or optionData.title,
+                    description = optionData.description,
+                    placeholder = optionData.inputPlaceholder,
+                    icon = optionData.icon,
+                    required = true,
+                    default = optionData.inputValue,
+                    autosize = true
                 }
             end
 
