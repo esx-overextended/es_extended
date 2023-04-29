@@ -1041,7 +1041,7 @@ function ESX.ShowInventory()
 
             elements[#elements+1] = {
                 icon = 'fas fa-money-bill-wave',
-                title = ('%s: <span style="color:green;">%s</span>'):format(ESX.PlayerData.accounts[i].label, formattedMoney),
+                title = ('%s: %s'):format(ESX.PlayerData.accounts[i].label, formattedMoney),
                 count = ESX.PlayerData.accounts[i].money,
                 type = 'item_account',
                 value = ESX.PlayerData.accounts[i].name,
