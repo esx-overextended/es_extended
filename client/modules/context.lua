@@ -111,15 +111,15 @@ end
 
 ---@param elements? table
 function ESX.RefreshContext(elements, _)
-    local currentContext = lib.getOpenContextMenu()
+    local currentContextId = lib.getOpenContextMenu()
 
-    if not currentContext or currentContext ~= contextData?.id then return end -- strict check whether the current context is opened through ESX.OpenContext or not
-
-    if elements then
-        contextData.options = generateOptions(elements, contextData.onSelect)
+    if not currentContextId then return end
+    if currentContextId ~= contextData?.id then -- strict check whether the current context is opened through ESX.OpenContext or not
+        return print("[^3WARNING^7] Tried to ^5refresh^7 a context menu, that hasn't been opened through ^2ESX.OpenContext^7.")
     end
 
-    lib.hideContext(true) Wait(0)
-    lib.registerContext(contextData)
-    lib.showContext(contextData.id)
+    local _contextData = contextData -- save the current context menu data since it will be nil once ESX.CloseContext is called
+
+    ESX.CloseContext() Wait(0)
+    ESX.OpenContext(nil, elements or _contextData.eles, _contextData.onSelect, _contextData.onClose, _contextData.canClose)
 end
