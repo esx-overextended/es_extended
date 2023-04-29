@@ -61,15 +61,39 @@ local function generateOptions(elements, onSelect)
     for index = isFirstElementUnselectable and 2 or 1, #elements do
         local optionData = elements[index]
         local i = isFirstElementUnselectable and index-1 or index
-        options[i] = optionData
+        options[i] = lib.table.deepclone(optionData)
         options[i].title = optionData.title
-        options[i].description = optionData.description
+        options[i].description = optionData.description or (optionData.inputValue and tostring(optionData.inputValue)) -- this is really weird. sometime it works with number and sometimes doesnt!
+        options[i].metadata = (optionData.description and optionData.inputValue) and {
+            {label = "value", value = optionData.inputValue}
+        }
         options[i].icon = optionData.icon
         options[i].disabled = optionData.disabled or optionData.unselectable
         options[i].onSelect = function()
             if not optionData.input then
                 return onSelect ~= nil and onSelect(contextData, optionData)
             end
+
+            local inputDialogData = {}
+            if optionData.inputType == "number" then
+                inputDialogData[1] = {
+                    type = "number",
+                    label = optionData.name or optionData.title,
+                    description = ("%s %s"):format(optionData.description or "", (optionData.inputMin and optionData.inputMax) and ("\nMin: %s - Max: %s"):format(optionData.inputMin, optionData.inputMax) or ""), -- no markdown support for description =[
+                    placeholder = optionData.inputPlaceholder,
+                    icon = optionData.icon,
+                    required = true,
+                    default = tonumber(optionData.inputValue),
+                    min = tonumber(optionData.inputMin),
+                    max = tonumber(optionData.inputMax),
+                }
+            end
+
+            local input = lib.inputDialog(optionData.title, inputDialogData, {allowCancel = true})
+
+            elements[index].inputValue = input?[1] or elements[index].inputValue
+
+            ESX.OpenContext(nil, elements, contextData.onSelect, contextData.onClose, contextData.canClose)
         end
     end
 
