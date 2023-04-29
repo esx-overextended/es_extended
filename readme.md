@@ -1,4 +1,4 @@
-<h1 align='center'>ESX Legacy</a></h1>
+<h1 align='center'>ESX Overextended</a></h1>
 <p align='center'><a href='https://documentation.esx-framework.org/legacy/installation'>Documentation</a></b></h5>
 
 <hr>

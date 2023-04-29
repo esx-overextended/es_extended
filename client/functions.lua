@@ -175,41 +175,6 @@ ESX.HashString = function(str)
     return input_map
 end
 
-if GetResourceState("esx_context") ~= "missing" then
-    function ESX.OpenContext(...)
-        exports["esx_context"]:Open(...)
-    end
-
-    function ESX.PreviewContext(...)
-        exports["esx_context"]:Preview(...)
-    end
-
-    function ESX.CloseContext(...)
-        exports["esx_context"]:Close(...)
-    end
-
-    function ESX.RefreshContext(...)
-       exports["esx_context"]:Refresh(...)
-    end
-else
-    function ESX.OpenContext()
-        print("[^1ERROR^7] Tried to ^5open^7 context menu, but ^5esx_context^7 is missing!")
-    end
-
-    function ESX.PreviewContext()
-        print("[^1ERROR^7] Tried to ^5preview^7 context menu, but ^5esx_context^7 is missing!")
-    end
-
-    function ESX.CloseContext()
-        print("[^1ERROR^7] Tried to ^5close^7 context menu, but ^5esx_context^7 is missing!")
-    end
-
-    function ESX.RefreshContext()
-        print("[^1ERROR^7] Tried to ^5Refresh^7 context menu, but ^5esx_context^7 is missing!")
-    end
-end
-
-
 ESX.RegisterInput = function(command_name, label, input_group, key, on_press, on_release)
     RegisterCommand(on_release ~= nil and "+" .. command_name or command_name, on_press, false)
     Core.Input[command_name] = on_release ~= nil and ESX.HashString("+" .. command_name) or ESX.HashString(command_name)
