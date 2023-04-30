@@ -98,6 +98,25 @@ local function generateOptions(elements, onSelect)
                     default = optionData.inputValue,
                     autosize = true
                 }
+            elseif optionData.inputType == "radio" then
+                local radioOptions, defaultValue = {}, nil
+                for _i = 1, #optionData.inputValues do
+                    local radioOptionData = optionData.inputValues[_i]
+                    defaultValue = defaultValue or (radioOptionData.value == optionData.inputValue or radioOptionData.value == optionData.inputPlaceholder or radioOptionData.value == -1) and radioOptionData.value
+                    radioOptions[_i] = {label = radioOptionData.text, value = radioOptionData.value}
+                end
+
+                inputDialogData[1] = {
+                    type = "select",
+                    label = optionData.name or optionData.title,
+                    options = radioOptions,
+                    description = optionData.description,
+                    placeholder = optionData.inputPlaceholder,
+                    icon = optionData.icon,
+                    required = true,
+                    default = defaultValue,
+                    clearable = true
+                }
             end
 
             local input = lib.inputDialog(optionData.title, inputDialogData, {allowCancel = true})
