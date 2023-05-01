@@ -224,7 +224,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.accounts[account.index].money += money
 
                 TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
-                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                    account = account,
+                    accountName = accountName,
+                    money = self.accounts[account.index].money,
+                    reason = reason,
+                    triggerServer = false
+                }, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -247,7 +253,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.accounts[account.index].money = self.accounts[account.index].money - money
 
                 TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
-                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                    account = account,
+                    accountName = accountName,
+                    money = self.accounts[account.index].money,
+                    reason = reason,
+                    triggerServer = false
+                }, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end

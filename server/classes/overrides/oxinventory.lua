@@ -43,7 +43,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
     end,
 
     setAccountMoney = function(self)
-        return function(accountName,money, reason)
+        return function(accountName, money, reason)
             reason = reason or 'unknown'
             if money >= 0 then
                 local account = self.getAccount(accountName)
@@ -63,7 +63,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
     end,
 
     addAccountMoney = function(self)
-        return function(accountName,money, reason)
+        return function(accountName, money, reason)
             reason = reason or 'unknown'
             if money > 0 then
                 local account = self.getAccount(accountName)
@@ -73,7 +73,13 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money += money
 
                     TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
-                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
+                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                        account = account,
+                        accountName = accountName,
+                        money = self.accounts[account.index].money,
+                        reason = reason,
+                        triggerServer = false
+                    }, true)
 
                     if Inventory.accounts[accountName] then
                         Inventory.AddItem(self.source, accountName, money)
@@ -84,7 +90,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
     end,
 
     removeAccountMoney = function(self)
-        return function(accountName,money, reason)
+        return function(accountName, money, reason)
             reason = reason or 'unknown'
             if money > 0 then
                 local account = self.getAccount(accountName)
@@ -94,7 +100,13 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money = self.accounts[account.index].money - money
 
                     TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
-                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
+                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                        account = account,
+                        accountName = accountName,
+                        money = self.accounts[account.index].money,
+                        reason = reason,
+                        triggerServer = false
+                    }, true)
 
                     if Inventory.accounts[accountName] then
                         Inventory.RemoveItem(self.source, accountName, money)
@@ -105,31 +117,31 @@ Core.PlayerFunctionOverrides.OxInventory = {
     end,
 
     getInventoryItem = function(self)
-        return function(name,metadata)
+        return function(name, metadata)
             return Inventory.GetItem(self.source, name, metadata)
         end
     end,
 
     addInventoryItem = function(self)
-        return function(name,count,metadata,slot)
+        return function(name, count, metadata, slot)
             return Inventory.AddItem(self.source, name, count or 1, metadata, slot)
         end
     end,
 
     removeInventoryItem = function(self)
-        return function(name,count,metadata,slot)
+        return function(name, count, metadata, slot)
             return Inventory.RemoveItem(self.source, name, count or 1, metadata, slot)
         end
     end,
 
     setInventoryItem = function(self)
-        return function(name,count,metadata)
+        return function(name, count, metadata)
             return Inventory.SetItem(self.source, name, count, metadata)
         end
     end,
 
     canCarryItem = function(self)
-        return function(name,count,metadata)
+        return function(name, count, metadata)
             return Inventory.CanCarryItem(self.source, name, count, metadata)
         end
     end,
