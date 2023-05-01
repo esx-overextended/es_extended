@@ -264,7 +264,6 @@ AddStateBagChangeHandler('VehicleProperties', nil, function(bagName, _, value)
     ESX.Game.SetVehicleProperties(vehicle, value)
 end)
 
-RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then

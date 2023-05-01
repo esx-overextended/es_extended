@@ -202,8 +202,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money = money
 
-                self.triggerEvent('esx:setAccountMoney', account)
-                TriggerEvent('esx:setAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = money, reason = reason}, true)
             else
                 print(('[^1ERROR^7] Tried To Set Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -224,8 +223,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money += money
 
-                self.triggerEvent('esx:setAccountMoney', account)
                 TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -247,8 +246,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money = self.accounts[account.index].money - money
 
-                self.triggerEvent('esx:setAccountMoney', account)
                 TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
