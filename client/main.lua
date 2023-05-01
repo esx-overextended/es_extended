@@ -188,7 +188,6 @@ AddEventHandler('esx:onPlayerLogout', function()
     ESX.PlayerLoaded = false
 end)
 
-RegisterNetEvent('esx:setMaxWeight')
 AddEventHandler('esx:setMaxWeight', function(newMaxWeight)
     ESX.SetPlayerData("maxWeight", newMaxWeight)
 end)
@@ -276,7 +275,6 @@ AddEventHandler('esx:setAccountMoney', function(account)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:addInventoryItem')
     AddEventHandler('esx:addInventoryItem', function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then
@@ -291,7 +289,6 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:removeInventoryItem')
     AddEventHandler('esx:removeInventoryItem', function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then

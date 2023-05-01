@@ -118,7 +118,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         local minimalAccounts = {}
 
-        for i=1, #self.accounts do
+        for i = 1, #self.accounts do
             minimalAccounts[self.accounts[i].name] = self.accounts[i].money
         end
 
@@ -126,7 +126,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     function self.getAccount(account)
-        for i=1, #self.accounts do
+        for i = 1, #self.accounts do
             if self.accounts[i].name == account then
                 return self.accounts[i]
             end
@@ -285,7 +285,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.weight = self.weight + (item.weight * count)
 
             TriggerEvent('esx:onAddInventoryItem', self.source, item.name, item.count)
-            self.triggerEvent('esx:addInventoryItem', item.name, item.count)
+            GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = item.name, itemCount = item.count, triggerServer = false}, true)
         end
     end
 
@@ -302,7 +302,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     self.weight = self.weight - (item.weight * count)
 
                     TriggerEvent('esx:onRemoveInventoryItem', self.source, item.name, item.count)
-                    self.triggerEvent('esx:removeInventoryItem', item.name, item.count)
+                    GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = item.name, itemCount = item.count, triggerServer = false}, true)
                 end
             else
                 print(('[^1ERROR^7] Player ID:^5%s Tried remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
@@ -359,7 +359,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
     function self.setMaxWeight(newWeight)
         self.maxWeight = newWeight
-        self.triggerEvent('esx:setMaxWeight', self.maxWeight)
+        GlobalState:set(("player:%s->esx:setMaxWeight"):format(self.source), {maxWeight = newWeight}, true)
     end
 
     function self.setJob(job, grade)

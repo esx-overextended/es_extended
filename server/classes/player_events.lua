@@ -14,7 +14,7 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
     -- local eventName = key:gsub(notEvent:gsub("([%-%%])", "%%%1"), "")
 
     if string.sub(key, 1, notEventLength) ~= notEvent then
-        return print(("[^1ERROR^7] Mulfunctioned state bag ^2name^7 received for triggering player-related events (^2%s^7)"):format(key))
+        return print(("[^1ERROR^7] Mulfunctioned state bag ^5name^7 received for triggering player-related events (^2%s^7)"):format(key))
     end
 
     if value.triggerServer ~= false then
@@ -22,8 +22,10 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
 
         if eventName == "esx:setAccountMoney" then
             TriggerEvent(eventName, playerId, value.accountName, value.money, value.reason)
+        elseif eventName == "esx:setMaxWeight" then
+            TriggerEvent(eventName, playerId, value.maxWeight)
         else
-            print(("[^3WARNING^7] The state bag name received for triggering player-related events has not been setup (^2%s^7)"):format(key))
+            print(("[^3WARNING^7] The event ^5name^7 received using global state bag has not been setup for ^5server-side^7 yet(^2%s^7)"):format(eventName))
         end
     end
 
