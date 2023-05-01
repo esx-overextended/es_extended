@@ -305,7 +305,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = item.name, itemCount = item.count, triggerServer = false}, true)
                 end
             else
-                print(('[^1ERROR^7] Player ID:^5%s Tried remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
+                print(('[^1ERROR^7] Player ID:^5%s Tried to remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
             end
         end
     end
@@ -390,8 +390,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.job.skin_female = {}
             end
 
-            TriggerEvent('esx:setJob', self.source, self.job, lastJob)
-            self.triggerEvent('esx:setJob', self.job, lastJob)
+            GlobalState:set(("player:%s->esx:setJob"):format(self.source), {currentJob = self.job, lastJob = lastJob}, true)
             Player(self.source).state:set("job", self.job, true)
         else
             print(('[es_extended] [^3WARNING^7] Ignoring invalid ^5.setJob()^7 usage for ID: ^5%s^7, Job: ^5%s^7'):format(self.source, job))

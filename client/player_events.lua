@@ -4,6 +4,8 @@ if completeBackwardCompatibleEvents then
     RegisterNetEvent("esx:setAccountMoney")
     RegisterNetEvent("esx:addInventoryItem")
     RegisterNetEvent("esx:removeInventoryItem")
+    RegisterNetEvent("esx:setMaxWeight")
+    RegisterNetEvent("esx:setJob")
 end
 
 AddStateBagChangeHandler(("player:%s->esx:setAccountMoney"):format(cache.serverId), "global", function(_, _, value, _, _)
@@ -28,4 +30,10 @@ AddStateBagChangeHandler(("player:%s->esx:setMaxWeight"):format(cache.serverId),
     if not value then return end
 
     TriggerEvent("esx:setMaxWeight", value.maxWeight)
+end)
+
+AddStateBagChangeHandler(("player:%s->esx:setJob"):format(cache.serverId), "global", function(_, _, value, _, _)
+    if not value then return end
+
+    TriggerEvent("esx:setJob", value.currentJob, value.lastJob)
 end)

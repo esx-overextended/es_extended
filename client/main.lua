@@ -336,7 +336,7 @@ if not Config.OxInventory then
     end)
 end
 
-RegisterNetEvent('esx:setJob', function(Job)
+AddEventHandler('esx:setJob', function(Job)
     ESX.SetPlayerData('job', Job)
 end)
 

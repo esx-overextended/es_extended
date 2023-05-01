@@ -24,6 +24,8 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
             TriggerEvent(eventName, playerId, value.accountName, value.money, value.reason)
         elseif eventName == "esx:setMaxWeight" then
             TriggerEvent(eventName, playerId, value.maxWeight)
+        elseif eventName == "esx:setJob" then
+            TriggerEvent(eventName, playerId, value.currentJob, value.lastJob)
         else
             print(("[^3WARNING^7] The event ^5name^7 received using global state bag has not been setup for ^5server-side^7 yet(^2%s^7)"):format(eventName))
         end
