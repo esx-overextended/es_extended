@@ -1,5 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 local pattern = "([^%-]*)%-" -- pattern to find the first occurence of a hyphen
+local currentResourceName = GetCurrentResourceName()
 local registeredEvents = {}
 
 ---@diagnostic disable-next-line: param-type-mismatch
@@ -38,17 +39,23 @@ function ESX.RegisterSafeEvent(eventName, cb)
         return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
     end
 
-    if cb and type(cb) ~= "function" then
-        return print(("[^1ERROR^7] The cb passed in ^4ESX.RegisterEvent^7 for (^3%s^7) is not a valid function!"):format(eventName))
+    local invokingResource = GetInvokingResource() or GetCurrentResourceName()
+    local cbType = type(cb)
+    local isCbValid = (cbType == "function" or (cbType == "table" and cb?.__cfx_functionReference and true)) or false
+
+    if cb and not isCbValid then
+        return print(("[^1ERROR^7] The cb passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7 is not a valid function!"):format(eventName, invokingResource))
     end
 
-    local invokingResource = GetInvokingResource()
+    local originalCb = invokingResource == currentResourceName and cb
 
     if registeredEvents[eventName] then
+        originalCb = registeredEvents[eventName].originalCallback
         print(("[^5INFO^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is being re-registered from ^2%s^7 to ^2%s^7!"):format(eventName, registeredEvents[eventName].resource, invokingResource))
     end
 
     registeredEvents[eventName] = {
+        originalCallback = originalCb,
         callback = cb,
         resource = invokingResource
     }
@@ -83,9 +90,19 @@ function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOption
 end
 
 local function onResourceStop(resource)
+    if resource == currentResourceName then return end
+
     for eventName, data in pairs(registeredEvents) do
         if data.resource == resource then
-            registeredEvents[eventName] = nil
+            if data.originalCallback then
+                registeredEvents[eventName] = {
+                    originalCallback = data.originalCallback,
+                    callback = data.originalCallback,
+                    resource = currentResourceName
+                }
+            else
+                registeredEvents[eventName] = nil
+            end
         end
     end
 end
