@@ -410,7 +410,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             })
 
             GiveWeaponToPed(GetPlayerPed(self.source), joaat(weaponName), ammo, false, false)
-            self.triggerEvent('esx:addInventoryItem', weaponLabel, false, true)
+            GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = weaponLabel, itemCount = false, showNotification = true, triggerServer = false}, true)
         end
     end
 
@@ -424,8 +424,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 if not self.hasWeaponComponent(weaponName, weaponComponent) then
                     self.loadout[loadoutNum].components[#self.loadout[loadoutNum].components + 1] = weaponComponent
                     local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
+
                     GiveWeaponComponentToPed(GetPlayerPed(self.source), joaat(weaponName), componentHash)
-                    self.triggerEvent('esx:addInventoryItem', component.label, false, true)
+                    GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = component.label, itemCount = false, showNotification = true, triggerServer = false}, true)
                 end
             end
         end
@@ -445,6 +446,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         if weapon then
             weapon.ammo = ammoCount
+            SetPedAmmo(GetPlayerPed(self.source), joaat(weaponName), weapon.ammo)
         end
     end
 
@@ -456,8 +458,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
             if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
                 self.loadout[loadoutNum].tintIndex = weaponTintIndex
-                self.triggerEvent('esx:setWeaponTint', weaponName, weaponTintIndex)
-                self.triggerEvent('esx:addInventoryItem', weaponObject.tints[weaponTintIndex], false, true)
+
+                GlobalState:set(("player:%s->esx:setWeaponTint"):format(self.source), {weaponName = weaponName, weaponTintIndex = weaponTintIndex, triggerServer = false}, true)
+                GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true, triggerServer = false}, true)
             end
         end
     end
@@ -489,8 +492,11 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
 
         if weaponLabel then
-            self.triggerEvent('esx:removeWeapon', weaponName)
-            self.triggerEvent('esx:removeInventoryItem', weaponLabel, false, true)
+            local ped, weaponHash = GetPlayerPed(self.source), joaat(weaponName)
+
+            RemoveWeaponFromPed(ped, weaponHash)
+            SetPedAmmo(ped, weaponHash, 0)
+            GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = weaponLabel, itemCount = false, showNotification = true, triggerServer = false}, true)
         end
     end
 
@@ -509,8 +515,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                         end
                     end
 
-                    self.triggerEvent('esx:removeWeaponComponent', weaponName, weaponComponent)
-                    self.triggerEvent('esx:removeInventoryItem', component.label, false, true)
+                    RemoveWeaponComponentFromPed(GetPlayerPed(self.source), joaat(weaponName), component.hash)
+                    GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = component.label, itemCount = false, showNotification = true, triggerServer = false}, true)
                 end
             end
         end
@@ -521,7 +527,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         if weapon then
             weapon.ammo = weapon.ammo - ammoCount
-            self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+            self.updateWeaponAmmo(weaponName, weapon.ammo)
         end
     end
 

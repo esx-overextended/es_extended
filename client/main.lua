@@ -318,21 +318,18 @@ if not Config.OxInventory then
         print("[^1ERROR^7] event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.addWeaponAmmo^7 Instead!")
     end)
 
-    RegisterNetEvent('esx:setWeaponTint')
     AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
         SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
     end)
 
     RegisterNetEvent('esx:removeWeapon')
     AddEventHandler('esx:removeWeapon', function(weapon)
-        RemoveWeaponFromPed(ESX.PlayerData.ped, joaat(weapon))
-        SetPedAmmo(ESX.PlayerData.ped, joaat(weapon), 0)
+        print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
     end)
 
     RegisterNetEvent('esx:removeWeaponComponent')
     AddEventHandler('esx:removeWeaponComponent', function(weapon, weaponComponent)
-        local componentHash = ESX.GetWeaponComponent(weapon, weaponComponent).hash
-        RemoveWeaponComponentFromPed(ESX.PlayerData.ped, joaat(weapon), componentHash)
+        print("[^1ERROR^7] event ^5'esx:removeWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.removeWeaponComponent^7 Instead!")
     end)
 end
 
