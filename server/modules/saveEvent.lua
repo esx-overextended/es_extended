@@ -20,6 +20,7 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
             local eventName = string.sub(key, notEventLength + 1)
 
             if registeredEvents[eventName] and registeredEvents[eventName].callback then
+                value.source = playerId
                 registeredEvents[eventName].callback(value)
             end
         end
