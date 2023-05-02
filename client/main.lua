@@ -188,7 +188,6 @@ AddEventHandler('esx:onPlayerLogout', function()
     ESX.PlayerLoaded = false
 end)
 
-RegisterNetEvent('esx:setMaxWeight')
 AddEventHandler('esx:setMaxWeight', function(newMaxWeight)
     ESX.SetPlayerData("maxWeight", newMaxWeight)
 end)
@@ -264,7 +263,6 @@ AddStateBagChangeHandler('VehicleProperties', nil, function(bagName, _, value)
     ESX.Game.SetVehicleProperties(vehicle, value)
 end)
 
-RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then
@@ -277,7 +275,6 @@ AddEventHandler('esx:setAccountMoney', function(account)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:addInventoryItem')
     AddEventHandler('esx:addInventoryItem', function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then
@@ -292,7 +289,6 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:removeInventoryItem')
     AddEventHandler('esx:removeInventoryItem', function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then
@@ -312,9 +308,9 @@ if not Config.OxInventory then
         print("[^1ERROR^7] event ^5'esx:addWeapon'^7 Has Been Removed. Please use ^5xPlayer.addWeapon^7 Instead!")
     end)
 
-    RegisterNetEvent('esx:addWeaponComponent')
-    AddEventHandler('esx:addWeaponComponent', function()
-        print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
+    RegisterNetEvent('esx:removeWeapon')
+    AddEventHandler('esx:removeWeapon', function()
+        print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
     end)
 
     RegisterNetEvent('esx:setWeaponAmmo')
@@ -322,29 +318,26 @@ if not Config.OxInventory then
         print("[^1ERROR^7] event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.addWeaponAmmo^7 Instead!")
     end)
 
-    RegisterNetEvent('esx:setWeaponTint')
-    AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
-        SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
-    end)
-
-    RegisterNetEvent('esx:removeWeapon')
-    AddEventHandler('esx:removeWeapon', function(weapon)
-        RemoveWeaponFromPed(ESX.PlayerData.ped, joaat(weapon))
-        SetPedAmmo(ESX.PlayerData.ped, joaat(weapon), 0)
+    RegisterNetEvent('esx:addWeaponComponent')
+    AddEventHandler('esx:addWeaponComponent', function()
+        print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
     end)
 
     RegisterNetEvent('esx:removeWeaponComponent')
-    AddEventHandler('esx:removeWeaponComponent', function(weapon, weaponComponent)
-        local componentHash = ESX.GetWeaponComponent(weapon, weaponComponent).hash
-        RemoveWeaponComponentFromPed(ESX.PlayerData.ped, joaat(weapon), componentHash)
+    AddEventHandler('esx:removeWeaponComponent', function()
+        print("[^1ERROR^7] event ^5'esx:removeWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.removeWeaponComponent^7 Instead!")
+    end)
+
+    AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
+        SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
     end)
 end
 
-RegisterNetEvent('esx:setJob', function(Job)
-    ESX.SetPlayerData('job', Job)
+AddEventHandler('esx:setJob', function(job)
+    ESX.SetPlayerData('job', job)
 end)
 
-RegisterNetEvent('esx:setMetadata', function(metadata)
+AddEventHandler('esx:setMetadata', function(metadata)
     ESX.SetPlayerData("metadata", metadata)
 end)
 

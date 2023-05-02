@@ -118,7 +118,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         local minimalAccounts = {}
 
-        for i=1, #self.accounts do
+        for i = 1, #self.accounts do
             minimalAccounts[self.accounts[i].name] = self.accounts[i].money
         end
 
@@ -126,7 +126,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     function self.getAccount(account)
-        for i=1, #self.accounts do
+        for i = 1, #self.accounts do
             if self.accounts[i].name == account then
                 return self.accounts[i]
             end
@@ -202,8 +202,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money = money
 
-                self.triggerEvent('esx:setAccountMoney', account)
-                TriggerEvent('esx:setAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = money, reason = reason}, true)
             else
                 print(('[^1ERROR^7] Tried To Set Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -224,8 +223,14 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money += money
 
-                self.triggerEvent('esx:setAccountMoney', account)
                 TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                    account = account,
+                    accountName = accountName,
+                    money = self.accounts[account.index].money,
+                    reason = reason,
+                    triggerServer = false
+                }, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -247,8 +252,14 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money = self.accounts[account.index].money - money
 
-                self.triggerEvent('esx:setAccountMoney', account)
                 TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
+                GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
+                    account = account,
+                    accountName = accountName,
+                    money = self.accounts[account.index].money,
+                    reason = reason,
+                    triggerServer = false
+                }, true)
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -274,7 +285,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.weight = self.weight + (item.weight * count)
 
             TriggerEvent('esx:onAddInventoryItem', self.source, item.name, item.count)
-            self.triggerEvent('esx:addInventoryItem', item.name, item.count)
+            GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = item.name, itemCount = item.count, triggerServer = false}, true)
         end
     end
 
@@ -291,10 +302,10 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     self.weight = self.weight - (item.weight * count)
 
                     TriggerEvent('esx:onRemoveInventoryItem', self.source, item.name, item.count)
-                    self.triggerEvent('esx:removeInventoryItem', item.name, item.count)
+                    GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = item.name, itemCount = item.count, triggerServer = false}, true)
                 end
             else
-                print(('[^1ERROR^7] Player ID:^5%s Tried remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
+                print(('[^1ERROR^7] Player ID:^5%s Tried to remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
             end
         end
     end
@@ -348,7 +359,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
     function self.setMaxWeight(newWeight)
         self.maxWeight = newWeight
-        self.triggerEvent('esx:setMaxWeight', self.maxWeight)
+        GlobalState:set(("player:%s->esx:setMaxWeight"):format(self.source), {maxWeight = newWeight}, true)
     end
 
     function self.setJob(job, grade)
@@ -379,8 +390,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.job.skin_female = {}
             end
 
-            TriggerEvent('esx:setJob', self.source, self.job, lastJob)
-            self.triggerEvent('esx:setJob', self.job, lastJob)
+            GlobalState:set(("player:%s->esx:setJob"):format(self.source), {currentJob = self.job, lastJob = lastJob}, true)
             Player(self.source).state:set("job", self.job, true)
         else
             print(('[es_extended] [^3WARNING^7] Ignoring invalid ^5.setJob()^7 usage for ID: ^5%s^7, Job: ^5%s^7'):format(self.source, job))
@@ -400,7 +410,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             })
 
             GiveWeaponToPed(GetPlayerPed(self.source), joaat(weaponName), ammo, false, false)
-            self.triggerEvent('esx:addInventoryItem', weaponLabel, false, true)
+            GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = weaponLabel, itemCount = false, showNotification = true, triggerServer = false}, true)
         end
     end
 
@@ -414,8 +424,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 if not self.hasWeaponComponent(weaponName, weaponComponent) then
                     self.loadout[loadoutNum].components[#self.loadout[loadoutNum].components + 1] = weaponComponent
                     local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
+
                     GiveWeaponComponentToPed(GetPlayerPed(self.source), joaat(weaponName), componentHash)
-                    self.triggerEvent('esx:addInventoryItem', component.label, false, true)
+                    GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = component.label, itemCount = false, showNotification = true, triggerServer = false}, true)
                 end
             end
         end
@@ -435,6 +446,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         if weapon then
             weapon.ammo = ammoCount
+            SetPedAmmo(GetPlayerPed(self.source), joaat(weaponName), weapon.ammo)
         end
     end
 
@@ -446,8 +458,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
             if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
                 self.loadout[loadoutNum].tintIndex = weaponTintIndex
-                self.triggerEvent('esx:setWeaponTint', weaponName, weaponTintIndex)
-                self.triggerEvent('esx:addInventoryItem', weaponObject.tints[weaponTintIndex], false, true)
+
+                GlobalState:set(("player:%s->esx:setWeaponTint"):format(self.source), {weaponName = weaponName, weaponTintIndex = weaponTintIndex, triggerServer = false}, true)
+                GlobalState:set(("player:%s->esx:addInventoryItem"):format(self.source), {itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true, triggerServer = false}, true)
             end
         end
     end
@@ -479,8 +492,11 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
 
         if weaponLabel then
-            self.triggerEvent('esx:removeWeapon', weaponName)
-            self.triggerEvent('esx:removeInventoryItem', weaponLabel, false, true)
+            local ped, weaponHash = GetPlayerPed(self.source), joaat(weaponName)
+
+            RemoveWeaponFromPed(ped, weaponHash)
+            SetPedAmmo(ped, weaponHash, 0)
+            GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = weaponLabel, itemCount = false, showNotification = true, triggerServer = false}, true)
         end
     end
 
@@ -499,8 +515,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                         end
                     end
 
-                    self.triggerEvent('esx:removeWeaponComponent', weaponName, weaponComponent)
-                    self.triggerEvent('esx:removeInventoryItem', component.label, false, true)
+                    RemoveWeaponComponentFromPed(GetPlayerPed(self.source), joaat(weaponName), component.hash)
+                    GlobalState:set(("player:%s->esx:removeInventoryItem"):format(self.source), {itemName = component.label, itemCount = false, showNotification = true, triggerServer = false}, true)
                 end
             end
         end
@@ -511,7 +527,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         if weapon then
             weapon.ammo = weapon.ammo - ammoCount
-            self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+            self.updateWeaponAmmo(weaponName, weapon.ammo)
         end
     end
 
@@ -639,8 +655,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.metadata[index][value] = subValue
         end
 
-        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
-        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
+        GlobalState:set(("player:%s->esx:setMetadata"):format(self.source), {currentMetadata = self.metadata, lastMetadata = lastMetadata}, true)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.setMeta = self.setMetadata -- backward compatibility with esx-legacy

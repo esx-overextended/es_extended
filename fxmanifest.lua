@@ -22,6 +22,7 @@ server_scripts {
     'server/common.lua',
     'server/modules/*.lua',
     'server/classes/**/*.lua',
+    'server/player_events.lua',
     'server/functions.lua',
     'server/onesync.lua',
     'server/paycheck.lua',
@@ -35,6 +36,7 @@ client_scripts {
     'client/common.lua',
     'client/functions.lua',
     'client/modules/*.lua',
+    'client/player_events.lua',
     'client/wrapper.lua',
     'client/main.lua',
 

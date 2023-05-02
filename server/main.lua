@@ -330,7 +330,7 @@ function loadESXPlayer(identifier, playerId, isNew)
             dateofbirth = xPlayer.get("dateofbirth") or "01/01/2000",
             height = xPlayer.get("height") or 120,
             dead = false,
-            metadata = xPlayer.getMeta()
+            metadata = xPlayer.getMetadata()
         }, isNew,
         userData.skin)
 
@@ -611,7 +611,7 @@ ESX.RegisterServerCallback('esx:getPlayerData', function(source, cb)
         loadout = xPlayer.getLoadout(),
         money = xPlayer.getMoney(),
         position = xPlayer.getCoords(true),
-        metadata = xPlayer.getMeta()
+        metadata = xPlayer.getMetadata()
     })
 end)
 
@@ -635,7 +635,7 @@ ESX.RegisterServerCallback('esx:getOtherPlayerData', function(_, cb, target)
         loadout = xPlayer.getLoadout(),
         money = xPlayer.getMoney(),
         position = xPlayer.getCoords(true),
-        metadata = xPlayer.getMeta()
+        metadata = xPlayer.getMetadata()
     })
 end)
 
@@ -657,13 +657,22 @@ end)
 
 AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
     if eventData.secondsRemaining == 60 then
-        CreateThread(function()
-            Wait(50000)
-            Core.SavePlayers()
-        end)
+        Core.SavePlayers()
+        SetTimeout(50000, Core.SavePlayers)
     end
 end)
 
 AddEventHandler('txAdmin:events:serverShuttingDown', function()
     Core.SavePlayers()
 end)
+
+---action(s) to do when the framework is stopped
+---@param resource string
+local function onResourceStop(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    Core.SavePlayers()
+end
+
+AddEventHandler("onResourceStop", onResourceStop)
+AddEventHandler("onServerResourceStop", onResourceStop)
+

@@ -152,30 +152,25 @@ function Core.SavePlayer(xPlayer, cb)
         json.encode(xPlayer.getCoords()),
         json.encode(xPlayer.getInventory(true)),
         json.encode(xPlayer.getLoadout(true)),
-        json.encode(xPlayer.getMeta()),
+        json.encode(xPlayer.getMetadata()),
         xPlayer.identifier
     }
 
-    MySQL.prepare(
-        'UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?',
-        parameters,
-        function(affectedRows)
-            if affectedRows == 1 then
-                print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
-                TriggerEvent('esx:playerSaved', xPlayer.playerId, xPlayer)
-            end
-            if cb then
-                cb()
-            end
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
+        if affectedRows == 1 then
+            print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
+            TriggerEvent('esx:playerSaved', xPlayer.source, xPlayer)
         end
-    )
+        if cb then
+            cb()
+        end
+    end)
 end
 
 function Core.SavePlayers(cb)
     local xPlayers <const> = ESX.Players
-    if not next(xPlayers) then
-        return
-    end
+
+    if not next(xPlayers) then return end
 
     local startTime <const> = os.time()
     local parameters = {}
@@ -189,27 +184,22 @@ function Core.SavePlayers(cb)
             json.encode(xPlayer.getCoords()),
             json.encode(xPlayer.getInventory(true)),
             json.encode(xPlayer.getLoadout(true)),
-            json.encode(xPlayer.getMeta()),
+            json.encode(xPlayer.getMetadata()),
             xPlayer.identifier
         }
     end
 
-    MySQL.prepare(
-        "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
-        parameters,
-        function(results)
-            if not results then
-                return
-            end
-
-            if type(cb) == 'function' then
-                return cb()
-            end
-
-            print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player',
-                ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
+        if not results then
+            return
         end
-    )
+
+        if type(cb) == 'function' then
+            return cb()
+        end
+
+        print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player', ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+    end)
 end
 
 ESX.GetPlayers = GetPlayers
