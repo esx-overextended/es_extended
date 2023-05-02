@@ -655,8 +655,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.metadata[index][value] = subValue
         end
 
-        TriggerEvent('esx:setMetadata', self.source, self.metadata, lastMetadata)
-        self.triggerEvent('esx:setMetadata', self.metadata, lastMetadata)
+        GlobalState:set(("player:%s->esx:setMetadata"):format(self.source), {currentMetadata = self.metadata, lastMetadata = lastMetadata}, true)
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.setMeta = self.setMetadata -- backward compatibility with esx-legacy

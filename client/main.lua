@@ -308,9 +308,9 @@ if not Config.OxInventory then
         print("[^1ERROR^7] event ^5'esx:addWeapon'^7 Has Been Removed. Please use ^5xPlayer.addWeapon^7 Instead!")
     end)
 
-    RegisterNetEvent('esx:addWeaponComponent')
-    AddEventHandler('esx:addWeaponComponent', function()
-        print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
+    RegisterNetEvent('esx:removeWeapon')
+    AddEventHandler('esx:removeWeapon', function()
+        print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
     end)
 
     RegisterNetEvent('esx:setWeaponAmmo')
@@ -318,26 +318,26 @@ if not Config.OxInventory then
         print("[^1ERROR^7] event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.addWeaponAmmo^7 Instead!")
     end)
 
-    AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
-        SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
-    end)
-
-    RegisterNetEvent('esx:removeWeapon')
-    AddEventHandler('esx:removeWeapon', function(weapon)
-        print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
+    RegisterNetEvent('esx:addWeaponComponent')
+    AddEventHandler('esx:addWeaponComponent', function()
+        print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
     end)
 
     RegisterNetEvent('esx:removeWeaponComponent')
-    AddEventHandler('esx:removeWeaponComponent', function(weapon, weaponComponent)
+    AddEventHandler('esx:removeWeaponComponent', function()
         print("[^1ERROR^7] event ^5'esx:removeWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.removeWeaponComponent^7 Instead!")
+    end)
+
+    AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
+        SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
     end)
 end
 
-AddEventHandler('esx:setJob', function(Job)
-    ESX.SetPlayerData('job', Job)
+AddEventHandler('esx:setJob', function(job)
+    ESX.SetPlayerData('job', job)
 end)
 
-RegisterNetEvent('esx:setMetadata', function(metadata)
+AddEventHandler('esx:setMetadata', function(metadata)
     ESX.SetPlayerData("metadata", metadata)
 end)
 

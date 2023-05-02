@@ -9,6 +9,10 @@ if completeBackwardCompatibleEvents then
     RegisterNetEvent("esx:setMaxWeight")
     RegisterNetEvent("esx:setJob")
     RegisterNetEvent("esx:setWeaponTint")
+    RegisterNetEvent("esx:updatePlayerData") -- hate this
+    RegisterNetEvent("esx:setMetadata", function(currentMetadata, _)
+        TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
+    end)
 end
 
 AddStateBagChangeHandler(("player:%s->esx:setAccountMoney"):format(cache.serverId), "global", function(_, _, value, _, _)
@@ -45,4 +49,10 @@ AddStateBagChangeHandler(("player:%s->esx:setWeaponTint"):format(cache.serverId)
     if not value then return end
 
     TriggerEvent("esx:setWeaponTint", value.weaponName, value.weaponTintIndex)
+end)
+
+AddStateBagChangeHandler(("player:%s->esx:setMetadata"):format(cache.serverId), "global", function(_, _, value, _, _)
+    if not value then return end
+
+    TriggerEvent("esx:setMetadata", value.currentMetadata, value.lastMetadata)
 end)
