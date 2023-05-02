@@ -39,6 +39,8 @@ function ESX.RegisterSafeEvent(eventName, cb)
 end
 
 local function onResourceStop(resource)
+    if resource == currentResourceName then return end
+
     for eventName, data in pairs(registeredEvents) do
         if data.resource == resource then
             if data.originalCallback then
