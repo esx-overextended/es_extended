@@ -13,8 +13,12 @@ function ESX.RegisterSafeEvent(eventName, cb)
     local cbType = type(cb)
     local isCbValid = (cbType == "function" or (cbType == "table" and cb?.__cfx_functionReference and true)) or false
 
-    if not cb or not isCbValid then
-        return print(("[^1ERROR^7] The cb passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7 is not a valid function!"):format(eventName, invokingResource))
+    if not cb then
+        return print(("[^1ERROR^7] No callback function has passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7"):format(eventName, invokingResource))
+    end
+
+    if not isCbValid then
+        return print(("[^1ERROR^7] The callback function passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7 is not a valid function!"):format(eventName, invokingResource))
     end
 
     local originalCb = invokingResource == currentResourceName and cb
@@ -29,7 +33,7 @@ function ESX.RegisterSafeEvent(eventName, cb)
         cookie = AddStateBagChangeHandler(("player:%s->%s"):format(cache.serverId, eventName), "global", function(_, _, value, _, _)
             if not value then return end
 
-            if value.client ~= false then
+            if value._client ~= false then
                 cb(value)
             end
         end),
