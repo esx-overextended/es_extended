@@ -95,11 +95,7 @@ local function onResourceStop(resource)
     for eventName, data in pairs(registeredEvents) do
         if data.resource == resource then
             if data.originalCallback then
-                registeredEvents[eventName] = {
-                    originalCallback = data.originalCallback,
-                    callback = data.originalCallback,
-                    resource = currentResourceName
-                }
+                ESX.RegisterSafeEvent(eventName, data.originalCallback)
             else
                 registeredEvents[eventName] = nil
             end
