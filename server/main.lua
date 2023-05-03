@@ -1,5 +1,5 @@
-SetMapName('San Andreas')
-SetGameType('ESX Legacy')
+SetMapName(Config.MapName)
+SetGameType(Config.GameType)
 
 local oneSyncState = GetConvar('onesync', 'off')
 local newPlayer = 'INSERT INTO `users` SET `accounts` = ?, `identifier` = ?, `group` = ?'
@@ -15,114 +15,7 @@ end
 
 loadPlayer = loadPlayer .. ' FROM `users` WHERE identifier = ?'
 
-if Config.Multichar then
-    AddEventHandler('esx:onPlayerJoined', function(src, char, data)
-        while not next(ESX.Jobs) do
-            Wait(50)
-        end
-
-        if not ESX.Players[src] then
-            local identifier = char .. ':' .. ESX.GetIdentifier(src)
-            if data then
-                createESXPlayer(identifier, src, data)
-            else
-                loadESXPlayer(identifier, src, false)
-            end
-        end
-    end)
-else
-    RegisterNetEvent('esx:onPlayerJoined')
-    AddEventHandler('esx:onPlayerJoined', function()
-        local _source = source
-        while not next(ESX.Jobs) do
-            Wait(50)
-        end
-
-        if not ESX.Players[_source] then
-            onPlayerJoined(_source)
-        end
-    end)
-end
-
-function onPlayerJoined(playerId)
-    local identifier = ESX.GetIdentifier(playerId)
-    if identifier then
-        if ESX.GetPlayerFromIdentifier(identifier) then
-            DropPlayer(playerId,
-                ('there was an error loading your character!\nError code: identifier-active-ingame\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s')
-                :format(
-                    identifier))
-        else
-            local result = MySQL.scalar.await('SELECT 1 FROM users WHERE identifier = ?', { identifier })
-            if result then
-                loadESXPlayer(identifier, playerId, false)
-            else
-                createESXPlayer(identifier, playerId)
-            end
-        end
-    else
-        DropPlayer(playerId,
-            'there was an error loading your character!\nError code: identifier-missing-ingame\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
-    end
-end
-
-function createESXPlayer(identifier, playerId, data)
-    local accounts = {}
-
-    for account, money in pairs(Config.StartingAccountMoney) do
-        accounts[account] = money
-    end
-
-    local defaultGroup = "user"
-    if Core.IsPlayerAdmin(playerId) then
-        print(('[^2INFO^0] Player ^5%s^0 Has been granted admin permissions via ^5Ace Perms^7.'):format(playerId))
-        defaultGroup = "admin"
-    end
-
-    if not Config.Multichar then
-        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()
-            loadESXPlayer(identifier, playerId, true)
-        end)
-    else
-        MySQL.prepare(newPlayer,
-            { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
-                loadESXPlayer(identifier, playerId, true)
-            end)
-    end
-end
-
-if not Config.Multichar then
-    AddEventHandler('playerConnecting', function(_, _, deferrals)
-        deferrals.defer()
-        local playerId = source
-        local identifier = ESX.GetIdentifier(playerId)
-
-        if oneSyncState == "off" or oneSyncState == "legacy" then
-            return deferrals.done(('[ESX] ESX Requires Onesync Infinity to work. This server currently has Onesync set to: %s'):format(oneSyncState))
-        end
-
-        if not Core.DatabaseConnected then
-            return deferrals.done(('[ESX] ESX Cannot Connect to your database. Please make sure it is correctly configured in your server.cfg'):format(
-                oneSyncState))
-        end
-
-        if identifier then
-            if ESX.GetPlayerFromIdentifier(identifier) then
-                return deferrals.done(
-                    ('[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s')
-                    :format(
-                        identifier))
-            else
-                return deferrals.done()
-            end
-        else
-            return deferrals.done(
-                '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
-        end
-    end)
-end
-
-function loadESXPlayer(identifier, playerId, isNew)
+local function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
     local job, grade = result.job, tostring(result.job_grade)
@@ -153,30 +46,21 @@ function loadESXPlayer(identifier, playerId, isNew)
 
     -- Job
     if not ESX.DoesJobExist(job, grade) then
-        print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
         job, grade = 'unemployed', '0'
+        print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
     end
 
     local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
-    userData.job.id = jobObject.id
-    userData.job.name = jobObject.name
-    userData.job.label = jobObject.label
-
-    userData.job.grade = tonumber(grade)
-    userData.job.grade_name = gradeObject.name
-    userData.job.grade_label = gradeObject.label
-    userData.job.grade_salary = gradeObject.salary
-
-    userData.job.skin_male = {}
-    userData.job.skin_female = {}
-
-    if gradeObject.skin_male then
-        userData.job.skin_male = json.decode(gradeObject.skin_male)
-    end
-    if gradeObject.skin_female then
-        userData.job.skin_female = json.decode(gradeObject.skin_female)
-    end
+    userData.job.id              = jobObject.id
+    userData.job.name            = jobObject.name
+    userData.job.label           = jobObject.label
+    userData.job.grade           = tonumber(grade)
+    userData.job.grade_name      = gradeObject.name
+    userData.job.grade_label     = gradeObject.label
+    userData.job.grade_salary    = gradeObject.salary
+    userData.job.skin_male       = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}
+    userData.job.skin_female     = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {}
 
     -- Inventory
     if not Config.OxInventory then
@@ -200,16 +84,7 @@ function loadESXPlayer(identifier, playerId, isNew)
                 userData.weight = userData.weight + (item.weight * count)
             end
 
-            table.insert(userData.inventory,
-                {
-                    name = name,
-                    count = count,
-                    label = item.label,
-                    weight = item.weight,
-                    usable = Core.UsableItemsCallbacks[name] ~= nil,
-                    rare = item.rare,
-                    canRemove = item.canRemove
-                })
+            table.insert(userData.inventory, { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove })
         end
 
         table.sort(userData.inventory, function(a, b)
@@ -251,8 +126,7 @@ function loadESXPlayer(identifier, playerId, isNew)
                         weapon.tintIndex = 0
                     end
 
-                    table.insert(userData.loadout,
-                        { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex })
+                    table.insert(userData.loadout, { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex })
                 end
             end
         end
@@ -265,11 +139,7 @@ function loadESXPlayer(identifier, playerId, isNew)
     if result.skin and result.skin ~= '' then
         userData.skin = json.decode(result.skin)
     else
-        if userData.sex == 'f' then
-            userData.skin = { sex = 1 }
-        else
-            userData.skin = { sex = 0 }
-        end
+        userData.skin = { sex = userData.sex == "f" and 1 or 0 }
     end
 
     -- Identity
@@ -288,15 +158,15 @@ function loadESXPlayer(identifier, playerId, isNew)
         end
     end
 
+    -- Metadata
     if result.metadata and result.metadata ~= '' then
         local metadata = json.decode(result.metadata)
         userData.metadata = metadata
     end
 
-    local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName,
-        userData.metadata)
+    local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
     ESX.Players[playerId] = xPlayer
-    Core.playersByIdentifier[identifier] = xPlayer
+    Core.PlayersByIdentifier[identifier] = xPlayer
 
     if userData.firstname then
         xPlayer.set('firstName', userData.firstname)
@@ -312,10 +182,10 @@ function loadESXPlayer(identifier, playerId, isNew)
         end
     end
 
-    TriggerEvent('esx:playerLoaded', playerId, xPlayer, isNew)
-
-    xPlayer.triggerEvent('esx:playerLoaded',
-        {
+    xPlayer.triggerSafeEvent("esx:playerLoaded", {
+        playerId = playerId,
+        xPlayerServer = xPlayer,
+        xPlayerClient = {
             accounts = xPlayer.getAccounts(),
             coords = userData.coords,
             identifier = xPlayer.getIdentifier(),
@@ -331,8 +201,10 @@ function loadESXPlayer(identifier, playerId, isNew)
             height = xPlayer.get("height") or 120,
             dead = false,
             metadata = xPlayer.getMetadata()
-        }, isNew,
-        userData.skin)
+        },
+        isNew = isNew,
+        skin = userData.skin
+    })
 
     if not Config.OxInventory then
         xPlayer.triggerEvent('esx:createMissingPickups', Core.Pickups)
@@ -341,6 +213,105 @@ function loadESXPlayer(identifier, playerId, isNew)
     end
     xPlayer.triggerEvent('esx:registerSuggestions', Core.RegisteredCommands)
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
+end
+
+local function createESXPlayer(identifier, playerId, data)
+    local accounts = {}
+
+    for account, money in pairs(Config.StartingAccountMoney) do
+        accounts[account] = money
+    end
+
+    local defaultGroup = "user"
+    if Core.IsPlayerAdmin(playerId) then
+        print(('[^2INFO^0] Player ^5%s^0 Has been granted admin permissions via ^5Ace Perms^7.'):format(playerId))
+        defaultGroup = "admin"
+    end
+
+    if not Config.Multichar then
+        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()
+            loadESXPlayer(identifier, playerId, true)
+        end)
+    else
+        MySQL.prepare(newPlayer,
+            { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
+                loadESXPlayer(identifier, playerId, true)
+            end)
+    end
+end
+
+local function onPlayerJoined(playerId)
+    local identifier = ESX.GetIdentifier(playerId)
+    if identifier then
+        if ESX.GetPlayerFromIdentifier(identifier) then
+            DropPlayer(playerId,
+                ('there was an error loading your character!\nError code: identifier-active-ingame\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s')
+                :format(identifier))
+        else
+            local result = MySQL.scalar.await('SELECT 1 FROM users WHERE identifier = ?', { identifier })
+            if result then
+                loadESXPlayer(identifier, playerId, false)
+            else
+                createESXPlayer(identifier, playerId)
+            end
+        end
+    else
+        DropPlayer(playerId,
+            'there was an error loading your character!\nError code: identifier-missing-ingame\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
+    end
+end
+
+if Config.Multichar then
+    AddEventHandler('esx:onPlayerJoined', function(src, char, data)
+        while not next(ESX.Jobs) do
+            Wait(50)
+        end
+
+        if not ESX.Players[src] then
+            local identifier = ("%s:%s"):format(char, ESX.GetIdentifier(src))
+            if data then
+                createESXPlayer(identifier, src, data)
+            else
+                loadESXPlayer(identifier, src, false)
+            end
+        end
+    end)
+else
+    AddEventHandler('playerConnecting', function(_, _, deferrals)
+        deferrals.defer()
+        local playerId = source
+        local identifier = ESX.GetIdentifier(playerId)
+
+        if oneSyncState == "off" or oneSyncState == "legacy" then
+            return deferrals.done(('[ESX] ESX Requires Onesync Infinity to work. This server currently has Onesync set to: %s'):format(oneSyncState))
+        end
+
+        if not Core.DatabaseConnected then
+            return deferrals.done(('[ESX] ESX Cannot Connect to your database. Please make sure it is correctly configured in your server.cfg'):format(oneSyncState))
+        end
+
+        if identifier then
+            if ESX.GetPlayerFromIdentifier(identifier) then
+                return deferrals.done(('[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s')
+                    :format(identifier))
+            else
+                return deferrals.done()
+            end
+        else
+            return deferrals.done(
+                '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
+        end
+    end)
+    RegisterNetEvent('esx:onPlayerJoined', function()
+        local _source = source
+        while not next(ESX.Jobs) do
+            Wait(50)
+        end
+
+        if not ESX.Players[_source] then
+            onPlayerJoined(_source)
+        end
+    end)
 end
 
 AddEventHandler('chatMessage', function(playerId, _, message)
@@ -360,7 +331,7 @@ AddEventHandler('playerDropped', function(reason)
     if xPlayer then
         TriggerEvent('esx:playerDropped', playerId, reason)
 
-        Core.playersByIdentifier[xPlayer.identifier] = nil
+        Core.PlayersByIdentifier[xPlayer.identifier] = nil
         Core.SavePlayer(xPlayer, function()
             ESX.Players[playerId] = nil
         end)
@@ -372,7 +343,7 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
     if xPlayer then
         TriggerEvent('esx:playerDropped', playerId)
 
-        Core.playersByIdentifier[xPlayer.identifier] = nil
+        Core.PlayersByIdentifier[xPlayer.identifier] = nil
         Core.SavePlayer(xPlayer, function()
             ESX.Players[playerId] = nil
             if cb then
@@ -675,4 +646,3 @@ end
 
 AddEventHandler("onResourceStop", onResourceStop)
 AddEventHandler("onServerResourceStop", onResourceStop)
-

@@ -18,8 +18,7 @@ RegisterNetEvent("esx:requestModel", function(model)
     ESX.Streaming.RequestModel(model)
 end)
 
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
+AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
 
     if Config.Multichar then

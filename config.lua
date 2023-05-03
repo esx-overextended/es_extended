@@ -1,28 +1,31 @@
 Config                             = {}
 Config.Locale                      = GetConvar('esx:locale', 'en')
 
+Config.MapName                     = "Los Santos"
+Config.GameType                    = "ESX Overextended"
+
 Config.Accounts                    = {
     bank = {
         label = _U('account_bank'),
         round = true
     },
-    black_money = {
-        label = _U('account_black_money'),
-        round = true
-    },
     money = {
         label = _U('account_money'),
+        round = true
+    },
+    black_money = {
+        label = _U('account_black_money'),
         round = true
     }
 }
 
-Config.StartingAccountMoney        = { bank = 50000 }
+Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
 
 Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading = 205.8 }
 
 Config.EnablePaycheck              = true      -- enable paycheck
 Config.EnableSocietyPayouts        = false     -- pay from the society account that the player is employed at? Requirement: esx_society
-Config.MaxWeight                   = 24        -- the max inventory weight without backpack
+Config.MaxWeight                   = 30        -- the max inventory weight without backpack
 Config.PaycheckInterval            = 7 * 60000 -- how often to recieve pay checks in milliseconds
 Config.EnableDebug                 = false     -- Use Debug options?
 Config.EnableDefaultInventory      = true      -- Display the default Inventory ( F2 )
@@ -66,7 +69,7 @@ Config.RemoveHudCommonents         = {
     [22] = false,                          --HUD_WEAPONS
 }
 
-Config.SpawnVehMaxUpgrades         = true       -- admin vehicles spawn with max vehcle settings
+Config.SpawnVehMaxUpgrades         = true       -- admin vehicles spawn with max vehicle settings
 Config.CustomAIPlates              = 'ESX.A111' -- Custom plates for AI vehicles
 -- Pattern string format
 --1 will lead to a random number from 0-9.

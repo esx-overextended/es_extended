@@ -23,7 +23,7 @@ AddEventHandler('onClientResourceStop', function(resource)
     npwd = nil
 end)
 
-RegisterNetEvent('esx:playerLoaded', checkPhone)
+AddEventHandler("esx:playerLoaded", checkPhone)
 
 RegisterNetEvent('esx:onPlayerLogout', function()
     if not npwd then

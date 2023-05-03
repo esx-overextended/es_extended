@@ -223,20 +223,27 @@ function ESX.GetPlayerFromId(source)
 end
 
 function ESX.GetPlayerFromIdentifier(identifier)
-    return Core.playersByIdentifier[identifier]
+    return Core.PlayersByIdentifier[identifier]
 end
 
+---Gets a player id rockstar's license identifier without 'license:' prefix
+---@param playerId integer
+---@return string | nil
 function ESX.GetIdentifier(playerId)
-    local fxDk = GetConvarInt('sv_fxdkMode', 0)
-    if fxDk == 1 then
+    if GetConvarInt("sv_fxdkMode", 0) == 1 then
         return "ESX-DEBUG-LICENCE"
     end
+
+    local identifier = nil
+
     for _, v in ipairs(GetPlayerIdentifiers(playerId)) do
-        if string.match(v, 'license:') then
-            local identifier = string.gsub(v, 'license:', '')
-            return identifier
+        if string.match(v, "license:") then
+            identifier = string.gsub(v, "license:", "")
+            break
         end
     end
+
+    return identifier
 end
 
 ---@param model string | number

@@ -3,6 +3,7 @@
 local completeBackwardCompatibleEvents = false
 
 if completeBackwardCompatibleEvents then
+    RegisterNetEvent("esx:playerLoaded")
     RegisterNetEvent("esx:setAccountMoney")
     RegisterNetEvent("esx:addInventoryItem")
     RegisterNetEvent("esx:removeInventoryItem")
@@ -14,6 +15,10 @@ if completeBackwardCompatibleEvents then
         TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
     end)
 end
+
+ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
+    TriggerEvent("esx:playerLoaded", value.xPlayerClient, value.isNew, value.skin)
+end)
 
 ESX.RegisterSafeEvent("esx:setAccountMoney", function(value)
     TriggerEvent("esx:setAccountMoney", value.account)
