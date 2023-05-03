@@ -215,27 +215,6 @@ local function loadESXPlayer(identifier, playerId, isNew)
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
 
-local function onPlayerJoined(playerId)
-    local identifier = ESX.GetIdentifier(playerId)
-    if identifier then
-        if ESX.GetPlayerFromIdentifier(identifier) then
-            DropPlayer(playerId,
-                ('there was an error loading your character!\nError code: identifier-active-ingame\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s')
-                :format(identifier))
-        else
-            local result = MySQL.scalar.await('SELECT 1 FROM users WHERE identifier = ?', { identifier })
-            if result then
-                loadESXPlayer(identifier, playerId, false)
-            else
-                createESXPlayer(identifier, playerId)
-            end
-        end
-    else
-        DropPlayer(playerId,
-            'there was an error loading your character!\nError code: identifier-missing-ingame\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
-    end
-end
-
 local function createESXPlayer(identifier, playerId, data)
     local accounts = {}
 
@@ -258,6 +237,27 @@ local function createESXPlayer(identifier, playerId, data)
             { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
                 loadESXPlayer(identifier, playerId, true)
             end)
+    end
+end
+
+local function onPlayerJoined(playerId)
+    local identifier = ESX.GetIdentifier(playerId)
+    if identifier then
+        if ESX.GetPlayerFromIdentifier(identifier) then
+            DropPlayer(playerId,
+                ('there was an error loading your character!\nError code: identifier-active-ingame\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s')
+                :format(identifier))
+        else
+            local result = MySQL.scalar.await('SELECT 1 FROM users WHERE identifier = ?', { identifier })
+            if result then
+                loadESXPlayer(identifier, playerId, false)
+            else
+                createESXPlayer(identifier, playerId)
+            end
+        end
+    else
+        DropPlayer(playerId,
+            'there was an error loading your character!\nError code: identifier-missing-ingame\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
     end
 end
 

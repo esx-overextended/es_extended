@@ -1,7 +1,7 @@
 Config                             = {}
 Config.Locale                      = GetConvar('esx:locale', 'en')
 
-Config.MapName                     = "San Andreas"
+Config.MapName                     = "Los Santos"
 Config.GameType                    = "ESX Overextended"
 
 Config.Accounts                    = {
