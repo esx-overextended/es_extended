@@ -1,5 +1,4 @@
 ---@diagnostic disable: duplicate-set-field
-local pattern = "([^%-]*)%-" -- pattern to find the first occurence of a hyphen
 local MAX_HASH_ID, currentHashId = 65535, 0
 local currentResourceName = GetCurrentResourceName()
 local registeredEvents = {}
@@ -13,7 +12,7 @@ end
 AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
     if not value then return end
 
-    local bagName = string.match(key, pattern)
+    local bagName = string.match(key, "(.-)%s*->") -- pattern to find the first occurence of a "->"
     local playerId = bagName and tonumber(bagName:gsub("player:", ""), 10)
 
     if not playerId then return end
@@ -23,11 +22,11 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
     -- local eventName = key:gsub(notEvent:gsub("([%-%%])", "%%%1"), "")
 
     if string.sub(key, 1, notEventLength) == notEvent then
-        if value._server ~= false then
+        if value.__esx_triggerServer ~= false then
             local eventName = string.sub(key, notEventLength + 1)
 
             if registeredEvents[eventName] then
-                if registeredEvents[eventName].callback then registeredEvents[eventName].callback(value) end
+                registeredEvents[eventName].callback(value)
             else
                 print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName))
             end
@@ -86,7 +85,7 @@ function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOption
     source = tonumber(source) --[[@as number]]
     source = source and math.floor(source)
 
-    if not source or source <= 0 then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id!") end
+    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id!") end
 
     if type(eventName) ~= "string" then
         return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
@@ -94,10 +93,10 @@ function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOption
 
     -- if not registeredEvents[eventName] then return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName)) end
 
-    eventData.source  = source
-    eventData._server = eventOptions?.server == nil and true or eventOptions?.server
-    eventData._client = eventOptions?.client == nil and true or eventOptions?.client
-    eventData._hash   = generateHash() -- to make sure the eventData is unique & different everytime calling GlobalState, because if it isn't, the change handlers won't be triggered
+    eventData.source              = source
+    eventData.__esx_triggerServer = eventOptions?.server == nil and true or eventOptions?.server
+    eventData.__esx_triggerClient = eventOptions?.client == nil and true or eventOptions?.client
+    eventData.__esx_hash          = generateHash() -- to make sure the eventData is unique & different everytime calling GlobalState, because if it isn't, the change handlers won't be triggered
 
     GlobalState:set(("player:%s->%s"):format(source, eventName), eventData, true)
 end

@@ -25,17 +25,25 @@ function ESX.RegisterSafeEvent(eventName, cb)
 
     if registeredEvents[eventName] then
         originalCb = registeredEvents[eventName].originalCallback
-        RemoveStateBagChangeHandler(registeredEvents[eventName].cookie)
+        RemoveStateBagChangeHandler(registeredEvents[eventName].selfCookie)
+        RemoveStateBagChangeHandler(registeredEvents[eventName].globalCookie)
         print(("[^5INFO^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is being re-registered from ^2%s^7 to ^2%s^7!"):format(eventName, registeredEvents[eventName].resource, invokingResource))
     end
 
-    registeredEvents[eventName] = {
-        cookie = AddStateBagChangeHandler(("player:%s->%s"):format(cache.serverId, eventName), "global", function(_, _, value, _, _)
-            if not value then return end
+    local function action(value)
+        if not value then return end
 
-            if value._client ~= false then
-                cb(value)
-            end
+        if value.__esx_triggerClient ~= false then
+            cb(value)
+        end
+    end
+
+    registeredEvents[eventName] = {
+        selfCookie = AddStateBagChangeHandler(("player:%s->%s"):format(cache.serverId, eventName), "global", function(_, _, value, _, _)
+            action(value)
+        end),
+        globalCookie = AddStateBagChangeHandler(("player:%s->%s"):format("-1", eventName), "global", function(_, _, value, _, _)
+            action(value)
         end),
         originalCallback = originalCb,
         resource = invokingResource
@@ -50,6 +58,8 @@ local function onResourceStop(resource)
             if data.originalCallback then
                 ESX.RegisterSafeEvent(eventName, data.originalCallback)
             else
+                RemoveStateBagChangeHandler(registeredEvents[eventName].selfCookie)
+                RemoveStateBagChangeHandler(registeredEvents[eventName].globalCookie)
                 registeredEvents[eventName] = nil
             end
         end
