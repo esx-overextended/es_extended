@@ -30,7 +30,7 @@ function ESX.RegisterSafeEvent(eventName, cb)
         print(("[^5INFO^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is being re-registered from ^2%s^7 to ^2%s^7!"):format(eventName, registeredEvents[eventName].resource, invokingResource))
     end
 
-    local function action(value)
+    local function stateBagChangeHandler(_, _, value, _, _)
         if not value then return end
 
         if value.__esx_triggerClient ~= false then
@@ -39,12 +39,8 @@ function ESX.RegisterSafeEvent(eventName, cb)
     end
 
     registeredEvents[eventName] = {
-        selfCookie = AddStateBagChangeHandler(("player:%s->%s"):format(cache.serverId, eventName), "global", function(_, _, value, _, _)
-            action(value)
-        end),
-        globalCookie = AddStateBagChangeHandler(("player:%s->%s"):format("-1", eventName), "global", function(_, _, value, _, _)
-            action(value)
-        end),
+        selfCookie = AddStateBagChangeHandler(("player:%s->%s"):format(cache.serverId, eventName), "global", stateBagChangeHandler),
+        globalCookie = AddStateBagChangeHandler(("player:%s->%s"):format("-1", eventName), "global", stateBagChangeHandler),
         originalCallback = originalCb,
         resource = invokingResource
     }
