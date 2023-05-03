@@ -52,7 +52,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money = money
 
-                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = money, reason = reason}, true)
+                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason})
 
                     if Inventory.accounts[accountName] then
                         Inventory.SetItem(self.source, accountName, money)
@@ -73,13 +73,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money += money
 
                     TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
-                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
-                        account = account,
-                        accountName = accountName,
-                        money = self.accounts[account.index].money,
-                        reason = reason,
-                        triggerServer = false
-                    }, true)
+                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, {server = false})
 
                     if Inventory.accounts[accountName] then
                         Inventory.AddItem(self.source, accountName, money)
@@ -100,13 +94,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money = self.accounts[account.index].money - money
 
                     TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
-                    GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {
-                        account = account,
-                        accountName = accountName,
-                        money = self.accounts[account.index].money,
-                        reason = reason,
-                        triggerServer = false
-                    }, true)
+                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, {server = false})
 
                     if Inventory.accounts[accountName] then
                         Inventory.RemoveItem(self.source, accountName, money)
@@ -155,7 +143,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
     setMaxWeight = function(self)
         return function(newWeight)
             self.maxWeight = newWeight
-            GlobalState:set(("player:%s->esx:setMaxWeight"):format(self.source), {maxWeight = newWeight}, true)
+            self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight})
             return Inventory.Set(self.source, 'maxWeight', newWeight)
         end
     end,
@@ -230,7 +218,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     if account and ESX.Math.Round(account.money) ~= amount then
                         account.money = amount
 
-                        GlobalState:set(("player:%s->esx:setAccountMoney"):format(self.source), {account = account, accountName = accountName, money = amount, reason = "Sync account with item"}, true)
+                        self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = amount, reason = "Sync account with item"})
                     end
                 end
             end
