@@ -9,7 +9,7 @@ Core.Pickups = {}
 Core.PickupId = 0
 Core.PlayerFunctionOverrides = {}
 Core.DatabaseConnected = false
-Core.playersByIdentifier = {}
+Core.PlayersByIdentifier = {}
 
 Core.vehicleTypesByModel = {}
 
