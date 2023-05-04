@@ -207,7 +207,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     })
 
     if not Config.OxInventory then
-        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups }, {server = false})
+        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups }, { server = false })
     else
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end
@@ -351,7 +351,7 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
             end
         end)
     end
-    ESX.TriggerSafeEventForPlayer(playerId, "esx:onPlayerLogout", nil, {server = false})
+    ESX.TriggerSafeEventForPlayer(playerId, "esx:onPlayerLogout", nil, { server = false })
 end)
 
 if not Config.OxInventory then
@@ -565,7 +565,7 @@ if not Config.OxInventory then
 
             if success then
                 Core.Pickups[pickupId] = nil
-                TriggerClientEvent('esx:removePickup', -1, pickupId)
+                ESX.TriggerSafeEventForPlayer(-1, "esx:removePickup", { pickupId = pickupId }, {server = false})
             end
         end
     end)

@@ -389,8 +389,7 @@ AddEventHandler('esx:registerSuggestions', function(registeredCommands)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:removePickup')
-    AddEventHandler('esx:removePickup', function(pickupId)
+    AddEventHandler("esx:removePickup", function(pickupId)
         if pickups[pickupId] and pickups[pickupId].obj then
             ESX.Game.DeleteObject(pickups[pickupId].obj)
             pickups[pickupId] = nil
