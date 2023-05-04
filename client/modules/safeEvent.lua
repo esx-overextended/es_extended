@@ -31,11 +31,9 @@ function ESX.RegisterSafeEvent(eventName, cb)
     end
 
     local function stateBagChangeHandler(_, _, value, _, _)
-        if not value then return end
+        if not value or value?.__esx_triggerClient == false then return end
 
-        if value.__esx_triggerClient ~= false then
-            cb(value)
-        end
+        cb(value)
     end
 
     registeredEvents[eventName] = {

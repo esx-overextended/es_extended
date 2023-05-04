@@ -10,7 +10,7 @@ end
 
 ---@diagnostic disable-next-line: param-type-mismatch
 AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
-    if not value then return end
+    if not value or value?.__esx_triggerServer == false then return end
 
     local bagName = string.match(key, "(.-)%s*->") -- pattern to find the first occurence of a "->"
     local playerId = bagName and tonumber(bagName:gsub("player:", ""), 10)
@@ -19,23 +19,18 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
 
     local notEvent = bagName .. "->"
     local notEventLength = #notEvent
-    -- local eventName = key:gsub(notEvent:gsub("([%-%%])", "%%%1"), "")
 
-    if string.sub(key, 1, notEventLength) == notEvent then
-        if value.__esx_triggerServer ~= false then
-            local eventName = string.sub(key, notEventLength + 1)
-
-            if registeredEvents[eventName] then
-                registeredEvents[eventName].callback(value)
-            else
-                print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName))
-            end
-        end
-    else
-        print(("[^1ERROR^7] Mulfunctioned GlobalState bag ^4name^7 (^2%s^7) received for triggering safe event!"):format(key))
+    if string.sub(key, 1, notEventLength) ~= notEvent then
+        return print(("[^1ERROR^7] Mulfunctioned GlobalState bag ^4name^7 (^2%s^7) received for triggering safe event!"):format(key))
     end
 
-    GlobalState:set(key, nil, true)
+    local eventName = string.sub(key, notEventLength + 1)
+
+    if not registeredEvents[eventName] then
+        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName))
+    end
+
+    registeredEvents[eventName].callback(value)
 end)
 
 ---@param eventName string
@@ -85,20 +80,21 @@ function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOption
     source = tonumber(source) --[[@as number]]
     source = source and math.floor(source)
 
-    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id!") end
+    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id or -1!") end
 
     if type(eventName) ~= "string" then
         return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
     end
-
-    -- if not registeredEvents[eventName] then return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName)) end
 
     eventData.source              = source
     eventData.__esx_triggerServer = eventOptions?.server == nil and true or eventOptions?.server
     eventData.__esx_triggerClient = eventOptions?.client == nil and true or eventOptions?.client
     eventData.__esx_hash          = generateHash() -- to make sure the eventData is unique & different everytime calling GlobalState, because if it isn't, the change handlers won't be triggered
 
-    GlobalState:set(("player:%s->%s"):format(source, eventName), eventData, true)
+    local bagName = ("player:%s->%s"):format(source, eventName)
+
+    GlobalState:set(bagName, eventData, true)
+    GlobalState:set(bagName, nil, true)
 end
 
 local function onResourceStop(resource)
@@ -117,3 +113,7 @@ end
 
 AddEventHandler("onResourceStop", onResourceStop)
 AddEventHandler("onServerResourceStop", onResourceStop)
+
+function ESX.PrintRegisteredSafeEvents()
+    print(ESX.DumpTable(registeredEvents))
+end
