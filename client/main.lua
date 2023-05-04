@@ -379,11 +379,10 @@ if not Config.OxInventory then
     end)
 end
 
-RegisterNetEvent('esx:registerSuggestions')
-AddEventHandler('esx:registerSuggestions', function(registeredCommands)
+AddEventHandler("esx:registerSuggestions", function(registeredCommands)
     for name, command in pairs(registeredCommands) do
         if command.suggestion then
-            TriggerEvent('chat:addSuggestion', ('/%s'):format(name), command.suggestion.help, command.suggestion.arguments)
+            TriggerEvent("chat:addSuggestion", ("/%s"):format(name), command.suggestion.help, command.suggestion.arguments)
         end
     end
 end)

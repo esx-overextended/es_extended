@@ -211,7 +211,9 @@ local function loadESXPlayer(identifier, playerId, isNew)
     else
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end
-    xPlayer.triggerEvent('esx:registerSuggestions', Core.RegisteredCommands)
+
+    xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands }, { server = false })
+
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
 

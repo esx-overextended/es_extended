@@ -18,6 +18,7 @@ if completeBackwardCompatibleEvents then
     RegisterNetEvent("esx:createPickup")
     RegisterNetEvent("esx:createMissingPickups")
     RegisterNetEvent("esx:removePickup")
+    RegisterNetEvent("esx:registerSuggestions")
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
@@ -62,4 +63,8 @@ end)
 
 ESX.RegisterSafeEvent("esx:removePickup", function(value)
     TriggerEvent("esx:removePickup", value.pickupId)
+end)
+
+ESX.RegisterSafeEvent("esx:registerSuggestions", function(value)
+    TriggerEvent("esx:registerSuggestions", value.registeredCommands)
 end)
