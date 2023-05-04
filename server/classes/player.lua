@@ -50,7 +50,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     ---@param eventData? table
     ---@param eventOptions? CEventOptions (defaults to {server = false, client = true})
     function self.triggerSafeEvent(eventName, eventData, eventOptions)
-        ESX.TriggerSafeEventForPlayer(self.source, eventName, eventData, eventOptions or {server = false, client = true})
+        ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
     end
 
     function self.setCoords(coords)
@@ -209,7 +209,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 money = account.round and ESX.Math.Round(money) or money
                 self.accounts[account.index].money = money
 
-                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason})
+                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason}, {server = true, client = true})
             else
                 print(('[^1ERROR^7] Tried To Set Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -231,7 +231,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.accounts[account.index].money += money
 
                 TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
-                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, {server = false})
+                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -254,7 +254,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.accounts[account.index].money = self.accounts[account.index].money - money
 
                 TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
-                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason}, {server = false})
+                self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
             else
                 print(('[^1ERROR^7] Tried To Set Add To Invalid Account ^5%s^0 For Player ^5%s^0!'):format(accountName, self.playerId))
             end
@@ -280,7 +280,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.weight = self.weight + (item.weight * count)
 
             TriggerEvent('esx:onAddInventoryItem', self.source, item.name, item.count)
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = item.name, itemCount = item.count}, {server = false})
+            self.triggerSafeEvent("esx:addInventoryItem", {itemName = item.name, itemCount = item.count})
         end
     end
 
@@ -297,7 +297,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     self.weight = self.weight - (item.weight * count)
 
                     TriggerEvent('esx:onRemoveInventoryItem', self.source, item.name, item.count)
-                    self.triggerSafeEvent("esx:removeInventoryItem", {itemName = item.name, itemCount = item.count}, {server = false})
+                    self.triggerSafeEvent("esx:removeInventoryItem", {itemName = item.name, itemCount = item.count})
                 end
             else
                 print(('[^1ERROR^7] Player ID:^5%s Tried to remove a Invalid count -> %s of %s'):format(self.playerId, count,name))
@@ -354,7 +354,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
     function self.setMaxWeight(newWeight)
         self.maxWeight = newWeight
-        self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight})
+        self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
     end
 
     function self.setJob(job, grade)
@@ -385,7 +385,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                 self.job.skin_female = {}
             end
 
-            self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob})
+            self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
             Player(self.source).state:set("job", self.job, true)
         else
             print(('[es_extended] [^3WARNING^7] Ignoring invalid ^5.setJob()^7 usage for ID: ^5%s^7, Job: ^5%s^7'):format(self.source, job))
@@ -405,7 +405,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             })
 
             GiveWeaponToPed(GetPlayerPed(self.source), joaat(weaponName), ammo, false, false)
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true}, {server = false})
+            self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true})
         end
     end
 
@@ -421,7 +421,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
 
                     GiveWeaponComponentToPed(GetPlayerPed(self.source), joaat(weaponName), componentHash)
-                    self.triggerSafeEvent("esx:addInventoryItem", {itemName = component.label, itemCount = false, showNotification = true}, {server = false})
+                    self.triggerSafeEvent("esx:addInventoryItem", {itemName = component.label, itemCount = false, showNotification = true})
                 end
             end
         end
@@ -454,8 +454,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
                 self.loadout[loadoutNum].tintIndex = weaponTintIndex
 
-                self.triggerSafeEvent("esx:setWeaponTint", {weaponName = weaponName, weaponTintIndex = weaponTintIndex}, {server = false})
-                self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true}, {server = false})
+                self.triggerSafeEvent("esx:setWeaponTint", {weaponName = weaponName, weaponTintIndex = weaponTintIndex})
+                self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true})
             end
         end
     end
@@ -491,7 +491,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
             RemoveWeaponFromPed(ped, weaponHash)
             SetPedAmmo(ped, weaponHash, 0)
-            self.triggerSafeEvent("esx:removeInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true}, {server = false})
+            self.triggerSafeEvent("esx:removeInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true})
         end
     end
 
@@ -511,7 +511,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
                     end
 
                     RemoveWeaponComponentFromPed(GetPlayerPed(self.source), joaat(weaponName), component.hash)
-                    self.triggerSafeEvent("esx:removeInventoryItem", {itemName = component.label, itemCount = false, showNotification = true}, {server = false})
+                    self.triggerSafeEvent("esx:removeInventoryItem", {itemName = component.label, itemCount = false, showNotification = true})
                 end
             end
         end
@@ -570,12 +570,12 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
     end
 
-    function self.showNotification(notifyText, notifyType, notifyDuration, notifyExtra)
+    function self.showNotification(message, type, duration, extra)
         self.triggerSafeEvent("esx:showNotification", {
-            notifyText = notifyText,
-            notifyType = notifyType,
-            notifyDuration = notifyDuration,
-            notifyExtra = notifyExtra
+            message = message,
+            type = type,
+            duration = duration,
+            extra = extra
         })
     end
 
@@ -660,7 +660,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.metadata[index][value] = subValue
         end
 
-        self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata})
+        self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata}, {server = true, client = true})
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.setMeta = self.setMetadata -- backward compatibility with esx-legacy
@@ -685,7 +685,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
         self.metadata[index] = nil
 
-        self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata})
+        self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata}, {server = true, client = true})
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.clearMeta = self.clearMetadata -- backward compatibility with esx-legacy

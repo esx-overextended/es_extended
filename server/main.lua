@@ -204,15 +204,15 @@ local function loadESXPlayer(identifier, playerId, isNew)
         },
         isNew = isNew,
         skin = userData.skin
-    })
+    }, { server = true, client = true })
 
     if not Config.OxInventory then
-        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups }, { server = false })
+        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups })
     else
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end
 
-    xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands }, { server = false })
+    xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
 
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
@@ -323,7 +323,7 @@ AddEventHandler("chatMessage", function(playerId, _, message)
 
         local commandName = message:sub(1):gmatch("%w+")()
 
-        ESX.TriggerSafeEventForPlayer(playerId, "esx:showNotification", { notifyText = _U("commanderror_invalidcommand", commandName) }, { server = false })
+        ESX.TriggerSafeEvent("esx:showNotification", playerId, { message = _U("commanderror_invalidcommand", commandName) }, { server = false, client = true })
     end
 end)
 
@@ -354,7 +354,8 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
             end
         end)
     end
-    ESX.TriggerSafeEventForPlayer(playerId, "esx:onPlayerLogout", nil, { server = false })
+
+    ESX.TriggerSafeEvent("esx:onPlayerLogout", playerId, nil, { server = false, client = true })
 end)
 
 if not Config.OxInventory then
@@ -563,7 +564,7 @@ if not Config.OxInventory then
 
             if success then
                 Core.Pickups[pickupId] = nil
-                ESX.TriggerSafeEventForPlayer(-1, "esx:removePickup", { pickupId = pickupId }, { server = false })
+                ESX.TriggerSafeEvent("esx:removePickup", -1, { pickupId = pickupId }, { server = false, client = true })
             end
         end
     end)

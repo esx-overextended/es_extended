@@ -85,7 +85,7 @@ ESX.RegisterSafeEvent("esx:registerSuggestions", function(value)
 end)
 
 ESX.RegisterSafeEvent("esx:showNotification", function(value)
-    TriggerEvent("esx:showNotification", value.notifyText, value.notifyType, value.notifyDuration, value.notifyExtra)
+    TriggerEvent("esx:showNotification", value.message, value.type, value.duration, value.extra)
 end)
 
 ESX.RegisterSafeEvent("esx:showAdvancedNotification", function(value)
