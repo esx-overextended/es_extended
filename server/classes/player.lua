@@ -579,8 +579,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         })
     end
 
-    function self.showHelpNotification(msg, thisFrame, beep, duration)
-        self.triggerEvent('esx:showHelpNotification', msg, thisFrame, beep, duration)
+    function self.showHelpNotification(message, thisFrame, beep, duration)
+        self.triggerSafeEvent("esx:showHelpNotification", {
+            message = message,
+            thisFrame = thisFrame,
+            beep = beep,
+            duration = duration
+        })
     end
 
     function self.getMetadata(index, subIndex)

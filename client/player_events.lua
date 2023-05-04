@@ -19,7 +19,7 @@ local events = {
     ["esx:registerSuggestions"] = false,
     ["esx:showNotification"] = false,
     ["esx:showAdvancedNotification"] = false,
-
+    ["esx:showHelpNotification"] = false,
 }
 
 do
@@ -86,7 +86,10 @@ ESX.RegisterSafeEvent("esx:showNotification", function(value)
     TriggerEvent("esx:showNotification", value.notifyText, value.notifyType, value.notifyDuration, value.notifyExtra)
 end)
 
-
 ESX.RegisterSafeEvent("esx:showAdvancedNotification", function(value)
     TriggerEvent("esx:showAdvancedNotification", value.sender, value.subject, value.message, value.textureDict, value.iconType, value.flash, value.saveToBrief, value.hudColorIndex)
+end)
+
+ESX.RegisterSafeEvent("esx:showHelpNotification", function(value)
+    TriggerEvent("esx:showHelpNotification", value.message, value.thisFrame, value.beep, value.duration)
 end)

@@ -14,10 +14,6 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent("esx:requestModel", function(model)
-    ESX.Streaming.RequestModel(model)
-end)
-
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
 
