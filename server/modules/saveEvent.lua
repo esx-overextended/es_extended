@@ -113,7 +113,3 @@ end
 
 AddEventHandler("onResourceStop", onResourceStop)
 AddEventHandler("onServerResourceStop", onResourceStop)
-
-function ESX.PrintRegisteredSafeEvents()
-    print(ESX.DumpTable(registeredEvents))
-end
