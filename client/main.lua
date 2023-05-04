@@ -182,12 +182,11 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     StartServerSyncLoops()
 end)
 
-RegisterNetEvent('esx:onPlayerLogout')
-AddEventHandler('esx:onPlayerLogout', function()
+AddEventHandler("esx:onPlayerLogout", function()
     ESX.PlayerLoaded = false
 end)
 
-AddEventHandler('esx:setMaxWeight', function(newMaxWeight)
+AddEventHandler("esx:setMaxWeight", function(newMaxWeight)
     ESX.SetPlayerData("maxWeight", newMaxWeight)
 end)
 
@@ -262,7 +261,7 @@ AddStateBagChangeHandler('VehicleProperties', nil, function(bagName, _, value)
     ESX.Game.SetVehicleProperties(vehicle, value)
 end)
 
-AddEventHandler('esx:setAccountMoney', function(account)
+AddEventHandler("esx:setAccountMoney", function(account)
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then
             ESX.PlayerData.accounts[i] = account

@@ -4,6 +4,7 @@ local completeBackwardCompatibleEvents = false
 
 if completeBackwardCompatibleEvents then
     RegisterNetEvent("esx:playerLoaded")
+    RegisterNetEvent("esx:onPlayerLogout")
     RegisterNetEvent("esx:setAccountMoney")
     RegisterNetEvent("esx:addInventoryItem")
     RegisterNetEvent("esx:removeInventoryItem")

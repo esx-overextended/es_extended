@@ -72,10 +72,10 @@ end
 
 ---@param source integer
 ---@param eventName string
----@param eventData table
+---@param eventData? table
 ---@param eventOptions? CEventOptions
 function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOptions)
-    if not source or not eventName or not eventData then return end
+    if not source or not eventName then return end
 
     source = tonumber(source) --[[@as number]]
     source = source and math.floor(source)
@@ -83,9 +83,14 @@ function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOption
     if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id or -1!") end
 
     if type(eventName) ~= "string" then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
+        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not a valid string!"):format(eventName))
     end
 
+    if eventData and type(eventData) ~= "table" then
+        return print(("[^1ERROR^7] The data (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not a table type!"):format(eventName))
+    end
+
+    eventData                     = eventData or {}
     eventData.source              = source
     eventData.__esx_triggerServer = eventOptions?.server == nil and true or eventOptions?.server
     eventData.__esx_triggerClient = eventOptions?.client == nil and true or eventOptions?.client

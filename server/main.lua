@@ -351,7 +351,7 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
             end
         end)
     end
-    TriggerClientEvent("esx:onPlayerLogout", playerId)
+    ESX.TriggerSafeEventForPlayer(playerId, "esx:onPlayerLogout", nil, {server = false})
 end)
 
 if not Config.OxInventory then
