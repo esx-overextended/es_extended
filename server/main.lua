@@ -204,14 +204,16 @@ local function loadESXPlayer(identifier, playerId, isNew)
         },
         isNew = isNew,
         skin = userData.skin
-    })
+    }, { server = true, client = true })
 
     if not Config.OxInventory then
-        xPlayer.triggerEvent('esx:createMissingPickups', Core.Pickups)
+        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups })
     else
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end
-    xPlayer.triggerEvent('esx:registerSuggestions', Core.RegisteredCommands)
+
+    xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
+
     print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
 
@@ -302,7 +304,8 @@ else
                 '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
         end
     end)
-    RegisterNetEvent('esx:onPlayerJoined', function()
+
+    RegisterServerEvent('esx:onPlayerJoined', function()
         local _source = source
         while not next(ESX.Jobs) do
             Wait(50)
@@ -314,13 +317,13 @@ else
     end)
 end
 
-AddEventHandler('chatMessage', function(playerId, _, message)
-    if message:sub(1, 1) == '/' and playerId > 0 then
+AddEventHandler("chatMessage", function(playerId, _, message)
+    if message:sub(1, 1) == "/" and playerId > 0 then
         CancelEvent()
 
         local commandName = message:sub(1):gmatch("%w+")()
 
-        TriggerClientEvent('esx:showNotification', playerId, _U('commanderror_invalidcommand', commandName))
+        ESX.TriggerSafeEvent("esx:showNotification", playerId, { message = _U("commanderror_invalidcommand", commandName) }, { server = false, client = true })
     end
 end)
 
@@ -351,12 +354,12 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
             end
         end)
     end
-    TriggerClientEvent("esx:onPlayerLogout", playerId)
+
+    ESX.TriggerSafeEvent("esx:onPlayerLogout", playerId, nil, { server = false, client = true })
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:updateWeaponAmmo')
-    AddEventHandler('esx:updateWeaponAmmo', function(weaponName, ammoCount)
+    RegisterServerEvent('esx:updateWeaponAmmo', function(weaponName, ammoCount)
         local xPlayer = ESX.GetPlayerFromId(source)
 
         if xPlayer then
@@ -364,8 +367,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:giveInventoryItem')
-    AddEventHandler('esx:giveInventoryItem', function(target, type, itemName, itemCount)
+    RegisterServerEvent('esx:giveInventoryItem', function(target, type, itemName, itemCount)
         local playerId = source
         local sourceXPlayer = ESX.GetPlayerFromId(playerId)
         local targetXPlayer = ESX.GetPlayerFromId(target)
@@ -462,8 +464,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:removeInventoryItem')
-    AddEventHandler('esx:removeInventoryItem', function(type, itemName, itemCount)
+    RegisterServerEvent('esx:removeInventoryItem', function(type, itemName, itemCount)
         local playerId = source
         local xPlayer = ESX.GetPlayerFromId(playerId)
 
@@ -521,8 +522,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:useItem')
-    AddEventHandler('esx:useItem', function(itemName)
+    RegisterServerEvent('esx:useItem', function(itemName)
         local source = source
         local xPlayer = ESX.GetPlayerFromId(source)
         local count = xPlayer.getInventoryItem(itemName).count
@@ -534,8 +534,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:onPickup')
-    AddEventHandler('esx:onPickup', function(pickupId)
+    RegisterServerEvent('esx:onPickup', function(pickupId)
         local pickup, xPlayer, success = Core.Pickups[pickupId], ESX.GetPlayerFromId(source)
 
         if pickup then
@@ -565,7 +564,7 @@ if not Config.OxInventory then
 
             if success then
                 Core.Pickups[pickupId] = nil
-                TriggerClientEvent('esx:removePickup', -1, pickupId)
+                ESX.TriggerSafeEvent("esx:removePickup", -1, { pickupId = pickupId }, { server = false, client = true })
             end
         end
     end)

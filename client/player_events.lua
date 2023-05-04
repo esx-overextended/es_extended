@@ -1,19 +1,39 @@
--- It is NOT suggessted to set this to true as it opens opportunity for vulnerabilities and abuses.
--- Also for these events below try converting your scripts to use AddEventHandler instead of RegisterNetEvent, as if you don't, it acts the same as setting this variable to true!
-local completeBackwardCompatibleEvents = false
+-- It is NOT suggessted to set these events to true to be registered as networked events as they open opportunity for vulnerabilities and abuses.
+-- Also for these events below try converting your scripts to use AddEventHandler instead of RegisterNetEvent, as if you don't, it acts the same as setting them to true(networked)!
+-- However, if you cannot convert all of these below events in your scripts to use AddEventHandler instead of RegisterNetEvent(escrowed scripts), you could set them to true to be networked.
 
-if completeBackwardCompatibleEvents then
-    RegisterNetEvent("esx:playerLoaded")
-    RegisterNetEvent("esx:setAccountMoney")
-    RegisterNetEvent("esx:addInventoryItem")
-    RegisterNetEvent("esx:removeInventoryItem")
-    RegisterNetEvent("esx:setMaxWeight")
-    RegisterNetEvent("esx:setJob")
-    RegisterNetEvent("esx:setWeaponTint")
-    RegisterNetEvent("esx:updatePlayerData") -- hate this
-    RegisterNetEvent("esx:setMetadata", function(currentMetadata)
-        TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
-    end)
+local events = {
+    ["esx:playerLoaded"] = false,
+    ["esx:onPlayerLogout"] = false,
+    ["esx:setAccountMoney"] = false,
+    ["esx:addInventoryItem"] = false,
+    ["esx:removeInventoryItem"] = false,
+    ["esx:setMaxWeight"] = false,
+    ["esx:setJob"] = false,
+    ["esx:setWeaponTint"] = false,
+    ["esx:updatePlayerData"] = false,
+    ["esx:setMetadata"] = false,
+    ["esx:createPickup"] = false,
+    ["esx:createMissingPickups"] = false,
+    ["esx:removePickup"] = false,
+    ["esx:registerSuggestions"] = false,
+    ["esx:showNotification"] = false,
+    ["esx:showAdvancedNotification"] = false,
+    ["esx:showHelpNotification"] = false,
+    ["esx:killPlayer"] = false,
+    ["esx:freezePlayer"] = false,
+}
+
+do
+    for eventName, networked in pairs(events) do
+        if networked then RegisterNetEvent(eventName) end
+    end
+
+    if events["esx:updatePlayerData"] then
+        AddEventHandler("esx:setMetadata", function(currentMetadata)
+            TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
+        end)
+    end
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
@@ -46,4 +66,40 @@ end)
 
 ESX.RegisterSafeEvent("esx:setMetadata", function(value)
     TriggerEvent("esx:setMetadata", value.currentMetadata, value.lastMetadata)
+end)
+
+ESX.RegisterSafeEvent("esx:createPickup", function(value)
+    TriggerEvent("esx:createPickup", value.pickupId, value.label, value.coords, value.type, value.name, value.components, value.tintIndex)
+end)
+
+ESX.RegisterSafeEvent("esx:createMissingPickups", function(value)
+    TriggerEvent("esx:createMissingPickups", value.pickups)
+end)
+
+ESX.RegisterSafeEvent("esx:removePickup", function(value)
+    TriggerEvent("esx:removePickup", value.pickupId)
+end)
+
+ESX.RegisterSafeEvent("esx:registerSuggestions", function(value)
+    TriggerEvent("esx:registerSuggestions", value.registeredCommands)
+end)
+
+ESX.RegisterSafeEvent("esx:showNotification", function(value)
+    TriggerEvent("esx:showNotification", value.message, value.type, value.duration, value.extra)
+end)
+
+ESX.RegisterSafeEvent("esx:showAdvancedNotification", function(value)
+    TriggerEvent("esx:showAdvancedNotification", value.sender, value.subject, value.message, value.textureDict, value.iconType, value.flash, value.saveToBrief, value.hudColorIndex)
+end)
+
+ESX.RegisterSafeEvent("esx:showHelpNotification", function(value)
+    TriggerEvent("esx:showHelpNotification", value.message, value.thisFrame, value.beep, value.duration)
+end)
+
+ESX.RegisterSafeEvent("esx:freezePlayer", function(value)
+    TriggerEvent("esx:freezePlayer", value.state)
+end)
+
+ESX.RegisterSafeEvent("esx:killPlayer", function(_)
+    TriggerEvent("esx:killPlayer")
 end)

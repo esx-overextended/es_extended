@@ -1296,22 +1296,19 @@ function ESX.ShowInventory()
     end)
 end
 
-RegisterNetEvent('esx:showNotification')
-AddEventHandler('esx:showNotification', function(msg, type, length)
-    ESX.ShowNotification(msg, type, length)
+AddEventHandler("esx:showNotification", function(notifyText, notifyType, notifyDuration, notifyExtra)
+    ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
 end)
 
-RegisterNetEvent('esx:showAdvancedNotification')
-AddEventHandler('esx:showAdvancedNotification', function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-    ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+AddEventHandler("esx:showAdvancedNotification", function(sender, subject, message, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+    ESX.ShowAdvancedNotification(sender, subject, message, textureDict, iconType, flash, saveToBrief, hudColorIndex)
 end)
 
-RegisterNetEvent('esx:showHelpNotification')
-AddEventHandler('esx:showHelpNotification', function(msg, thisFrame, beep, duration)
-    ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
+AddEventHandler("esx:showHelpNotification", function(message, thisFrame, beep, duration)
+    ESX.ShowHelpNotification(message, thisFrame, beep, duration)
 end)
 
----@param model number|string
+---@param model number | string
 ---@return string
 ---@diagnostic disable-next-line: duplicate-set-field
 function ESX.GetVehicleType(model)

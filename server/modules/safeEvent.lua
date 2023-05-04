@@ -10,7 +10,7 @@ end
 
 ---@diagnostic disable-next-line: param-type-mismatch
 AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
-    if not value or value?.__esx_triggerServer == false then return end
+    if not value or not value?.__esx_triggerServer then return end
 
     local bagName = string.match(key, "(.-)%s*->") -- pattern to find the first occurence of a "->"
     local playerId = bagName and tonumber(bagName:gsub("player:", ""), 10)
@@ -27,7 +27,7 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
     local eventName = string.sub(key, notEventLength + 1)
 
     if not registeredEvents[eventName] then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEventForPlayer^7 is not registered!"):format(eventName))
+        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not registered on server!"):format(eventName))
     end
 
     registeredEvents[eventName].callback(value)
@@ -67,28 +67,33 @@ function ESX.RegisterSafeEvent(eventName, cb)
 end
 
 ---@class CEventOptions
----@field client? boolean whether should call the client event (defaults to true)
----@field server? boolean whether should call the server event (defaults to true)
+---@field client? boolean whether should call the client event (defaults to false)
+---@field server? boolean whether should call the server event (defaults to false)
 
----@param source integer
 ---@param eventName string
----@param eventData table
+---@param source integer
+---@param eventData? table
 ---@param eventOptions? CEventOptions
-function ESX.TriggerSafeEventForPlayer(source, eventName, eventData, eventOptions)
-    if not source or not eventName or not eventData then return end
+function ESX.TriggerSafeEvent(eventName, source, eventData, eventOptions)
+    if not eventName or not source then return end
+
+    if type(eventName) ~= "string" then
+        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a valid string!"):format(eventName))
+    end
 
     source = tonumber(source) --[[@as number]]
     source = source and math.floor(source)
 
-    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEventForPlayer^7 must be a valid player id or -1!") end
+    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEvent^7 must be a valid player id or -1!") end
 
-    if type(eventName) ~= "string" then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
+    if eventData and type(eventData) ~= "table" then
+        return print(("[^1ERROR^7] The data (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a table type!"):format(eventName))
     end
 
+    eventData                     = eventData or {}
     eventData.source              = source
-    eventData.__esx_triggerServer = eventOptions?.server == nil and true or eventOptions?.server
-    eventData.__esx_triggerClient = eventOptions?.client == nil and true or eventOptions?.client
+    eventData.__esx_triggerServer = eventOptions?.server == nil and false or eventOptions?.server
+    eventData.__esx_triggerClient = eventOptions?.client == nil and false or eventOptions?.client
     eventData.__esx_hash          = generateHash() -- to make sure the eventData is unique & different everytime calling GlobalState, because if it isn't, the change handlers won't be triggered
 
     local bagName = ("player:%s->%s"):format(source, eventName)

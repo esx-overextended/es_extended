@@ -25,10 +25,8 @@ end)
 
 AddEventHandler("esx:playerLoaded", checkPhone)
 
-RegisterNetEvent('esx:onPlayerLogout', function()
-    if not npwd then
-        return
-    end
+AddEventHandler("esx:onPlayerLogout", function()
+    if not npwd then return end
 
     npwd:setPhoneVisible(false)
     npwd:setPhoneDisabled(true)

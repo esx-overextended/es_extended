@@ -336,7 +336,7 @@ end, true, {
 })
 
 ESX.RegisterCommand('kill', "admin", function(_, args, _)
-    args.playerId.triggerEvent("esx:killPlayer")
+    args.playerId.triggerSafeEvent("esx:killPlayer")
 end, true, {
     help = _U('command_kill'),
     validate = true,
@@ -346,7 +346,7 @@ end, true, {
 })
 
 ESX.RegisterCommand('freeze', "admin", function(_, args, _)
-    args.playerId.triggerEvent('esx:freezePlayer', "freeze")
+    args.playerId.triggerSafeEvent("esx:freezePlayer", { state = "freeze" })
 end, true, {
     help = _U('command_freeze'),
     validate = true,
@@ -356,7 +356,7 @@ end, true, {
 })
 
 ESX.RegisterCommand('unfreeze', "admin", function(_, args, _)
-    args.playerId.triggerEvent('esx:freezePlayer', "unfreeze")
+    args.playerId.triggerSafeEvent("esx:freezePlayer", { state = "unfreeze" })
 end, true, {
     help = _U('command_unfreeze'),
     validate = true,

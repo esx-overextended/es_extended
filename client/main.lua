@@ -14,10 +14,6 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent("esx:requestModel", function(model)
-    ESX.Streaming.RequestModel(model)
-end)
-
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
 
@@ -182,12 +178,11 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     StartServerSyncLoops()
 end)
 
-RegisterNetEvent('esx:onPlayerLogout')
-AddEventHandler('esx:onPlayerLogout', function()
+AddEventHandler("esx:onPlayerLogout", function()
     ESX.PlayerLoaded = false
 end)
 
-AddEventHandler('esx:setMaxWeight', function(newMaxWeight)
+AddEventHandler("esx:setMaxWeight", function(newMaxWeight)
     ESX.SetPlayerData("maxWeight", newMaxWeight)
 end)
 
@@ -262,7 +257,7 @@ AddStateBagChangeHandler('VehicleProperties', nil, function(bagName, _, value)
     ESX.Game.SetVehicleProperties(vehicle, value)
 end)
 
-AddEventHandler('esx:setAccountMoney', function(account)
+AddEventHandler("esx:setAccountMoney", function(account)
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then
             ESX.PlayerData.accounts[i] = account
@@ -341,8 +336,7 @@ AddEventHandler('esx:setMetadata', function(metadata)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:createPickup')
-    AddEventHandler('esx:createPickup', function(pickupId, label, coords, type, name, components, tintIndex)
+    AddEventHandler("esx:createPickup", function(pickupId, label, coords, type, name, components, tintIndex)
         local function setObjectProperties(object)
             SetEntityAsMissionEntity(object, true, false)
             PlaceObjectOnGroundProperly(object)
@@ -374,26 +368,23 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:createMissingPickups')
-    AddEventHandler('esx:createMissingPickups', function(missingPickups)
+    AddEventHandler("esx:createMissingPickups", function(missingPickups)
         for pickupId, pickup in pairs(missingPickups) do
-            TriggerEvent('esx:createPickup', pickupId, pickup.label, pickup.coords - vector3(0, 0, 1.0), pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+            TriggerEvent("esx:createPickup", pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
         end
     end)
 end
 
-RegisterNetEvent('esx:registerSuggestions')
-AddEventHandler('esx:registerSuggestions', function(registeredCommands)
+AddEventHandler("esx:registerSuggestions", function(registeredCommands)
     for name, command in pairs(registeredCommands) do
         if command.suggestion then
-            TriggerEvent('chat:addSuggestion', ('/%s'):format(name), command.suggestion.help, command.suggestion.arguments)
+            TriggerEvent("chat:addSuggestion", ("/%s"):format(name), command.suggestion.help, command.suggestion.arguments)
         end
     end
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:removePickup')
-    AddEventHandler('esx:removePickup', function(pickupId)
+    AddEventHandler("esx:removePickup", function(pickupId)
         if pickups[pickupId] and pickups[pickupId].obj then
             ESX.Game.DeleteObject(pickups[pickupId].obj)
             pickups[pickupId] = nil
@@ -457,6 +448,7 @@ if not Config.OxInventory then
 
             for pickupId, pickup in pairs(pickups) do
                 local distance = #(playerCoords - pickup.coords)
+                PlaceObjectOnGroundProperly(pickup.obj)
 
                 if distance < 5 then
                     Sleep = 0
@@ -651,22 +643,19 @@ AddEventHandler("esx:noclip", function()
     end)
 end)
 
-RegisterNetEvent("esx:killPlayer")
 AddEventHandler("esx:killPlayer", function()
     SetEntityHealth(ESX.PlayerData.ped, 0)
 end)
 
-RegisterNetEvent("esx:freezePlayer")
 AddEventHandler("esx:freezePlayer", function(input)
-    local player = PlayerId()
     if input == 'freeze' then
         SetEntityCollision(ESX.PlayerData.ped, false, true)
         FreezeEntityPosition(ESX.PlayerData.ped, true)
-        SetPlayerInvincible(player, true)
+        SetPlayerInvincible(cache.playerId, true)
     elseif input == 'unfreeze' then
         SetEntityCollision(ESX.PlayerData.ped, true, true)
         FreezeEntityPosition(ESX.PlayerData.ped, false)
-        SetPlayerInvincible(player, false)
+        SetPlayerInvincible(cache.playerId, false)
     end
 end)
 
