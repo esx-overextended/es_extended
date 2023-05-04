@@ -8,7 +8,7 @@
 
 * Updated Interface Functions: Modified various interface-related functions to utilize ox_lib's modern UIs, such as Notification, TextUI, and ProgressBar. This enhances the user experience and gives a more contemporary look and feel.
 
-* Improved Client-side Event Security: Implemented enhanced security measures for client-side events responsible for receiving players' object data from the server. This focuses on strengthening the events to reduce potential vulnerabilities and abuses. **(WIP)**
+* Improved Client-side Event Security: Implemented enhanced security measures for client-side events responsible for receiving players' object data from the server. This focuses on strengthening the events to reduce potential vulnerabilities and abuses.
 
 * Streamlined Player Coordinates Tracking: Overhauled the tracking of player object's coordinates by removing the recursive thread creation approach. The new method maintains backward compatibility while improving efficiency and performance. *(This change becomes more impactful as the number of players increases)*
 
