@@ -336,7 +336,7 @@ end, true, {
 })
 
 ESX.RegisterCommand('kill', "admin", function(_, args, _)
-    args.playerId.triggerEvent("esx:killPlayer")
+    args.playerId.triggerSafeEvent("esx:killPlayer")
 end, true, {
     help = _U('command_kill'),
     validate = true,

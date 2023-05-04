@@ -20,6 +20,7 @@ local events = {
     ["esx:showNotification"] = false,
     ["esx:showAdvancedNotification"] = false,
     ["esx:showHelpNotification"] = false,
+    ["esx:killPlayer"] = false,
     ["esx:freezePlayer"] = false,
 }
 
@@ -97,4 +98,8 @@ end)
 
 ESX.RegisterSafeEvent("esx:freezePlayer", function(value)
     TriggerEvent("esx:freezePlayer", value.state)
+end)
+
+ESX.RegisterSafeEvent("esx:killPlayer", function(_)
+    TriggerEvent("esx:killPlayer")
 end)

@@ -642,7 +642,6 @@ AddEventHandler("esx:noclip", function()
     end)
 end)
 
-RegisterNetEvent("esx:killPlayer")
 AddEventHandler("esx:killPlayer", function()
     SetEntityHealth(ESX.PlayerData.ped, 0)
 end)
