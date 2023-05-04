@@ -304,7 +304,8 @@ else
                 '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
         end
     end)
-    RegisterNetEvent('esx:onPlayerJoined', function()
+
+    RegisterServerEvent('esx:onPlayerJoined', function()
         local _source = source
         while not next(ESX.Jobs) do
             Wait(50)
@@ -357,8 +358,7 @@ AddEventHandler('esx:playerLogout', function(playerId, cb)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:updateWeaponAmmo')
-    AddEventHandler('esx:updateWeaponAmmo', function(weaponName, ammoCount)
+    RegisterServerEvent('esx:updateWeaponAmmo', function(weaponName, ammoCount)
         local xPlayer = ESX.GetPlayerFromId(source)
 
         if xPlayer then
@@ -366,8 +366,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:giveInventoryItem')
-    AddEventHandler('esx:giveInventoryItem', function(target, type, itemName, itemCount)
+    RegisterServerEvent('esx:giveInventoryItem', function(target, type, itemName, itemCount)
         local playerId = source
         local sourceXPlayer = ESX.GetPlayerFromId(playerId)
         local targetXPlayer = ESX.GetPlayerFromId(target)
@@ -464,8 +463,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:removeInventoryItem')
-    AddEventHandler('esx:removeInventoryItem', function(type, itemName, itemCount)
+    RegisterServerEvent('esx:removeInventoryItem', function(type, itemName, itemCount)
         local playerId = source
         local xPlayer = ESX.GetPlayerFromId(playerId)
 
@@ -523,8 +521,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:useItem')
-    AddEventHandler('esx:useItem', function(itemName)
+    RegisterServerEvent('esx:useItem', function(itemName)
         local source = source
         local xPlayer = ESX.GetPlayerFromId(source)
         local count = xPlayer.getInventoryItem(itemName).count
@@ -536,8 +533,7 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent('esx:onPickup')
-    AddEventHandler('esx:onPickup', function(pickupId)
+    RegisterServerEvent('esx:onPickup', function(pickupId)
         local pickup, xPlayer, success = Core.Pickups[pickupId], ESX.GetPlayerFromId(source)
 
         if pickup then

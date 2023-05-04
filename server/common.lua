@@ -73,14 +73,13 @@ MySQL.ready(function()
     end
 end)
 
-RegisterServerEvent('esx:clientLog')
-AddEventHandler('esx:clientLog', function(msg)
+RegisterServerEvent('esx:clientLog', function(msg)
     if Config.EnableDebug then
         print(('[^2TRACE^7] %s^7'):format(msg))
     end
 end)
 
-RegisterNetEvent("esx:ReturnVehicleType", function(Type, Request)
+RegisterServerEvent("esx:ReturnVehicleType", function(Type, Request)
     if Core.ClientCallbacks[Request] then
         Core.ClientCallbacks[Request](Type)
         Core.ClientCallbacks[Request] = nil
