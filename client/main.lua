@@ -340,8 +340,7 @@ AddEventHandler('esx:setMetadata', function(metadata)
 end)
 
 if not Config.OxInventory then
-    RegisterNetEvent('esx:createPickup')
-    AddEventHandler('esx:createPickup', function(pickupId, label, coords, type, name, components, tintIndex)
+    AddEventHandler("esx:createPickup", function(pickupId, label, coords, type, name, components, tintIndex)
         local function setObjectProperties(object)
             SetEntityAsMissionEntity(object, true, false)
             PlaceObjectOnGroundProperly(object)

@@ -422,7 +422,16 @@ if not Config.OxInventory then
             Core.Pickups[pickupId].tintIndex = tintIndex
         end
 
-        TriggerClientEvent('esx:createPickup', -1, pickupId, label, coords, type, name, components, tintIndex)
+        ESX.TriggerSafeEventForPlayer(-1, "esx:createPickup", {
+            pickupId = pickupId,
+            label = label,
+            coords = coords,
+            type = type,
+            name = name,
+            components = components,
+            tintIndex = tintIndex
+        }, {server = false})
+
         Core.PickupId = pickupId
     end
 end

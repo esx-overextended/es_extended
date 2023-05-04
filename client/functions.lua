@@ -1311,7 +1311,7 @@ AddEventHandler('esx:showHelpNotification', function(msg, thisFrame, beep, durat
     ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
 end)
 
----@param model number|string
+---@param model number | string
 ---@return string
 ---@diagnostic disable-next-line: duplicate-set-field
 function ESX.GetVehicleType(model)

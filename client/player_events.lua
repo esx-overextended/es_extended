@@ -15,6 +15,7 @@ if completeBackwardCompatibleEvents then
     RegisterNetEvent("esx:setMetadata", function(currentMetadata)
         TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
     end)
+    RegisterNetEvent("esx:createPickup")
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
@@ -47,4 +48,8 @@ end)
 
 ESX.RegisterSafeEvent("esx:setMetadata", function(value)
     TriggerEvent("esx:setMetadata", value.currentMetadata, value.lastMetadata)
+end)
+
+ESX.RegisterSafeEvent("esx:createPickup", function(value)
+    TriggerEvent("esx:createPickup", value.pickupId, value.label, value.coords, value.type, value.name, value.components, value.tintIndex)
 end)
