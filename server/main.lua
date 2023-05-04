@@ -323,7 +323,7 @@ AddEventHandler("chatMessage", function(playerId, _, message)
 
         local commandName = message:sub(1):gmatch("%w+")()
 
-        ESX.TriggerSafeEventForPlayer(playerId, "esx:showNotification", {notifyText = _U("commanderror_invalidcommand", commandName)})
+        ESX.TriggerSafeEventForPlayer(playerId, "esx:showNotification", { notifyText = _U("commanderror_invalidcommand", commandName) }, { server = false })
     end
 end)
 
@@ -563,7 +563,7 @@ if not Config.OxInventory then
 
             if success then
                 Core.Pickups[pickupId] = nil
-                ESX.TriggerSafeEventForPlayer(-1, "esx:removePickup", { pickupId = pickupId }, {server = false})
+                ESX.TriggerSafeEventForPlayer(-1, "esx:removePickup", { pickupId = pickupId }, { server = false })
             end
         end
     end)

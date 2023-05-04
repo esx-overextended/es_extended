@@ -370,7 +370,7 @@ if not Config.OxInventory then
 
     AddEventHandler("esx:createMissingPickups", function(missingPickups)
         for pickupId, pickup in pairs(missingPickups) do
-            TriggerEvent("esx:createPickup", pickupId, pickup.label, pickup.coords - vector3(0, 0, 1.0), pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+            TriggerEvent("esx:createPickup", pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
         end
     end)
 end
@@ -448,6 +448,7 @@ if not Config.OxInventory then
 
             for pickupId, pickup in pairs(pickups) do
                 local distance = #(playerCoords - pickup.coords)
+                PlaceObjectOnGroundProperly(pickup.obj)
 
                 if distance < 5 then
                     Sleep = 0
