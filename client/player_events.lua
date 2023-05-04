@@ -16,6 +16,7 @@ if completeBackwardCompatibleEvents then
         TriggerEvent("esx:updatePlayerData", "metadata", currentMetadata)
     end)
     RegisterNetEvent("esx:createPickup")
+    RegisterNetEvent("esx:createMissingPickups")
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
@@ -52,4 +53,8 @@ end)
 
 ESX.RegisterSafeEvent("esx:createPickup", function(value)
     TriggerEvent("esx:createPickup", value.pickupId, value.label, value.coords, value.type, value.name, value.components, value.tintIndex)
+end)
+
+ESX.RegisterSafeEvent("esx:createMissingPickups", function(value)
+    TriggerEvent("esx:createMissingPickups", value.pickups)
 end)

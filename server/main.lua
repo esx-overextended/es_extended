@@ -207,7 +207,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     })
 
     if not Config.OxInventory then
-        xPlayer.triggerEvent('esx:createMissingPickups', Core.Pickups)
+        xPlayer.triggerSafeEvent("esx:createMissingPickups", { pickups = Core.Pickups }, {server = false})
     else
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end

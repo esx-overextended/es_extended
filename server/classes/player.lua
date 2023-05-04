@@ -46,8 +46,11 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         TriggerClientEvent(eventName, self.source, ...)
     end
 
+    ---@param eventName string
+    ---@param eventData? table
+    ---@param eventOptions? CEventOptions (defaults to {server = false, client = true})
     function self.triggerSafeEvent(eventName, eventData, eventOptions)
-        ESX.TriggerSafeEventForPlayer(self.source, eventName, eventData, eventOptions)
+        ESX.TriggerSafeEventForPlayer(self.source, eventName, eventData, eventOptions or {server = false, client = true})
     end
 
     function self.setCoords(coords)
