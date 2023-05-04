@@ -570,8 +570,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         end
     end
 
-    function self.showNotification(msg)
-        self.triggerEvent('esx:showNotification', msg)
+    function self.showNotification(notifyText, notifyType, notifyDuration, notifyExtra)
+        self.triggerSafeEvent("esx:showNotification", {
+            notifyText = notifyText,
+            notifyType = notifyType,
+            notifyDuration = notifyDuration,
+            notifyExtra = notifyExtra
+        })
     end
 
     function self.showHelpNotification(msg, thisFrame, beep, duration)

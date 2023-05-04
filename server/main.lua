@@ -316,13 +316,13 @@ else
     end)
 end
 
-AddEventHandler('chatMessage', function(playerId, _, message)
-    if message:sub(1, 1) == '/' and playerId > 0 then
+AddEventHandler("chatMessage", function(playerId, _, message)
+    if message:sub(1, 1) == "/" and playerId > 0 then
         CancelEvent()
 
         local commandName = message:sub(1):gmatch("%w+")()
 
-        TriggerClientEvent('esx:showNotification', playerId, _U('commanderror_invalidcommand', commandName))
+        ESX.TriggerSafeEventForPlayer(playerId, "esx:showNotification", {notifyText = _U("commanderror_invalidcommand", commandName)})
     end
 end)
 
