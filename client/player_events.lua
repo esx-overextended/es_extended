@@ -20,6 +20,7 @@ local events = {
     ["esx:showNotification"] = false,
     ["esx:showAdvancedNotification"] = false,
     ["esx:showHelpNotification"] = false,
+    ["esx:freezePlayer"] = false,
 }
 
 do
@@ -92,4 +93,8 @@ end)
 
 ESX.RegisterSafeEvent("esx:showHelpNotification", function(value)
     TriggerEvent("esx:showHelpNotification", value.message, value.thisFrame, value.beep, value.duration)
+end)
+
+ESX.RegisterSafeEvent("esx:freezePlayer", function(value)
+    TriggerEvent("esx:freezePlayer", value.state)
 end)

@@ -647,17 +647,15 @@ AddEventHandler("esx:killPlayer", function()
     SetEntityHealth(ESX.PlayerData.ped, 0)
 end)
 
-RegisterNetEvent("esx:freezePlayer")
 AddEventHandler("esx:freezePlayer", function(input)
-    local player = PlayerId()
     if input == 'freeze' then
         SetEntityCollision(ESX.PlayerData.ped, false, true)
         FreezeEntityPosition(ESX.PlayerData.ped, true)
-        SetPlayerInvincible(player, true)
+        SetPlayerInvincible(cache.playerId, true)
     elseif input == 'unfreeze' then
         SetEntityCollision(ESX.PlayerData.ped, true, true)
         FreezeEntityPosition(ESX.PlayerData.ped, false)
-        SetPlayerInvincible(player, false)
+        SetPlayerInvincible(cache.playerId, false)
     end
 end)
 
