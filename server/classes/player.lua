@@ -5,7 +5,13 @@ local self_metadata = {
         return rawget(self, index)
     end,
     __newindex = function(self, index, ...)
-        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource())) end
+        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource()))
+        elseif index == "inScopePlayers" then
+            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
+            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
+                return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.inScopePlayers. This should ^5not^7 be happening!"):format(invokingResource))
+            end
+        end
 
         rawset(self, index, ...)
     end
@@ -29,6 +35,17 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.weight = playerInventoryWeight
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
+    self.inScopePlayers = setmetatable({}, {
+        __index = function() return false end,
+        __newindex = function(inScopePlayers, index, value)
+            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
+            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
+                return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.inScopePlayers. This should ^5not^7 be happening!"):format(invokingResource))
+            end
+
+            rawset(inScopePlayers, tonumber(index), value)
+        end
+    })
 
     if Config.Multichar then self.license = 'license'.. playerIdentifier:sub(playerIdentifier:find(':'), playerIdentifier:len()) else self.license = 'license:'..playerIdentifier end
 
@@ -42,13 +59,17 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     stateBag:set("name", self.name, true)
     stateBag:set("metadata", self.metadata, true)
 
+    ---Triggers a client event for the current player
+    ---@param eventName string name of the client event
+    ---@param ... any
     function self.triggerEvent(eventName, ...)
         TriggerClientEvent(eventName, self.source, ...)
     end
 
-    ---@param eventName string
-    ---@param eventData? table
-    ---@param eventOptions? CEventOptions (defaults to {server = false, client = true})
+    ---Triggers a safe event for the current player
+    ---@param eventName string -- name of the safe event
+    ---@param eventData? table -- data to send through the safe event
+    ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
     function self.triggerSafeEvent(eventName, eventData, eventOptions)
         ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
     end
@@ -68,7 +89,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local coords = GetEntityCoords(playerPed)
         local heading = GetEntityHeading(playerPed)
 
-        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, w = heading, heading = heading}
+        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, heading = heading}
     end
 
     function self.kick(reason)
@@ -689,6 +710,38 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.clearMeta = self.clearMetadata -- backward compatibility with esx-legacy
+
+    ---Gets the table of all players that are in-scope/in-range with the current player
+    ---@return table<number, true>
+    function self.getInScopePlayers()
+        return self.inScopePlayers
+    end
+
+    ---Checks if the target playerId is inside the scope/range of the current player
+    ---@param targetId integer
+    ---@return boolean
+    function self.isPlayerInScope(targetId)
+        return self.inScopePlayers[targetId]
+    end
+
+    ---Triggers a client event for all players that are in-scope/in-range with the current player
+    ---@param eventName string name of the client event
+    ---@param ... any
+    function self.triggerScopedEvent(eventName, ...)
+        for id in ipairs(self.inScopePlayers) do
+            TriggerClientEvent(eventName, id, ...)
+        end
+    end
+
+    ---Triggers a safe event for all players that are in-scope/in-range with the current player
+    ---@param eventName string -- name of the safe event
+    ---@param eventData? table -- data to send through the safe event
+    ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
+    function self.triggerSafeScopedEvent(eventName, eventData, eventOptions)
+        for id in ipairs(self.inScopePlayers) do
+            ESX.TriggerSafeEvent(eventName, id, eventData, eventOptions or {server = false, client = true})
+        end
+    end
 
     for fnName, fn in pairs(targetOverrides) do
         self[fnName] = fn(self)
