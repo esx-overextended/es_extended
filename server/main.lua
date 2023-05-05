@@ -323,39 +323,38 @@ AddEventHandler("chatMessage", function(playerId, _, message)
 
         local commandName = message:sub(1):gmatch("%w+")()
 
-        ESX.TriggerSafeEvent("esx:showNotification", playerId, { message = _U("commanderror_invalidcommand", commandName) }, { server = false, client = true })
+        ESX.TriggerSafeEvent("esx:showNotification", playerId, { message = _U("commanderror_invalidcommand", commandName), type = "error" }, { server = false, client = true })
     end
 end)
 
-AddEventHandler('playerDropped', function(reason)
-    local playerId = source
-    local xPlayer = ESX.GetPlayerFromId(playerId)
+---action to do when a player drops/logs out
+---@param source integer
+---@param reason? string
+---@param cb? function
+local function onPlayerLogout(source, reason, cb)
+    local xPlayer = ESX.GetPlayerFromId(source)
 
     if xPlayer then
-        TriggerEvent('esx:playerDropped', playerId, reason)
+        TriggerEvent("esx:playerDropped", source, reason)
 
         Core.PlayersByIdentifier[xPlayer.identifier] = nil
         Core.SavePlayer(xPlayer, function()
-            ESX.Players[playerId] = nil
-        end)
-    end
-end)
-
-AddEventHandler('esx:playerLogout', function(playerId, cb)
-    local xPlayer = ESX.GetPlayerFromId(playerId)
-    if xPlayer then
-        TriggerEvent('esx:playerDropped', playerId)
-
-        Core.PlayersByIdentifier[xPlayer.identifier] = nil
-        Core.SavePlayer(xPlayer, function()
-            ESX.Players[playerId] = nil
+            ESX.Players[source] = nil
             if cb then
                 cb()
             end
         end)
     end
 
-    ESX.TriggerSafeEvent("esx:onPlayerLogout", playerId, nil, { server = false, client = true })
+    ESX.TriggerSafeEvent("esx:onPlayerLogout", source, nil, { server = false, client = true })
+end
+
+AddEventHandler("playerDropped", function(reason)
+    onPlayerLogout(source, reason)
+end)
+
+AddEventHandler("esx:playerLogout", function(source, cb)
+    onPlayerLogout(source, "Logged out of character", cb)
 end)
 
 if not Config.OxInventory then
