@@ -1,5 +1,5 @@
 Config                             = {}
-Config.Debug                       = true
+Config.Debug                       = true -- Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstart license can join the server.
 
 Config.Locale                      = GetConvar('esx:locale', 'en')
 

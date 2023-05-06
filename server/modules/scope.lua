@@ -129,7 +129,3 @@ function ESX.TriggerSafeScopedEvent(eventName, scopeOwner, includeScopeOwner, ev
         ESX.TriggerSafeEvent(eventName, targetId, eventData, eventOptions or { server = false, client = true })
     end
 end
-
-RegisterCommand("scopes", function()
-    print(ESX.DumpTable(scopes))
-end, false)
