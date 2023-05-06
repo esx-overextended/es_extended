@@ -35,17 +35,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.weight = playerInventoryWeight
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
-    self.inScopePlayers = setmetatable({}, {
-        __index = function() return false end,
-        __newindex = function(inScopePlayers, index, value)
-            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
-            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
-                return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.inScopePlayers. This should ^5not^7 be happening!"):format(invokingResource))
-            end
-
-            rawset(inScopePlayers, tonumber(index), value)
-        end
-    })
+    self.inScopePlayers = {}
 
     if Config.Multichar then self.license = 'license'.. playerIdentifier:sub(playerIdentifier:find(':'), playerIdentifier:len()) else self.license = 'license:'..playerIdentifier end
 
