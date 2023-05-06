@@ -5,32 +5,26 @@
 ---@type table<integer, xScope>
 local scopes = {}
 
-AddEventHandler("playerEnteredScope", function(data)
-    local playerEntering, player = tonumber(data["player"]), tonumber(data["for"])
+---action to do when a player joins in
+---@param source integer
+local function onPlayerJoining(source)
+    source = tonumber(source) --[[@as number]]
 
-    if not scopes[player] then
-        scopes[player] = setmetatable({}, {
-            __index = function() return false end,
-            __newindex = function(self, index, value)
-                local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
-                if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
-                    return print(("[^3WARNING^7] Resource ^1%s^7 is modifying players' scope data. This should ^5not^7 be happening!"):format(invokingResource))
-                end
-
-                rawset(self, index, value)
+    scopes[source] = setmetatable({}, {
+        __index = function() return false end,
+        __newindex = function(self, index, value)
+            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
+            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
+                return print(("[^3WARNING^7] Resource ^1%s^7 is modifying players' scope data. This should ^5not^7 be happening!"):format(invokingResource))
             end
-        })
-    end
 
-    scopes[player][playerEntering] = true
-end)
+            rawset(self, index, value)
+        end
+    })
+end
 
-AddEventHandler("playerLeftScope", function(data)
-    local playerLeaving, player = tonumber(data["player"]), tonumber(data["for"])
-
-    if not scopes[player] then return end
-
-    scopes[player][playerLeaving] = nil
+AddEventHandler("playerJoining", function()
+    onPlayerJoining(source)
 end)
 
 ---action to do when a player drops/logs out
@@ -52,6 +46,36 @@ end
 AddEventHandler("playerDropped", function()
     onPlayerDropped(source)
 end)
+
+AddEventHandler("playerEnteredScope", function(data)
+    local playerEntering, player = tonumber(data["player"]), tonumber(data["for"]) --[[@as number]]
+
+    if not scopes[player] then
+        onPlayerJoining(player)
+        print(("[^4INFO^7] Player Id ^3%s^7 did not have its scope configured beforehand. However that is handled but it should not have happened!"):format(player))
+    end
+
+    scopes[player][playerEntering] = true
+end)
+
+AddEventHandler("playerLeftScope", function(data)
+    local playerLeaving, player = tonumber(data["player"]), tonumber(data["for"]) --[[@as number]]
+
+    if not scopes[player] then return end
+
+    scopes[player][playerLeaving] = nil
+end)
+
+local function onResourceStart(resource)
+    if resource ~= GetCurrentResourceName() then return end
+
+    for _, playerId in ipairs(GetPlayers()) do
+        onPlayerJoining(playerId)
+    end
+end
+
+AddEventHandler("onResourceStart", onResourceStart)
+AddEventHandler("onServerResourceStart", onResourceStart)
 
 ---Gets the table of all players that are inside the scope of a player id
 ---@param scopeOwner integer server id of the player/scope owner
@@ -113,3 +137,7 @@ function ESX.TriggerSafeScopedEvent(eventName, scopeOwner, includeScopeOwner, ev
         ESX.TriggerSafeEvent(eventName, targetId, eventData, eventOptions or { server = false, client = true })
     end
 end
+
+RegisterCommand("scopes", function()
+    print(ESX.DumpTable(scopes))
+end, false)
