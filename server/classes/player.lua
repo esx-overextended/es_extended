@@ -5,13 +5,7 @@ local self_metadata = {
         return rawget(self, index)
     end,
     __newindex = function(self, index, ...)
-        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource()))
-        elseif index == "inScopePlayers" then
-            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
-            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
-                return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.inScopePlayers. This should ^5not^7 be happening!"):format(invokingResource))
-            end
-        end
+        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource())) end
 
         rawset(self, index, ...)
     end
@@ -35,7 +29,6 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.weight = playerInventoryWeight
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
-    self.inScopePlayers = {}
 
     if Config.Multichar then self.license = 'license'.. playerIdentifier:sub(playerIdentifier:find(':'), playerIdentifier:len()) else self.license = 'license:'..playerIdentifier end
 
@@ -702,35 +695,34 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.clearMeta = self.clearMetadata -- backward compatibility with esx-legacy
 
     ---Gets the table of all players that are in-scope/in-range with the current player
-    ---@return table<number, true>
-    function self.getInScopePlayers()
-        return self.inScopePlayers
+    ---@param includeSelf? boolean include the current player within the return data (defaults to false)
+    ---@return xScope | nil
+    function self.getInScopePlayers(includeSelf)
+        return ESX.GetPlayersInScope(self.source, includeSelf)
     end
 
-    ---Checks if the target playerId is inside the scope/range of the current player
+    ---Checks if the target player id is inside the scope/range of the current player
     ---@param targetId integer
     ---@return boolean
     function self.isPlayerInScope(targetId)
-        return self.inScopePlayers[targetId]
+        return ESX.IsPlayerInScope(targetId, self.source)
     end
 
     ---Triggers a client event for all players that are in-scope/in-range with the current player
     ---@param eventName string name of the client event
+    ---@param includeSelf? boolean trigger the event for the current player (defaults to false)
     ---@param ... any
-    function self.triggerScopedEvent(eventName, ...)
-        for id in ipairs(self.inScopePlayers) do
-            TriggerClientEvent(eventName, id, ...)
-        end
+    function self.triggerScopedEvent(eventName, includeSelf, ...)
+        ESX.TriggerScopedEvent(eventName, self.source, includeSelf, ...)
     end
 
     ---Triggers a safe event for all players that are in-scope/in-range with the current player
-    ---@param eventName string -- name of the safe event
+    ---@param eventName string name of the safe event
+    ---@param includeSelf? boolean trigger the event for the current player (defaults to false)
     ---@param eventData? table -- data to send through the safe event
     ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
-    function self.triggerSafeScopedEvent(eventName, eventData, eventOptions)
-        for id in ipairs(self.inScopePlayers) do
-            ESX.TriggerSafeEvent(eventName, id, eventData, eventOptions or {server = false, client = true})
-        end
+    function self.triggerSafeScopedEvent(eventName, includeSelf, eventData, eventOptions)
+        ESX.TriggerSafeScopedEvent(eventName, self.source, includeSelf, eventData, eventOptions)
     end
 
     for fnName, fn in pairs(targetOverrides) do

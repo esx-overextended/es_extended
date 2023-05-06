@@ -4,7 +4,6 @@
 
 ---@type table<integer, xScope>
 local scopes = {}
-local syncedScopes = {}
 
 AddEventHandler("playerEnteredScope", function(data)
     local playerEntering, player = tonumber(data["player"]), tonumber(data["for"])
@@ -21,15 +20,6 @@ AddEventHandler("playerEnteredScope", function(data)
                 rawset(self, index, value)
             end
         })
-    end
-
-    if not syncedScopes[player] then
-        local xPlayer = ESX.GetPlayerFromId(player)
-
-        if xPlayer then
-            xPlayer.inScopePlayers = scopes[player] --- point the xPlayer.inScopePlayers table to the same memory as scopes[player]
-            syncedScopes[player] = true
-        end
     end
 
     scopes[player][playerEntering] = true
@@ -50,7 +40,7 @@ local function onPlayerDropped(source)
 
     if not source then return end
 
-    scopes[source], syncedScopes[source] = nil, nil
+    scopes[source] = nil
 
     for _, scopeData in ipairs(scopes) do
         if scopeData[source] then
@@ -60,10 +50,6 @@ local function onPlayerDropped(source)
 end
 
 AddEventHandler("playerDropped", function()
-    onPlayerDropped(source)
-end)
-
-AddEventHandler("esx:playerDropped", function(source)
     onPlayerDropped(source)
 end)
 
