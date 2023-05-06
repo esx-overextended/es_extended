@@ -86,6 +86,17 @@ function ESX.GetPlayersInScope(scopeOwner, includeScopeOwner)
     return xScope
 end
 
+---Checks whether the playerId can be found inside the scopeId
+---@param playerId integer target player id to check
+---@param scopeId integer scope id/scope of a player id to check
+---@return boolean
+function ESX.IsPlayerInScope(playerId, scopeId)
+    playerId = tonumber(playerId) --[[@as number]]
+    scopeId = tonumber(scopeId) --[[@as number]]
+
+    return playerId == scopeId or scopes[scopeId]?[playerId] == true
+end
+
 ---Triggers a client event for all players that are inside a scope id/scope of a player id
 ---@param eventName string name of the client event
 ---@param scopeOwner integer scope id/scope of a player id
