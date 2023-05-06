@@ -11,15 +11,7 @@ local function onPlayerJoining(source)
     source = tonumber(source) --[[@as number]]
 
     scopes[source] = setmetatable({}, {
-        __index = function() return false end,
-        __newindex = function(self, index, value)
-            local invokingResource, currentResource = GetInvokingResource(), GetCurrentResourceName()
-            if invokingResource and invokingResource ~= currentResource then -- not being triggered from the framework
-                return print(("[^3WARNING^7] Resource ^1%s^7 is modifying players' scope data. This should ^5not^7 be happening!"):format(invokingResource))
-            end
-
-            rawset(self, index, value)
-        end
+        __index = function() return false end
     })
 end
 
