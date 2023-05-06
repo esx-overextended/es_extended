@@ -36,7 +36,7 @@ local function onPlayerDropped(source)
 
     scopes[source] = nil
 
-    for _, scopeData in ipairs(scopes) do
+    for _, scopeData in pairs(scopes) do
         if scopeData[source] then
             scopeData[source] = nil
         end
@@ -117,7 +117,7 @@ function ESX.TriggerScopedEvent(eventName, scopeOwner, includeScopeOwner, ...)
 
     if not targets then return print(("[^3WARNING^7] No such scope (^5%s^7) is available!"):format(scopeOwner)) end
 
-    for targetId in ipairs(targets) do
+    for targetId in pairs(targets) do
         TriggerClientEvent(eventName, targetId, ...)
     end
 end
@@ -133,7 +133,7 @@ function ESX.TriggerSafeScopedEvent(eventName, scopeOwner, includeScopeOwner, ev
 
     if not targets then return print(("[^3WARNING^7] No such scope (^5%s^7) is available!"):format(scopeOwner)) end
 
-    for targetId in ipairs(targets) do
+    for targetId in pairs(targets) do
         ESX.TriggerSafeEvent(eventName, targetId, eventData, eventOptions or { server = false, client = true })
     end
 end

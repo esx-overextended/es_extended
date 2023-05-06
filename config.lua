@@ -1,4 +1,6 @@
 Config                             = {}
+Config.Debug                       = true
+
 Config.Locale                      = GetConvar('esx:locale', 'en')
 
 Config.MapName                     = "Los Santos"

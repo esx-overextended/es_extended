@@ -245,7 +245,7 @@ end
 local function onPlayerJoined(playerId)
     local identifier = ESX.GetIdentifier(playerId)
     if identifier then
-        if ESX.GetPlayerFromIdentifier(identifier) then
+        if not Config.Debug and ESX.GetPlayerFromIdentifier(identifier) then
             DropPlayer(playerId,
                 ('there was an error loading your character!\nError code: identifier-active-ingame\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s')
                 :format(identifier))
@@ -293,7 +293,7 @@ else
         end
 
         if identifier then
-            if ESX.GetPlayerFromIdentifier(identifier) then
+            if not Config.Debug and ESX.GetPlayerFromIdentifier(identifier) then
                 return deferrals.done(('[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s')
                     :format(identifier))
             else
@@ -301,7 +301,7 @@ else
             end
         else
             return deferrals.done(
-                '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
+            '[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
         end
     end)
 
