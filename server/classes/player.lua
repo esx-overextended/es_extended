@@ -42,13 +42,17 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     stateBag:set("name", self.name, true)
     stateBag:set("metadata", self.metadata, true)
 
+    ---Triggers a client event for the current player
+    ---@param eventName string name of the client event
+    ---@param ... any
     function self.triggerEvent(eventName, ...)
         TriggerClientEvent(eventName, self.source, ...)
     end
 
-    ---@param eventName string
-    ---@param eventData? table
-    ---@param eventOptions? CEventOptions (defaults to {server = false, client = true})
+    ---Triggers a safe event for the current player
+    ---@param eventName string -- name of the safe event
+    ---@param eventData? table -- data to send through the safe event
+    ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
     function self.triggerSafeEvent(eventName, eventData, eventOptions)
         ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
     end
@@ -68,7 +72,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local coords = GetEntityCoords(playerPed)
         local heading = GetEntityHeading(playerPed)
 
-        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, w = heading, heading = heading}
+        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, heading = heading}
     end
 
     function self.kick(reason)
@@ -689,6 +693,44 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         Player(self.source).state:set('metadata', self.metadata, true)
     end
     self.clearMeta = self.clearMetadata -- backward compatibility with esx-legacy
+
+    ---Gets the table of all players that are in-scope/in-range with the current player
+    ---@param includeSelf? boolean include the current player within the return data (defaults to false)
+    ---@return xScope | nil
+    function self.getInScopePlayers(includeSelf)
+        return ESX.GetPlayersInScope(self.source, includeSelf)
+    end
+
+    ---Checks if the current player is inside the scope/range of the target player id
+    ---@param targetId integer
+    ---@return boolean
+    function self.isInPlayerScope(targetId)
+        return ESX.IsPlayerInScope(self.source, targetId)
+    end
+
+    ---Checks if the target player id is inside the scope/range of the current player
+    ---@param targetId integer
+    ---@return boolean
+    function self.isPlayerInScope(targetId)
+        return ESX.IsPlayerInScope(targetId, self.source)
+    end
+
+    ---Triggers a client event for all players that are in-scope/in-range with the current player
+    ---@param eventName string name of the client event
+    ---@param includeSelf? boolean trigger the event for the current player (defaults to false)
+    ---@param ... any
+    function self.triggerScopedEvent(eventName, includeSelf, ...)
+        ESX.TriggerScopedEvent(eventName, self.source, includeSelf, ...)
+    end
+
+    ---Triggers a safe event for all players that are in-scope/in-range with the current player
+    ---@param eventName string name of the safe event
+    ---@param includeSelf? boolean trigger the event for the current player (defaults to false)
+    ---@param eventData? table -- data to send through the safe event
+    ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
+    function self.triggerSafeScopedEvent(eventName, includeSelf, eventData, eventOptions)
+        ESX.TriggerSafeScopedEvent(eventName, self.source, includeSelf, eventData, eventOptions)
+    end
 
     for fnName, fn in pairs(targetOverrides) do
         self[fnName] = fn(self)
