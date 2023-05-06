@@ -88,8 +88,8 @@ end
 
 ---Triggers a client event for all players that are inside a scope id/scope of a player id
 ---@param eventName string name of the client event
----@param scopeOwner integer name of the client event
----@param includeScopeOwner? boolean include the scope owner within the return data (defaults to false)
+---@param scopeOwner integer scope id/scope of a player id
+---@param includeScopeOwner? boolean trigger the event for the scopeOwner (defaults to false)
 ---@param ... any
 function ESX.TriggerScopedEvent(eventName, scopeOwner, includeScopeOwner, ...)
     local targets = ESX.GetPlayersInScope(scopeOwner, includeScopeOwner)
@@ -98,5 +98,21 @@ function ESX.TriggerScopedEvent(eventName, scopeOwner, includeScopeOwner, ...)
 
     for targetId in ipairs(targets) do
         TriggerClientEvent(eventName, targetId, ...)
+    end
+end
+
+---Triggers a safe client event for all players that are inside a scope id/scope of a player id
+---@param eventName string name of the safe event
+---@param scopeOwner integer scope id/scope of a player id
+---@param includeScopeOwner? boolean trigger the event for the scopeOwner (defaults to false)
+---@param eventData? table -- data to send through the safe event
+---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
+function ESX.TriggerSafeScopedEvent(eventName, scopeOwner, includeScopeOwner, eventData, eventOptions)
+    local targets = ESX.GetPlayersInScope(scopeOwner, includeScopeOwner)
+
+    if not targets then return print(("[^3WARNING^7] No such scope (^5%s^7) is available!"):format(scopeOwner)) end
+
+    for targetId in ipairs(targets) do
+        ESX.TriggerSafeEvent(eventName, targetId, eventData, eventOptions or { server = false, client = true })
     end
 end
