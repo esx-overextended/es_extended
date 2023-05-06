@@ -701,6 +701,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         return ESX.GetPlayersInScope(self.source, includeSelf)
     end
 
+    ---Checks if the current player is inside the scope/range of the target player id
+    ---@param targetId integer
+    ---@return boolean
+    function self.isInPlayerScope(targetId)
+        return ESX.IsPlayerInScope(self.source, targetId)
+    end
+
     ---Checks if the target player id is inside the scope/range of the current player
     ---@param targetId integer
     ---@return boolean
