@@ -104,7 +104,7 @@ function ESX.IsPlayerInScope(playerId, scopeId)
     playerId = tonumber(playerId) --[[@as number]]
     scopeId = tonumber(scopeId) --[[@as number]]
 
-    return playerId == scopeId or scopes[scopeId]?[playerId] == true
+    return scopes[scopeId] and (playerId == scopeId or scopes[scopeId][playerId] == true) or false
 end
 
 ---Triggers a client event for all players that are inside a scope id/scope of a player id
