@@ -19,4 +19,18 @@ if not IsDuplicityVersion() then -- Only register this event for the client
         ESX.PlayerLoaded = false
         ESX.PlayerData = {}
     end)
+else -- Only register this event for the server
+    local _GetPlayerFromId = ESX.GetPlayerFromId
+    ---@diagnostic disable-next-line: duplicate-set-field
+    function ESX.GetPlayerFromId(playerId)
+        local xPlayer = _GetPlayerFromId(playerId)
+
+        return xPlayer and setmetatable(xPlayer, {
+            __index = function(self, index)
+                if index == "coords" then return self.getCoords() end
+
+                return rawget(self, index)
+            end
+        })
+    end
 end

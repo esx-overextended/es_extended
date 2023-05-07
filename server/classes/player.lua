@@ -1,20 +1,7 @@
-local self_metadata = {
-    __index = function(self, index)
-        if index == "coords" then return self.getCoords() end
-
-        return rawget(self, index)
-    end,
-    __newindex = function(self, index, ...)
-        if index == "coords" then return print(("[^3WARNING^7] Resource ^1%s^7 is assigning a value to xPlayer.coords. This should ^5not^7 be happening!"):format(GetInvokingResource())) end
-
-        rawset(self, index, ...)
-    end
-}
-
 function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 
-    local self = setmetatable({}, self_metadata)
+    local self = {}
 
     self.accounts = playerAccounts
     self.group = playerGroup
