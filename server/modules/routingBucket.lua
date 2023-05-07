@@ -18,7 +18,7 @@ local function configureBucket(bucketId)
         __newindex = function(self, index, value)
             rawset(self, index, value)
 
-            routingBucketPlayers[index] = bucketId
+            routingBucketPlayers[index] = value and bucketId
 
             if value then
                 SetPlayerRoutingBucket(index, bucketId)
@@ -62,6 +62,17 @@ AddEventHandler("playerDropped", function()
     onPlayerDropped(source)
 end)
 
+local function onResourceStart(resource)
+    if resource ~= GetCurrentResourceName() then return end
+
+    for _, playerId in ipairs(GetPlayers()) do
+        onPlayerJoining(playerId)
+    end
+end
+
+AddEventHandler("onResourceStart", onResourceStart)
+AddEventHandler("onServerResourceStart", onResourceStart)
+
 ---Adds the player id to the routing bucket id
 ---@param playerId integer
 ---@param bucketId integer
@@ -70,12 +81,12 @@ function ESX.SetPlayerRoutingBucket(playerId, bucketId)
     playerId = tonumber(playerId) --[[@as number]]
     bucketId = tonumber(bucketId) --[[@as number]]
 
-    if not playerId or not bucketId then return false end
+    if not playerId or not bucketId or GetPlayerPing(playerId) == 0 then return false end
 
-    local currentBucketId = routingBucketPlayers[source]
+    local currentBucketId = routingBucketPlayers[playerId]
 
     if currentBucketId then
-        routingBuckets[currentBucketId][playerId] = nil
+        getmetatable(routingBuckets[currentBucketId]).__newindex(routingBuckets[currentBucketId], playerId, nil)
     end
 
     configureBucket(bucketId)
@@ -102,3 +113,8 @@ function ESX.GetRoutingBucketPlayers(bucketId)
 
     return routingBuckets[bucketId]
 end
+
+RegisterCommand("buckets", function()
+    print("routingBuckets", ESX.DumpTable(routingBuckets))
+    print("routingBucketPlayers", ESX.DumpTable(routingBucketPlayers))
+end)
