@@ -84,7 +84,7 @@ local function onPlayerDropped(source)
 
     if not bucketId then return print(("[^3WARNING^7] Player Id (^5%s^7) surprisingly did not have routing bucket id assigned!"):format(source)) end
 
-    getmetatable(routingBuckets[bucketId].players).__newindex(routingBuckets[bucketId],players, source, nil)
+    getmetatable(routingBuckets[bucketId].players).__newindex(routingBuckets[bucketId].players, source, nil)
 end
 
 AddEventHandler("playerDropped", function()
