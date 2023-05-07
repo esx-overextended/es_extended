@@ -1,37 +1,66 @@
 ---@alias playerId integer
+---@alias entityId integer
 ---@alias routingBucket integer
----@alias routingBucketData table<integer, true>
+---@alias routingBucketPlayersData table<playerId, true>
+---@alias routingBucketEntitiesData table<entityId, true>
+
+---@class routingBucketData
+---@field players routingBucketPlayersData
+---@field entities routingBucketEntitiesData
 
 
 ---@type table<routingBucket, routingBucketData>
 local routingBuckets = {}
 ---@type table<playerId, routingBucket>
 local routingBucketPlayers = {}
+---@type table<entityId, routingBucket>
+local routingBucketEntities = {}
 
 ---Setup routing bucket table (for internal use)
----@param bucketId integer
+---@param bucketId routingBucket
 local function configureBucket(bucketId)
     if routingBuckets[bucketId] then return end
 
-    routingBuckets[bucketId] = setmetatable({}, {
-        __index = function() return false end,
-        __newindex = function(self, index, value)
-            rawset(self, index, value)
+    routingBuckets[bucketId] = {
+        players = setmetatable({}, {
+            __index = function() return false end,
+            __newindex = function(self, index, value)
+                rawset(self, index, value)
 
-            routingBucketPlayers[index] = value and bucketId
+                routingBucketPlayers[index] = value and bucketId
 
-            if value then
-                SetPlayerRoutingBucket(index, bucketId)
-                ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
+                if value then
+                    SetPlayerRoutingBucket(index, bucketId)
+                    ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
+                end
+
+                if next(routingBuckets[bucketId].players) or next(routingBuckets[bucketId].entities) then return end
+
+                routingBuckets[bucketId] = nil
             end
+        }),
+        entities = setmetatable({}, {
+            __index = function() return false end,
+            __newindex = function(self, index, value)
+                rawset(self, index, value)
 
-            if not next(routingBuckets[bucketId]) then routingBuckets[bucketId] = nil end
-        end
-    })
+                routingBucketEntities[index] = value and bucketId
+
+                if value then
+                    SetEntityRoutingBucket(index, bucketId)
+                    TriggerEvent("esx:setEntityRoutingBucket", index, bucketId)
+                end
+
+                if next(routingBuckets[bucketId].entities) or next(routingBuckets[bucketId].players) then return end
+
+                routingBuckets[bucketId] = nil
+            end
+        })
+    }
 end
 
 ---action to do when a player joins in
----@param source integer
+---@param source playerId
 local function onPlayerJoining(source)
     source = tonumber(source) --[[@as number]]
 
@@ -45,7 +74,7 @@ AddEventHandler("playerJoining", function()
 end)
 
 ---action to do when a player drops/logs out
----@param source integer
+---@param source playerId
 local function onPlayerDropped(source)
     source = tonumber(source) --[[@as number]]
 
@@ -55,7 +84,7 @@ local function onPlayerDropped(source)
 
     if not bucketId then return print(("[^3WARNING^7] Player Id (^5%s^7) surprisingly did not have routing bucket id assigned!"):format(source)) end
 
-    getmetatable(routingBuckets[bucketId]).__newindex(routingBuckets[bucketId], source, nil)
+    getmetatable(routingBuckets[bucketId].players).__newindex(routingBuckets[bucketId],players, source, nil)
 end
 
 AddEventHandler("playerDropped", function()
@@ -74,8 +103,8 @@ AddEventHandler("onResourceStart", onResourceStart)
 AddEventHandler("onServerResourceStart", onResourceStart)
 
 ---Adds the player id to the routing bucket id
----@param playerId integer
----@param bucketId integer
+---@param playerId playerId
+---@param bucketId routingBucket
 ---@return boolean
 function ESX.SetPlayerRoutingBucket(playerId, bucketId)
     playerId = tonumber(playerId) --[[@as number]]
@@ -86,18 +115,41 @@ function ESX.SetPlayerRoutingBucket(playerId, bucketId)
     local currentBucketId = routingBucketPlayers[playerId]
 
     if currentBucketId then
-        getmetatable(routingBuckets[currentBucketId]).__newindex(routingBuckets[currentBucketId], playerId, nil)
+        getmetatable(routingBuckets[currentBucketId].players).__newindex(routingBuckets[currentBucketId].players, playerId, nil)
     end
 
     configureBucket(bucketId)
 
-    routingBuckets[bucketId][playerId] = true
+    routingBuckets[bucketId].players[playerId] = true
+
+    return true
+end
+
+---Adds the entity id to the routing bucket id
+---@param entityId entityId
+---@param bucketId routingBucket
+---@return boolean
+function ESX.SetEntityRoutingBucket(entityId, bucketId)
+    entityId = tonumber(entityId) --[[@as number]]
+    bucketId = tonumber(bucketId) --[[@as number]]
+
+    if not entityId or not bucketId or not DoesEntityExist(entityId) then return false end
+
+    local currentBucketId = routingBucketEntities[entityId]
+
+    if currentBucketId then
+        getmetatable(routingBuckets[currentBucketId].entities).__newindex(routingBuckets[currentBucketId].entities, entityId, nil)
+    end
+
+    configureBucket(bucketId)
+
+    routingBuckets[bucketId].entities[entityId] = true
 
     return true
 end
 
 ---Gets the routing bucket id that the player id is inside
----@param playerId integer
+---@param playerId playerId
 ---@return routingBucket | nil
 function ESX.GetPlayerRoutingBucket(playerId)
     playerId = tonumber(playerId) --[[@as number]]
@@ -105,10 +157,37 @@ function ESX.GetPlayerRoutingBucket(playerId)
     return routingBucketPlayers[playerId]
 end
 
----Gets the routing bucket id that the player id is inside
----@param bucketId integer
----@return routingBucketData | nil
+---Gets the routing bucket id that the entity id is inside
+---@param entityId entityId
+---@return routingBucket | nil
+function ESX.GetEntityRoutingBucket(entityId)
+    entityId = tonumber(entityId) --[[@as number]]
+
+    return routingBucketEntities[entityId]
+end
+
+---Gets all of the players inside the routing bucket id
+---@param bucketId routingBucket
+---@return routingBucketPlayersData | nil
 function ESX.GetRoutingBucketPlayers(bucketId)
+    bucketId = tonumber(bucketId) --[[@as number]]
+
+    return routingBuckets[bucketId]?.players
+end
+
+---Gets all of the entities inside the routing bucket id
+---@param bucketId routingBucket
+---@return routingBucketEntitiesData | nil
+function ESX.GetRoutingBucketEntities(bucketId)
+    bucketId = tonumber(bucketId) --[[@as number]]
+
+    return routingBuckets[bucketId]?.entities
+end
+
+---Gets all of the routing bucket id data (players & entities)
+---@param bucketId routingBucket
+---@return routingBucketData | nil
+function ESX.GetRoutingBucketData(bucketId)
     bucketId = tonumber(bucketId) --[[@as number]]
 
     return routingBuckets[bucketId]
@@ -117,4 +196,5 @@ end
 RegisterCommand("buckets", function()
     print("routingBuckets", ESX.DumpTable(routingBuckets))
     print("routingBucketPlayers", ESX.DumpTable(routingBucketPlayers))
+    print("routingBucketEntities", ESX.DumpTable(routingBucketEntities))
 end)
