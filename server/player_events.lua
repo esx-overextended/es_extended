@@ -17,3 +17,7 @@ end)
 ESX.RegisterSafeEvent("esx:setMetadata", function(value)
     TriggerEvent("esx:setMetadata", value.source, value.currentMetadata, value.lastMetadata)
 end)
+
+ESX.RegisterSafeEvent("esx:setPlayerRoutingBucket", function(value)
+    TriggerEvent("esx:setPlayerRoutingBucket", value.source, value.routingBucket)
+end)

@@ -103,3 +103,7 @@ end)
 ESX.RegisterSafeEvent("esx:killPlayer", function(_)
     TriggerEvent("esx:killPlayer")
 end)
+
+ESX.RegisterSafeEvent("esx:setPlayerRoutingBucket", function(value)
+    TriggerEvent("esx:setPlayerRoutingBucket", value.routingBucket)
+end)
