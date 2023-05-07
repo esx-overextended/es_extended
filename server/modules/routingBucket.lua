@@ -93,3 +93,12 @@ function ESX.GetPlayerRoutingBucket(playerId)
 
     return routingBucketPlayers[playerId]
 end
+
+---Gets the routing bucket id that the player id is inside
+---@param bucketId integer
+---@return routingBucketData | nil
+function ESX.GetRoutingBucketPlayers(bucketId)
+    bucketId = tonumber(bucketId) --[[@as number]]
+
+    return routingBuckets[bucketId]
+end
