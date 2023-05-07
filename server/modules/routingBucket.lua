@@ -84,3 +84,12 @@ function ESX.SetPlayerRoutingBucket(playerId, bucketId)
 
     return true
 end
+
+---Gets the routing bucket id that the player id is inside
+---@param playerId integer
+---@return routingBucket | nil
+function ESX.GetPlayerRoutingBucket(playerId)
+    playerId = tonumber(playerId) --[[@as number]]
+
+    return routingBucketPlayers[playerId]
+end
