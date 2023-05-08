@@ -208,9 +208,3 @@ function ESX.GetRoutingBucketData(bucketId)
 
     return routingBuckets[bucketId]
 end
-
-RegisterCommand("buckets", function()
-    print("routingBuckets", ESX.DumpTable(routingBuckets))
-    print("routingBucketPlayers", ESX.DumpTable(routingBucketPlayers))
-    print("routingBucketEntities", ESX.DumpTable(routingBucketEntities))
-end)

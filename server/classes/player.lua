@@ -720,7 +720,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     ---Gets the routing bucket id that the current player is inside
-    ---@return routingBucket
+    ---@return routingBucket | nil
     function self.getRoutingBucket()
         return ESX.GetPlayerRoutingBucket(self.source)
     end
