@@ -719,6 +719,19 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         ESX.TriggerSafeScopedEvent(eventName, self.source, includeSelf, eventData, eventOptions)
     end
 
+    ---Gets the routing bucket id that the current player is inside
+    ---@return routingBucket
+    function self.getRoutingBucket()
+        return ESX.GetPlayerRoutingBucket(self.source)
+    end
+
+    ---Adds the current player to the routing bucket id
+    ---@param bucketId routingBucket
+    ---@return boolean
+    function self.setRoutingBucket(bucketId)
+        return ESX.SetPlayerRoutingBucket(self.source, bucketId)
+    end
+
     for fnName, fn in pairs(targetOverrides) do
         self[fnName] = fn(self)
     end
