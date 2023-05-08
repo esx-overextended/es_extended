@@ -104,6 +104,20 @@ end
 AddEventHandler("onResourceStart", onResourceStart)
 AddEventHandler("onServerResourceStart", onResourceStart)
 
+--[[ -- we can but we don't need to cache all entities as it makes the cache tables so much populated
+AddEventHandler("entityCreated", function(entityId)
+    if not DoesEntityExist(entityId) then return end
+
+    ESX.SetEntityRoutingBucket(entityId, GetEntityRoutingBucket(entityId))
+end)
+]]
+
+AddEventHandler("entityRemoved", function(entityId)
+    if not routingBucketEntities[entityId] then return end
+
+    getmetatable(routingBuckets[routingBucketEntities[entityId]].entities).__newindex(routingBuckets[routingBucketEntities[entityId]].entities, entityId, nil)
+end)
+
 ---Adds the player id to the routing bucket id
 ---@param playerId playerId
 ---@param bucketId routingBucket
