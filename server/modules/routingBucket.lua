@@ -32,6 +32,7 @@ local function configureBucket(bucketId)
                 if value then
                     SetPlayerRoutingBucket(index, bucketId)
                     ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
+                    if ESX.Players[index] then ESX.Players[index].set("routingBucket", bucketId) end
                 end
 
                 if next(routingBuckets[bucketId].players) or next(routingBuckets[bucketId].entities) then return end
@@ -49,6 +50,7 @@ local function configureBucket(bucketId)
                 if value then
                     SetEntityRoutingBucket(index, bucketId)
                     TriggerEvent("esx:setEntityRoutingBucket", index, bucketId)
+                    Entity(index).state:set("routingBucket", bucketId, true) -- TODO: once vehicle class is implemented, change this
                 end
 
                 if next(routingBuckets[bucketId].entities) or next(routingBuckets[bucketId].players) then return end
