@@ -14,6 +14,8 @@
 
 * Enhanced Context Menu Functionality: Adapted context-menu-related functions to utilize ox_lib's UI while ensuring backward compatibility. This update allows users to continue using the previous esx_context if desired, while benefiting from ox_lib's context UI look.
 
+* Added Some Modules and Functions: Included some modules such as safe event, onesync scope, and routing bucket for better management and consistency across all external resources that utilize ESX object.
+
 * Reduced Framework Dependency Resources: This aims to streamline resource allocation by minimizing the framework's dependency resources. **(WIP)**
 
 
