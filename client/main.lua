@@ -53,23 +53,6 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
         NetworkSetFriendlyFireOption(true)
     end
 
-    if Config.EnableHud then
-        for i = 1, #(ESX.PlayerData.accounts) do
-            local accountTpl = '<div><img src="img/accounts/' .. ESX.PlayerData.accounts[i].name .. '.png"/>&nbsp;{{money}}</div>'
-            ESX.UI.HUD.RegisterElement('account_' .. ESX.PlayerData.accounts[i].name, i, 0, accountTpl, { money = ESX.Math.GroupDigits(ESX.PlayerData.accounts[i].money) })
-        end
-
-        local jobTpl = '<div>{{job_label}}{{grade_label}}</div>'
-
-        local gradeLabel = ESX.PlayerData.job.grade_label ~= ESX.PlayerData.job.label and ESX.PlayerData.job.grade_label or ''
-        if gradeLabel ~= '' then gradeLabel = ' - ' .. gradeLabel end
-
-        ESX.UI.HUD.RegisterElement('job', #ESX.PlayerData.accounts, 0, jobTpl, {
-            job_label = ESX.PlayerData.job.label,
-            grade_label = gradeLabel
-        })
-    end
-
     local playerId = PlayerId()
 
     -- RemoveHudCommonents
@@ -197,8 +180,6 @@ end)
 
 AddEventHandler("esx:onPlayerLogout", function()
     ESX.PlayerLoaded = false
-
-    if Config.EnableHud then ESX.UI.HUD.Reset() end
 end)
 
 AddEventHandler("esx:setMaxWeight", function(newMaxWeight)
@@ -285,12 +266,6 @@ AddEventHandler("esx:setAccountMoney", function(account)
     end
 
     ESX.SetPlayerData('accounts', ESX.PlayerData.accounts)
-
-    if Config.EnableHud then
-        ESX.UI.HUD.UpdateElement('account_' .. account.name, {
-            money = ESX.Math.GroupDigits(account.money)
-        })
-    end
 end)
 
 if not Config.OxInventory then
@@ -354,15 +329,6 @@ end
 
 AddEventHandler('esx:setJob', function(job)
     ESX.SetPlayerData('job', job)
-
-    if Config.EnableHud then
-        local gradeLabel = job.grade_label ~= job.label and job.grade_label or ''
-        if gradeLabel ~= '' then gradeLabel = ' - ' .. gradeLabel end
-        ESX.UI.HUD.UpdateElement('job', {
-            job_label = job.label,
-            grade_label = gradeLabel
-        })
-    end
 end)
 
 AddEventHandler('esx:setMetadata', function(metadata)
@@ -423,29 +389,6 @@ if not Config.OxInventory then
             ESX.Game.DeleteObject(pickups[pickupId].obj)
             pickups[pickupId] = nil
         end
-    end)
-end
-
--- Pause menu disables HUD display
-if Config.EnableHud then
-    CreateThread(function()
-        local isPauseMenuActive = false
-
-        while true do
-            if IsPauseMenuActive() and not isPauseMenuActive then
-                isPauseMenuActive = true
-                ESX.UI.HUD.SetDisplay(0.0)
-            elseif not IsPauseMenuActive() and isPauseMenuActive then
-                isPauseMenuActive = false
-                ESX.UI.HUD.SetDisplay(1.0)
-            end
-
-            Wait(500)
-        end
-    end)
-
-    AddEventHandler('esx:loadingScreenOff', function()
-        ESX.UI.HUD.SetDisplay(1.0)
     end)
 end
 
