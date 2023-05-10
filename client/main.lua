@@ -356,10 +356,10 @@ AddEventHandler('esx:setJob', function(job)
     ESX.SetPlayerData('job', job)
 
     if Config.EnableHud then
-        local gradeLabel = Job.grade_label ~= Job.label and Job.grade_label or ''
+        local gradeLabel = job.grade_label ~= job.label and job.grade_label or ''
         if gradeLabel ~= '' then gradeLabel = ' - ' .. gradeLabel end
         ESX.UI.HUD.UpdateElement('job', {
-            job_label = Job.label,
+            job_label = job.label,
             grade_label = gradeLabel
         })
     end
