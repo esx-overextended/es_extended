@@ -27,6 +27,7 @@ Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading
 
 Config.EnablePaycheck              = true      -- enable paycheck
 Config.EnableSocietyPayouts        = false     -- pay from the society account that the player is employed at? Requirement: esx_society
+Config.EnableHud                   = false     -- enable the default hud? Display current job and accounts (black, bank & cash)
 Config.MaxWeight                   = 30        -- the max inventory weight without backpack
 Config.PaycheckInterval            = 7 * 60000 -- how often to recieve pay checks in milliseconds
 Config.EnableDebug                 = false     -- Use Debug options?
