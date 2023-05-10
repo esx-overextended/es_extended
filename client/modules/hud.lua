@@ -132,7 +132,8 @@ end)
 
 if Config.EnableHud then
     CreateThread(function()
-        local isPauseMenuActive, shouldHideHud = nil, false
+        local isPauseMenuActive
+        local shouldHideHud = false
 
         while true do
             isPauseMenuActive = IsPauseMenuActive()
