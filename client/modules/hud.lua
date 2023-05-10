@@ -1,11 +1,25 @@
 ESX.UI.HUD = {}
+ESX.UI.HUD.Hidden = false
+ESX.UI.HUD.Showing = false
 ESX.UI.HUD.RegisteredElements = {}
 
+function ESX.UI.HUD.IsHidden()
+    return ESX.UI.HUD.Hidden
+end
+
+function ESX.UI.HUD.IsShowing()
+    return ESX.UI.HUD.Showing
+end
+
 function ESX.UI.HUD.SetDisplay(opacity)
+    if ESX.UI.HUD.Hidden then return end
+
     SendNUIMessage({
         action = "setHUDDisplay",
         opacity = opacity
     })
+
+    ESX.UI.HUD.Showing = opacity == 1.0
 end
 
 function ESX.UI.HUD.RegisterElement(name, index, priority, html, data)
@@ -18,9 +32,7 @@ function ESX.UI.HUD.RegisterElement(name, index, priority, html, data)
         end
     end
 
-    if found then
-        return
-    end
+    if found then return end
 
     ESX.UI.HUD.RegisteredElements[#ESX.UI.HUD.RegisteredElements + 1] = name
 
@@ -54,6 +66,7 @@ function ESX.UI.HUD.Reset()
     SendNUIMessage({
         action = "resetHUDElements"
     })
+
     ESX.UI.HUD.RegisteredElements = {}
 end
 
@@ -111,16 +124,24 @@ AddEventHandler("esx:setJob", function(job)
     })
 end)
 
+AddEventHandler("esx:loadingScreenOff", function()
+    if not Config.EnableHud then return end
+
+    ESX.UI.HUD.SetDisplay(1.0)
+end)
+
 if Config.EnableHud then
     CreateThread(function()
-        local isPauseMenuActive = false
+        local isPauseMenuActive, shouldHideHud = nil, false
 
         while true do
-            if IsPauseMenuActive() and not isPauseMenuActive then
-                isPauseMenuActive = true
+            isPauseMenuActive = IsPauseMenuActive()
+
+            if isPauseMenuActive and not shouldHideHud then
+                shouldHideHud = true
                 ESX.UI.HUD.SetDisplay(0.0)
-            elseif not IsPauseMenuActive() and isPauseMenuActive then
-                isPauseMenuActive = false
+            elseif not isPauseMenuActive and shouldHideHud then
+                shouldHideHud = false
                 ESX.UI.HUD.SetDisplay(1.0)
             end
 
@@ -128,7 +149,13 @@ if Config.EnableHud then
         end
     end)
 
-    AddEventHandler("esx:loadingScreenOff", function()
-        ESX.UI.HUD.SetDisplay(1.0)
+    ESX.RegisterInput("es_extended_hud_button", "Show/Hide Hud", "KEYBOARD", Config.HudButton, function()
+        if not ESX.UI.HUD.Hidden then
+            ESX.UI.HUD.SetDisplay(0.0)
+            ESX.UI.HUD.Hidden = true
+        else
+            ESX.UI.HUD.Hidden = false
+            ESX.UI.HUD.SetDisplay(1.0)
+        end
     end)
 end
