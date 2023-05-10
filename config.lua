@@ -1,5 +1,5 @@
 Config                             = {}
-Config.Debug                       = true -- Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstart license can join the server.
+Config.EnableDebug                 = false -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
 
 Config.Locale                      = GetConvar('esx:locale', 'en')
 
@@ -31,7 +31,6 @@ Config.EnableHud                   = true      -- enable the default hud? Displa
 Config.HudButton                   = "GRAVE"   -- button to show/hide hud. Only works if Config.EnableHud is true (https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard)
 Config.MaxWeight                   = 30        -- the max inventory weight without backpack
 Config.PaycheckInterval            = 7 * 60000 -- how often to recieve pay checks in milliseconds
-Config.EnableDebug                 = false     -- Use Debug options?
 Config.EnableDefaultInventory      = true      -- Display the default Inventory ( F2 )
 Config.EnableWantedLevel           = false     -- Use Normal GTA wanted Level?
 Config.EnablePVP                   = true      -- Allow Player to player combat
