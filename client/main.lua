@@ -30,7 +30,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
         }, function()
             TriggerServerEvent('esx:onPlayerSpawn')
             TriggerEvent('esx:onPlayerSpawn')
-            TriggerEvent('esx:restoreLoadout')
+            TriggerEvent("esx:restoreLoadout")
 
             if isNew then
                 TriggerEvent('skinchanger:loadDefaultModel', skin.sex == 0)
@@ -203,34 +203,32 @@ AddEventHandler('skinchanger:modelLoaded', function()
     while not ESX.PlayerLoaded do
         Wait(100)
     end
-    TriggerEvent('esx:restoreLoadout')
+    TriggerEvent("esx:restoreLoadout")
 end)
 
-AddEventHandler('esx:restoreLoadout', function()
-    ESX.SetPlayerData('ped', PlayerPedId())
+AddEventHandler("esx:restoreLoadout", function()
+    if Config.OxInventory or not ESX.PlayerData.loadout then return end
 
-    if not Config.OxInventory then
-        local ammoTypes = {}
-        RemoveAllPedWeapons(ESX.PlayerData.ped, true)
+    local ammoTypes = {}
+    RemoveAllPedWeapons(ESX.PlayerData.ped, true)
 
-        for _, v in ipairs(ESX.PlayerData.loadout) do
-            local weaponName = v.name
-            local weaponHash = joaat(weaponName)
+    for _, v in ipairs(ESX.PlayerData.loadout) do
+        local weaponName = v.name
+        local weaponHash = joaat(weaponName)
 
-            GiveWeaponToPed(ESX.PlayerData.ped, weaponHash, 0, false, false)
-            SetPedWeaponTintIndex(ESX.PlayerData.ped, weaponHash, v.tintIndex)
+        GiveWeaponToPed(ESX.PlayerData.ped, weaponHash, 0, false, false)
+        SetPedWeaponTintIndex(ESX.PlayerData.ped, weaponHash, v.tintIndex)
 
-            local ammoType = GetPedAmmoTypeFromWeapon(ESX.PlayerData.ped, weaponHash)
+        local ammoType = GetPedAmmoTypeFromWeapon(ESX.PlayerData.ped, weaponHash)
 
-            for _, v2 in ipairs(v.components) do
-                local componentHash = ESX.GetWeaponComponent(weaponName, v2).hash
-                GiveWeaponComponentToPed(ESX.PlayerData.ped, weaponHash, componentHash)
-            end
+        for _, v2 in ipairs(v.components) do
+            local componentHash = ESX.GetWeaponComponent(weaponName, v2).hash
+            GiveWeaponComponentToPed(ESX.PlayerData.ped, weaponHash, componentHash)
+        end
 
-            if not ammoTypes[ammoType] then
-                AddAmmoToPed(ESX.PlayerData.ped, weaponHash, v.ammo)
-                ammoTypes[ammoType] = true
-            end
+        if not ammoTypes[ammoType] then
+            AddAmmoToPed(ESX.PlayerData.ped, weaponHash, v.ammo)
+            ammoTypes[ammoType] = true
         end
     end
 end)
@@ -682,4 +680,5 @@ end
 
 lib.onCache("ped", function(value)
     ESX.SetPlayerData("ped", value)
+    TriggerEvent("esx:restoreLoadout")
 end)
