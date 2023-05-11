@@ -151,6 +151,7 @@ function ESX.UI.Menu.Open(type, namespace, name, data, submit, cancel, change, c
     menu.submit = submit
     menu.cancel = cancel
     menu.change = change
+    menu.lastIndex = 1
 
     menu.close = function()
         for i = 1, #ESX.UI.Menu.Opened, 1 do
@@ -188,7 +189,7 @@ function ESX.UI.Menu.Open(type, namespace, name, data, submit, cancel, change, c
     end
 
     menu.refresh = function()
-        ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, menu.data)
+        ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, menu.data, menu.lastIndex)
     end
 
     menu.setElement = function(i, key, val)
@@ -216,8 +217,12 @@ function ESX.UI.Menu.Open(type, namespace, name, data, submit, cancel, change, c
         end
     end
 
+    menu.setIndex = function(index)
+        menu.lastIndex = index
+    end
+
     ESX.UI.Menu.Opened[#ESX.UI.Menu.Opened + 1] = menu
-    ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, data)
+    ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, data, menu.lastIndex)
 
     return menu
 end
@@ -310,7 +315,7 @@ local function closeDefaultMenu(_, _)
     closeMenu("default")
 end
 
-local function openDefaultMenu(namespace, name, data)
+local function openDefaultMenu(namespace, name, data, indexToOpen)
     closeMenu("default")
 
     -- print(ESX.DumpTable(data))
@@ -339,6 +344,8 @@ local function openDefaultMenu(namespace, name, data)
                 menu.setElement(i, "selected", i == selected)
             end
 
+            menu.setIndex(selected)
+
             if menu.change ~= nil then
                 local changeData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
                 menu.change(changeData, menu)
@@ -350,12 +357,11 @@ local function openDefaultMenu(namespace, name, data)
         local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
         if menu.submit ~= nil then
-            data.elements[selected].selected = true
             local submitData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
             menu.submit(submitData, menu)
         end
     end)
-    lib.showMenu(menuData.id)
+    lib.showMenu(menuData.id, indexToOpen)
 end
 
 ESX.UI.Menu.RegisterType("default", openDefaultMenu, closeDefaultMenu)
