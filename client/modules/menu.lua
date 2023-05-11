@@ -281,9 +281,25 @@ local function generateDefaultOptions(namespace, name, elements)
     return options
 end
 
-local function closeDefaultMenu(namespace, name)
+local function closeMenu(type)
     local currentMenuId = lib.getOpenMenu()
 
+    if not currentMenuId then return end
+
+    local foundInOpenedMenu = false
+
+    for i = 1, #ESX.UI.Menu.Opened, 1 do
+        local menu = ESX.UI.Menu.Opened[i]
+        if menu.type == type and currentMenuId == menuData?.id then
+            foundInOpenedMenu = true
+            break
+        end
+    end
+
+    lib.hideMenu(not foundInOpenedMenu) Wait(10)
+end
+
+local function closeDefaultMenu(_, _)
     local lastMenuIndex = #ESX.UI.Menu.Opened
     local menu = ESX.UI.Menu.Opened[lastMenuIndex]
 
@@ -291,11 +307,11 @@ local function closeDefaultMenu(namespace, name)
         return menu.refresh()
     end
 
-    if currentMenuId then lib.hideMenu(currentMenuId ~= menuData?.id) Wait(0) end
+    closeMenu("default")
 end
 
 local function openDefaultMenu(namespace, name, data)
-    if currentMenuId then lib.hideMenu(currentMenuId ~= menuData?.id) Wait(0) end
+    closeMenu("default")
 
     -- print(ESX.DumpTable(data))
 
@@ -310,17 +326,30 @@ local function openDefaultMenu(namespace, name, data)
         onClose = function(_)
             local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
-            if menu?.cancel ~= nil then
+            if menu.cancel ~= nil then
                 local cancelData = { _namespace = namespace, _name = name }
                 menu.cancel(cancelData, menu)
             end
         end,
+        onSelected = function(selected, _, _)
+            local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
+
+            for i = 1, #data.elements, 1 do
+                menu.setElement(i, "value", data.elements[i].value)
+                menu.setElement(i, "selected", i == selected)
+            end
+
+            if menu.change ~= nil then
+                local changeData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
+                menu.change(changeData, menu)
+            end
+        end
     }
 
     lib.registerMenu(menuData, function(selected, _, _)
         local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
-        if menu?.submit ~= nil then
+        if menu.submit ~= nil then
             data.elements[selected].selected = true
             local submitData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
             menu.submit(submitData, menu)
