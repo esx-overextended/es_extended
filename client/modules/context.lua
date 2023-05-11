@@ -71,6 +71,7 @@ local function generateOptions(elements, onSelect)
         options[i].disabled = optionData.disabled or optionData.unselectable
         options[i].onSelect = function()
             if not optionData.input then
+                ESX.OpenContext(nil, elements, contextData.onSelect, contextData.onClose, contextData.canClose)
                 return onSelect ~= nil and onSelect(contextData, optionData)
             end
 
@@ -140,9 +141,10 @@ function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
         id = "esx:contextMenu",
         title = elements[1]?.unselectable and elements[1]?.title or "Menu",
         options = options,
-        eles = elements,     -- populate the table for backward-compatibility with esx_context
-        onSelect = onSelect, -- populate the table for backward-compatibility with esx_context
-        onClose = onClose,   -- populate the table for backward-compatibility with esx_context
+        eles = elements,          -- populate the table for backward-compatibility with esx_context
+        onSelect = onSelect,      -- populate the table for backward-compatibility with esx_context
+        onClose = onClose,        -- populate the table for backward-compatibility with esx_context
+        close = ESX.CloseContext, -- populate the table for backward-compatibility with esx_context
         canClose = canClose == nil and true or canClose,
         onExit = function()
             contextData = nil
@@ -174,6 +176,6 @@ function ESX.RefreshContext(elements, _)
 
     local _contextData = contextData -- save the current context menu data since it will be nil once ESX.CloseContext is called
 
-    ESX.CloseContext() Wait(0)
+    ESX.CloseContext() Wait(10)
     ESX.OpenContext(nil, elements or _contextData.eles, _contextData.onSelect, _contextData.onClose, _contextData.canClose)
 end
