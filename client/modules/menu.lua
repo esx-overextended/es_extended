@@ -173,24 +173,30 @@ do -- use ox_lib for default menu
     end
 
     local function closeMenu(type, namespace, name)
-        local currentMenuId = lib.getOpenMenu()
+        if type == "default" then
+            local currentMenuId = lib.getOpenMenu()
 
-        if not currentMenuId then return end
+            if not currentMenuId then return end
 
-        local foundInOpenedMenu = currentMenuId == menuData?.id
+            local foundInOpenedMenu = currentMenuId == menuData?.id
 
-        if not foundInOpenedMenu and (namespace and name) then
-            local openedMenusCount = #ESX.UI.Menu.Opened
-            for i = openedMenusCount, openedMenusCount, -1 do
-                local menu = ESX.UI.Menu.Opened[i]
-                if menu.type == type and menu.namespace == namespace and menu.name == name then
-                    foundInOpenedMenu = true
-                    break
+            if not foundInOpenedMenu and (namespace and name) then
+                local openedMenusCount = #ESX.UI.Menu.Opened
+                for i = openedMenusCount, openedMenusCount, -1 do
+                    local menu = ESX.UI.Menu.Opened[i]
+                    if menu.type == type and menu.namespace == namespace and menu.name == name then
+                        foundInOpenedMenu = true
+                        break
+                    end
                 end
             end
+
+            lib.hideMenu(not foundInOpenedMenu)
+        elseif type == "dialog" then
+            lib.closeInputDialog()
         end
 
-        lib.hideMenu(not foundInOpenedMenu) Wait(10)
+        Wait(10)
     end
 
     ESX.UI.Menu.RegisterType("default", function(namespace, name, data, indexToOpen) -- open
@@ -263,5 +269,52 @@ do -- use ox_lib for default menu
         lib.showMenu(menuData.id, indexToOpen)
     end, function(namespace, name)  -- close
         closeMenu("default", namespace, name)
+    end, true)
+
+    ESX.UI.Menu.RegisterType("dialog", function(namespace, name, data) -- open
+        closeMenu("dialog") closeMenu("default")
+        data.type = data.type or "default"
+
+        local input = lib.inputDialog(data.title or "Dialog", {
+            {type = data.type == "big" and "textarea" or "input", label = data.label, description = data.description, placeholder = data.placeholder, icon = data.icon, default = data.value}
+        })
+        local menu = ESX.UI.Menu.GetOpened("dialog", namespace, name)
+
+        if not menu then return end
+
+        if not input then
+            if menu.cancel then
+                local cancelData = { _namespace = namespace, _name = name }
+                menu.cancel(cancelData, menu)
+            end
+        else
+            local cancel = false
+
+            -- is the submitted data a number?
+            if tonumber(input[1]) then
+                input[1] = ESX.Math.Round(tonumber(input[1]))
+
+                -- check for negative value
+                if tonumber(input[1]) <= 0 then
+                    cancel = true
+                end
+            end
+
+            data.value = ESX.Math.Trim(input[1])
+            print("This is the data.value", data.value, type(data.value), input[1])
+
+            -- don't submit if the value is negative or if it's 0
+            if cancel then
+                ESX.ShowNotification("That input is not allowed!")
+                return menu.refresh()
+            else
+                if menu.change then menu.change(data, menu) end
+                if menu.submit then menu.submit(data, menu) end
+            end
+        end
+
+        menu.close()
+    end, function(namespace, name)  -- close
+        closeMenu("dialog", namespace, name)
     end, true)
 end
