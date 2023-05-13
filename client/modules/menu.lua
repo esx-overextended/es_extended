@@ -160,6 +160,13 @@ do -- use ox_lib for default menu
             options[i].type = options[i].type or "default"
             options[i].selected = optionData.selected or false
             options[i].close = optionData.close or false
+            if options[i].type == "slider" then
+                options[i].values = {}
+                for k = optionData.min or 1, optionData.options and #optionData.options or options[i].max do
+                    options[i].values[k] = optionData.options?[k] or k
+                end
+                options[i].defaultIndex = options[i].value
+            end
         end
 
         return options
@@ -209,10 +216,12 @@ do -- use ox_lib for default menu
 
                 menu.close()
             end,
-            onSelected = function(selected, _, _)
+            onSelected = function(selected, scrollIndex, _)
                 local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
                 if not menu then return end
+
+                data.elements[selected].value = (not data.elements[selected].min and scrollIndex and scrollIndex - 1) or scrollIndex or data.elements[selected].value
 
                 for i = 1, #data.elements, 1 do
                     menu.setElement(i, "value", data.elements[i].value)
@@ -225,7 +234,21 @@ do -- use ox_lib for default menu
                     local changeData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
                     menu.change(changeData, menu)
                 end
-            end
+            end,
+            onSideScroll = function(selected, scrollIndex, _)
+                local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
+
+                if not menu then return end
+
+                data.elements[selected].value = (not data.elements[selected].min and scrollIndex and scrollIndex - 1) or scrollIndex or data.elements[selected].value
+
+                menu.setElement(selected, "value", data.elements[selected].value)
+
+                if menu.change ~= nil then
+                    local changeData = { _namespace = namespace, _name = name, elements = data.elements, current = data.elements[selected] }
+                    menu.change(changeData, menu)
+                end
+            end,
         }
 
         lib.registerMenu(menuData, function(selected, _, _)
