@@ -64,9 +64,7 @@ local function generateOptions(elements, onSelect)
         options[i] = lib.table.deepclone(optionData)
         options[i].title = optionData.title
         options[i].description = optionData.name and (("%s%s"):format(optionData.name, (optionData.inputValue and ": " .. optionData.inputValue) or "")) or (optionData.inputValue and tostring(optionData.inputValue)--[[sometime it works with number and sometimes doesnt!]])
-        options[i].metadata = optionData.description and {
-            {label = "description", value = optionData.description}
-        }
+        options[i].metadata = (optionData.description or optionData.inputPlaceholder) and {{label = "description", value = optionData.description or optionData.inputPlaceholder}}
         options[i].icon = optionData.icon
         options[i].disabled = optionData.disabled or optionData.unselectable
         options[i].onSelect = function()
