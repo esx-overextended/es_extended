@@ -27,8 +27,7 @@ function ESX.UI.Menu.Open(type, namespace, name, data, submit, cancel, change, c
 
         for i = 1, #ESX.UI.Menu.Opened, 1 do
             if ESX.UI.Menu.Opened[i] then
-                if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and
-                    ESX.UI.Menu.Opened[i].name == name then
+                if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
                     ESX.UI.Menu.Opened[i] = nil
                 end
             end
@@ -108,8 +107,7 @@ end
 function ESX.UI.Menu.Close(type, namespace, name)
     for i = 1, #ESX.UI.Menu.Opened, 1 do
         if ESX.UI.Menu.Opened[i] then
-            if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and
-                ESX.UI.Menu.Opened[i].name == name then
+            if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
                 ESX.UI.Menu.Opened[i].close()
                 ESX.UI.Menu.Opened[i] = nil
             end
@@ -118,7 +116,7 @@ function ESX.UI.Menu.Close(type, namespace, name)
 end
 
 function ESX.UI.Menu.CloseAll()
-    for i = 1, #ESX.UI.Menu.Opened, 1 do
+    for i = #ESX.UI.Menu.Opened, 1, -1 do
         if ESX.UI.Menu.Opened[i] then
             ESX.UI.Menu.Opened[i].close()
             ESX.UI.Menu.Opened[i] = nil
@@ -129,8 +127,7 @@ end
 function ESX.UI.Menu.GetOpened(type, namespace, name)
     for i = 1, #ESX.UI.Menu.Opened, 1 do
         if ESX.UI.Menu.Opened[i] then
-            if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and
-                ESX.UI.Menu.Opened[i].name == name then
+            if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
                 return ESX.UI.Menu.Opened[i]
             end
         end
@@ -174,7 +171,7 @@ do -- use ox_lib for default menu
         return options
     end
 
-    local function closeMenu(type, namespace, name, runOnExit)
+    local function closeMenu(type, namespace, name)
         if type == "default" then
             local currentMenuId = lib.getOpenMenu()
 
@@ -183,17 +180,16 @@ do -- use ox_lib for default menu
             local foundInOpenedMenu = currentMenuId == menuData?.id
 
             if not foundInOpenedMenu and (namespace and name) then
-                local openedMenusCount = #ESX.UI.Menu.Opened
-                for i = openedMenusCount, openedMenusCount, -1 do
+                for i = #ESX.UI.Menu.Opened, 1, -1 do
                     local menu = ESX.UI.Menu.Opened[i]
-                    if menu.type == type and menu.namespace == namespace and menu.name == name then
+                    if menu?.type == type and menu?.namespace == namespace and menu?.name == name then
                         foundInOpenedMenu = true
                         break
                     end
                 end
             end
 
-            lib.hideMenu(runOnExit or not foundInOpenedMenu)
+            lib.hideMenu(not foundInOpenedMenu)
         elseif type == "dialog" then
             lib.closeInputDialog()
         end
@@ -274,7 +270,7 @@ do -- use ox_lib for default menu
 
         lib.showMenu(menuData.id, indexToOpen)
     end, function(namespace, name)  -- close
-        closeMenu("default", namespace, name, true)
+        closeMenu("default", namespace, name)
     end, true)
 
     ESX.UI.Menu.RegisterType("dialog", function(namespace, name, data) -- open
