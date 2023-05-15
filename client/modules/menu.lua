@@ -159,7 +159,7 @@ do -- use ox_lib for default menu
             options[i].label = optionData.title or optionData.label
             options[i].type = options[i].type or "default"
             options[i].selected = optionData.selected or false
-            options[i].close = optionData.close or false
+            options[i].close = false
             if options[i].type == "slider" then
                 options[i].values = {}
                 for k = optionData.min or 1, optionData.options and #optionData.options or options[i].max do
@@ -169,10 +169,12 @@ do -- use ox_lib for default menu
             end
         end
 
+        if not next(options) then options[1] = {label = "NO DATA", icon = "fas fa-circle-exclamation", close = false} end -- fix error for menus with no passed element options
+
         return options
     end
 
-    local function closeMenu(type, namespace, name)
+    local function closeMenu(type, namespace, name, runOnExit)
         if type == "default" then
             local currentMenuId = lib.getOpenMenu()
 
@@ -191,7 +193,7 @@ do -- use ox_lib for default menu
                 end
             end
 
-            lib.hideMenu(not foundInOpenedMenu)
+            lib.hideMenu(runOnExit or not foundInOpenedMenu)
         elseif type == "dialog" then
             lib.closeInputDialog()
         end
@@ -223,6 +225,8 @@ do -- use ox_lib for default menu
                 menu.close()
             end,
             onSelected = function(selected, scrollIndex, _)
+                if not next(data.elements) then return end -- fix error for menus with no passed element options
+
                 local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
                 if not menu then return end
@@ -258,6 +262,8 @@ do -- use ox_lib for default menu
         }
 
         lib.registerMenu(menuData, function(selected, _, _)
+            if not next(data.elements) then return end -- fix error for menus with no passed element options
+
             local menu = ESX.UI.Menu.GetOpened("default", namespace, name)
 
             if menu.submit ~= nil then
@@ -268,7 +274,7 @@ do -- use ox_lib for default menu
 
         lib.showMenu(menuData.id, indexToOpen)
     end, function(namespace, name)  -- close
-        closeMenu("default", namespace, name)
+        closeMenu("default", namespace, name, true)
     end, true)
 
     ESX.UI.Menu.RegisterType("dialog", function(namespace, name, data) -- open
@@ -301,7 +307,6 @@ do -- use ox_lib for default menu
             end
 
             data.value = ESX.Math.Trim(input[1])
-            print("This is the data.value", data.value, type(data.value), input[1])
 
             -- don't submit if the value is negative or if it's 0
             if cancel then
