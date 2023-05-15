@@ -12,7 +12,7 @@
 
 * Streamlined Player Coordinates Tracking: Overhauled the tracking of player object's coordinates by removing the recursive thread creation approach. The new method maintains backward compatibility while improving efficiency and performance. *(This change becomes more impactful as the number of players increases)*
 
-* Enhanced Context Menu Functionality: Adapted context-menu-related functions to utilize ox_lib's UI while ensuring backward compatibility. This update allows users to continue using the previous esx_context if desired, while benefiting from ox_lib's context UI look.
+* Enhanced Menu Functionality: Adapted context menu, default menu, and dialog menu related functions to utilize ox_lib's UI while ensuring full backward compatibility. This update allows users to continue using the previous esx_context, esx_menu_default, and esx_menu_dialog if desired, while benefiting from ox_lib's modern UI look.
 
 * Added Some Modules and Functions: Included some modules such as safe event, onesync scope, and routing bucket for better management and consistency across all external resources that utilize ESX object.
 
