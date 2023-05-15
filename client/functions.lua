@@ -1190,7 +1190,7 @@ function ESX.ShowInventory()
                                     else
                                         local elementsG = {
                                             {unselectable = true, icon = "fas fa-trash", title = element.title},
-                                            {icon = "fas fa-tally", title = "Amount.", input = true, inputType = "number", inputPlaceholder = "Amount to give..", inputMin = 1, inputMax = 1000},
+                                            {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000},
                                             {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
                                         }
 
@@ -1229,7 +1229,7 @@ function ESX.ShowInventory()
                     else
                         local elementsR = {
                             {unselectable = true, icon = "fas fa-trash", title = element.title},
-                            {icon = "fas fa-tally", title = "Amount.", input = true, inputType = "number", inputPlaceholder = "Amount to remove..", inputMin = 1, inputMax = 1000},
+                            {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to remove...", inputMin = 1, inputMax = 1000},
                             {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
                         }
 
@@ -1264,7 +1264,7 @@ function ESX.ShowInventory()
                         if pedAmmo > 0 then
                             local elementsGA = {
                                 {unselectable = true, icon = "fas fa-trash", title = element.title},
-                                {icon = "fas fa-tally", title = "Amount.", input = true, inputType = "number", inputPlaceholder = "Amount to give..", inputMin = 1, inputMax = 1000},
+                                {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000},
                                 {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
                             }
 
