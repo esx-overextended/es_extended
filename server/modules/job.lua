@@ -215,3 +215,64 @@ function ESX.UpdateJob(jobObject)
 
     return true, "job_updated_successfully"
 end
+
+---@class xJobRemove
+---@field name string job name
+
+---Removes a job or a table of job on runtime
+---@param jobObject xJobRemove | xJobRemove[]
+---@return boolean
+---@return string
+function ESX.RemoveJob(jobObject)
+    if type(jobObject) ~= "table" then return false, "invalid_job_object_type" end
+
+    local jobsTable, queries = {}, {}
+    local currentJobs = ESX.GetJobs()
+
+    if jobObject.name then
+        jobsTable[1] = {
+            name = ((jobObject.name and type(jobObject.name) == "string") and jobObject.name) or -1
+        }
+    else
+        for index, jobObj in pairs(jobObject) do
+            jobsTable[index] = {
+                name = ((jobObj.name and type(jobObj.name) == "string") and jobObj.name) or -1
+            }
+        end
+    end
+
+    if not #jobsTable or #jobsTable < 1 then return false, "no_job_object_received" end
+
+    for index, jobObj in pairs(jobsTable) do
+        for key, value in pairs(jobObj) do
+            if value == -1 then return false, ("invalid_job_%s_parameter"):format(key) end
+
+            if key == "name" then
+                if not currentJobs[value] then return false, ("job_%s_does_not_exist"):format(value) end
+
+                jobsTable[index].label = currentJobs[value].label
+            end
+        end
+
+        queries[#queries + 1] = {
+            query = "DELETE FROM `jobs` WHERE `name` = ?", values = { jobsTable[index].name }
+        }
+
+        queries[#queries + 1] = {
+            query = "DELETE FROM `job_grades` WHERE `job_name` = ?", values = { jobsTable[index].name }
+        }
+    end
+
+    if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
+
+    for index in pairs(jobsTable) do
+        print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been removed'):format(jobsTable[index].label, jobsTable[index].name))
+    end
+
+    ---@diagnostic disable-next-line: cast-local-type
+    jobObject, jobsTable, queries, currentJobs = nil, nil, nil, nil
+
+    ESX.RefreshJobs()
+
+    return true, "job_removed_successfully"
+end
