@@ -78,8 +78,6 @@ function ESX.AddJob(jobObject)
                         query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `skin_male` = ?, `skin_female` = ?",
                         values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.skin_male, gradeObj.skin_female }
                     }
-
-                    gradeKeyToNumber, gradeObj = nil, nil
                 end
             end
         end
@@ -95,9 +93,6 @@ function ESX.AddJob(jobObject)
     for index in pairs(jobsTable) do
         print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been added'):format(jobsTable[index].label, jobsTable[index].name))
     end
-
-    ---@diagnostic disable-next-line: cast-local-type
-    jobObject, jobsTable, queries, currentJobs = nil, nil, nil, nil
 
     ESX.RefreshJobs()
 
@@ -190,8 +185,6 @@ function ESX.UpdateJob(jobObject)
                         query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `skin_male` = ?, `skin_female` = ?",
                         values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.skin_male, gradeObj.skin_female }
                     }
-
-                    gradeKeyToNumber, gradeObj = nil, nil
                 end
             end
         end
@@ -207,9 +200,6 @@ function ESX.UpdateJob(jobObject)
     for index in pairs(jobsTable) do
         print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been updated'):format(jobsTable[index].label, jobsTable[index].name))
     end
-
-    ---@diagnostic disable-next-line: cast-local-type
-    jobObject, jobsTable, queries, currentJobs = nil, nil, nil, nil
 
     ESX.RefreshJobs()
 
@@ -268,9 +258,6 @@ function ESX.RemoveJob(jobObject)
     for index in pairs(jobsTable) do
         print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been removed'):format(jobsTable[index].label, jobsTable[index].name))
     end
-
-    ---@diagnostic disable-next-line: cast-local-type
-    jobObject, jobsTable, queries, currentJobs = nil, nil, nil, nil
 
     ESX.RefreshJobs()
 
