@@ -91,7 +91,7 @@ function ESX.AddJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been added'):format(jobsTable[index].label, jobsTable[index].name))
+        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been added"):format(jobsTable[index].label, jobsTable[index].name))
     end
 
     ESX.RefreshJobs()
@@ -198,7 +198,7 @@ function ESX.UpdateJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been updated'):format(jobsTable[index].label, jobsTable[index].name))
+        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been updated"):format(jobsTable[index].label, jobsTable[index].name))
     end
 
     ESX.RefreshJobs()
@@ -256,10 +256,72 @@ function ESX.RemoveJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(('[^2INFO^7] Job ^5"%s"^7 (%s) has been removed'):format(jobsTable[index].label, jobsTable[index].name))
+        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been removed"):format(jobsTable[index].label, jobsTable[index].name))
     end
 
     ESX.RefreshJobs()
 
     return true, "job_removed_successfully"
+end
+
+---Refreshes/loads the job table from database
+function ESX.RefreshJobs()
+    local Jobs = {}
+    local jobs = MySQL.query.await("SELECT * FROM jobs")
+
+    for _, v in ipairs(jobs) do
+        Jobs[v.name] = v
+        Jobs[v.name].grades = {}
+    end
+
+    local jobGrades = MySQL.query.await("SELECT * FROM job_grades")
+
+    for _, v in ipairs(jobGrades) do
+        if Jobs[v.job_name] then
+            Jobs[v.job_name].grades[tostring(v.grade)] = v
+        else
+            print(("[^3WARNING^7] Ignoring job grades for ^5'%s'^0 due to missing job"):format(v.job_name))
+        end
+    end
+
+    for _, v in pairs(Jobs) do
+        if ESX.Table.SizeOf(v.grades) == 0 then
+            Jobs[v.name] = nil
+            print(("[^3WARNING^7] Ignoring job ^5'%s'^0 due to no job grades found"):format(v.name))
+        end
+    end
+
+    if not next(Jobs) then
+        -- fallback data, if no job exist
+        ESX.Jobs = {
+            ["unemployed"] = { label = "Unemployed", grades = { ["0"] = { grade = 0, label = "Unemployed", salary = 200, skin_male = {}, skin_female = {} } } }
+        }
+    else
+        ESX.Jobs = Jobs
+    end
+
+    Core.RefreshPlayersJob()
+end
+
+---Checks if a job with the specified name and grade exist
+---@param jobName string
+---@param jobGrade integer | string
+---@return boolean
+function ESX.DoesJobExist(jobName, jobGrade)
+    jobGrade = tostring(jobGrade)
+
+    if jobName and jobGrade then
+        if ESX.Jobs[jobName] and ESX.Jobs[jobName].grades[jobGrade] then
+            return true
+        end
+    end
+
+    return false
+end
+
+function Core.RefreshPlayersJob()
+    for _, xPlayer in pairs(ESX.Players) do
+        local doesJobExist = ESX.DoesJobExist(xPlayer.job.name, xPlayer.job.grade)
+        xPlayer.setJob(not doesJobExist and "unemployed" or xPlayer.job.name, not doesJobExist and 0 or xPlayer.job.grade)
+    end
 end
