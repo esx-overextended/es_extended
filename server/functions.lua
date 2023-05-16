@@ -148,6 +148,7 @@ function Core.SavePlayer(xPlayer, cb)
         json.encode(xPlayer.getAccounts(true)),
         xPlayer.job.name,
         xPlayer.job.grade,
+        xPlayer.job.duty,
         xPlayer.group,
         json.encode(xPlayer.getCoords()),
         json.encode(xPlayer.getInventory(true)),
@@ -156,7 +157,7 @@ function Core.SavePlayer(xPlayer, cb)
         xPlayer.identifier
     }
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
         if affectedRows == 1 then
             print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
             TriggerEvent('esx:playerSaved', xPlayer.source, xPlayer)
@@ -180,6 +181,7 @@ function Core.SavePlayers(cb)
             json.encode(xPlayer.getAccounts(true)),
             xPlayer.job.name,
             xPlayer.job.grade,
+            xPlayer.job.duty,
             xPlayer.group,
             json.encode(xPlayer.getCoords()),
             json.encode(xPlayer.getInventory(true)),
@@ -189,7 +191,7 @@ function Core.SavePlayers(cb)
         }
     end
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
         if not results then
             return
         end

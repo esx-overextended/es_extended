@@ -3,7 +3,7 @@ SetGameType(Config.GameType)
 
 local oneSyncState = GetConvar('onesync', 'off')
 local newPlayer = 'INSERT INTO `users` SET `accounts` = ?, `identifier` = ?, `group` = ?'
-local loadPlayer = 'SELECT `accounts`, `job`, `job_grade`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`'
+local loadPlayer = 'SELECT `accounts`, `job`, `job_grade`, `job_duty`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`'
 
 if Config.Multichar then
     newPlayer = newPlayer .. ', `firstname` = ?, `lastname` = ?, `dateofbirth` = ?, `sex` = ?, `height` = ?'
@@ -18,7 +18,7 @@ loadPlayer = loadPlayer .. ' FROM `users` WHERE identifier = ?'
 local function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
-    local job, grade = result.job, tostring(result.job_grade)
+    local job, grade, duty = result.job, tostring(result.job_grade), result.job_duty and (result.job_duty == 1 and true or result.job_duty == 0 and false)
     local foundAccounts, foundItems = {}, {}
 
     -- Accounts
@@ -46,7 +46,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     -- Job
     if not ESX.DoesJobExist(job, grade) then
-        job, grade = 'unemployed', '0'
+        job, grade, duty = 'unemployed', '0', false
         print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
     end
 
@@ -55,6 +55,8 @@ local function loadESXPlayer(identifier, playerId, isNew)
     userData.job.id              = jobObject.id
     userData.job.name            = jobObject.name
     userData.job.label           = jobObject.label
+    userData.job.duty            = type(duty) == "boolean" and duty or jobObject.default_duty
+
     userData.job.grade           = tonumber(grade)
     userData.job.grade_name      = gradeObject.name
     userData.job.grade_label     = gradeObject.label

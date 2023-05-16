@@ -292,7 +292,8 @@ ESX.RegisterCommand('group', { "user", "admin" }, function(xPlayer, _, _)
 end, true)
 
 ESX.RegisterCommand('job', { "user", "admin" }, function(xPlayer, _, _)
-    print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getJob().name .. "^0 - ^5" .. xPlayer.getJob().grade_label .. "^0")
+    local data = ("%s, You are currently: ^5%s^0 - ^5%s^0 (^5%s-Duty^0)"):format(xPlayer.getName(), xPlayer.getJob().name, xPlayer.getJob().grade_label, xPlayer.getDuty() and "On" or "Off")
+    print(data)
 end, true)
 
 ESX.RegisterCommand('info', { "user", "admin" }, function(xPlayer, _, _)

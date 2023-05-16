@@ -348,7 +348,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
     end
 
-    function self.setJob(job, grade)
+    function self.setJob(job, grade, duty)
         grade = tostring(grade)
         local lastJob = json.decode(json.encode(self.job))
 
@@ -358,6 +358,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.job.id    = jobObject.id
             self.job.name  = jobObject.name
             self.job.label = jobObject.label
+            self.job.duty  = type(duty) == "boolean" and duty or jobObject.default_duty
 
             self.job.grade        = tonumber(grade)
             self.job.grade_name   = gradeObject.name
@@ -378,9 +379,28 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
             self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
             Player(self.source).state:set("job", self.job, true)
+
+            self.setDuty(self.job.duty)
         else
             print(('[es_extended] [^3WARNING^7] Ignoring invalid ^5.setJob()^7 usage for ID: ^5%s^7, Job: ^5%s^7'):format(self.source, job))
         end
+    end
+
+    ---Gets the current player's job duty state
+    ---@return any
+    function self.getDuty()
+        return self.job.duty
+    end
+
+    ---Sets the current player's job duty state
+    ---@param duty boolean
+    function self.setDuty(duty)
+        if type(duty) ~= "boolean" then return end
+
+        self.job.duty = duty
+
+        self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
+        Player(self.source).state:set("duty", self.job.duty, true)
     end
 
     function self.addWeapon(weaponName, ammo)
