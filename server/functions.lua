@@ -338,11 +338,10 @@ function ESX.RefreshJobs()
         end
     end
 
-    if not Jobs then
+    if not next(Jobs) then
         -- Fallback data, if no jobs exist
-        ESX.Jobs['unemployed'] = {
-            label = 'Unemployed',
-            grades = { ['0'] = { grade = 0, label = 'Unemployed', salary = 200, skin_male = {}, skin_female = {} } }
+        ESX.Jobs = {
+            label = "Unemployed", grades = { ["0"] = { grade = 0, label = "Unemployed", salary = 200, skin_male = {}, skin_female = {} } }
         }
     else
         ESX.Jobs = Jobs
