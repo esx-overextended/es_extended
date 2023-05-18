@@ -325,6 +325,6 @@ end
 function Core.RefreshPlayersJob()
     for _, xPlayer in pairs(ESX.Players) do
         local doesJobExist = ESX.DoesJobExist(xPlayer.job.name, xPlayer.job.grade)
-        xPlayer.setJob(not doesJobExist and "unemployed" or xPlayer.job.name, not doesJobExist and 0 or xPlayer.job.grade)
+        xPlayer.setJob(doesJobExist and xPlayer.job.name or "unemployed", doesJobExist and xPlayer.job.grade or 0, doesJobExist and xPlayer.job.duty)
     end
 end
