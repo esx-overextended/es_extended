@@ -1,8 +1,10 @@
 local Charset = {}
 
-for i = 48, 57 do table.insert(Charset, string.char(i)) end
-for i = 65, 90 do table.insert(Charset, string.char(i)) end
-for i = 97, 122 do table.insert(Charset, string.char(i)) end
+for _, range in ipairs({{48, 57}, {65, 90}, {97, 122}}) do
+    for i = range[1], range[2] do
+        Charset[#Charset+1] = string.char(i)
+    end
+end
 
 local weaponsByName = {}
 local weaponsByHash = {}
