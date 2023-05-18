@@ -10,7 +10,7 @@
 ---@class xJobNew
 ---@field name string job name
 ---@field label string job label
----@field whitelisted boolean | 1 | 0 job whitelisted state
+---@field default_duty boolean | 1 | 0 job default duty state
 ---@field grades table<gradeKey, xGradeNew>
 
 ---Adds a job or a table of jobs on runtime
@@ -27,7 +27,7 @@ function ESX.AddJob(jobObject)
         jobsTable[1] = {
             name = ((jobObject.name and type(jobObject.name) == "string") and jobObject.name) or -1,
             label = ((jobObject.label and type(jobObject.label) == "string") and jobObject.label) or -1,
-            whitelisted = ((jobObject.whitelisted ~= nil and (type(jobObject.whitelisted) == "number" or type(jobObject.whitelisted) == "boolean")) and jobObject.whitelisted) or jobObject.whitelisted == nil and -1,
+            default_duty = ((jobObject.default_duty ~= nil and (type(jobObject.default_duty) == "number" or type(jobObject.default_duty) == "boolean")) and jobObject.default_duty) or jobObject.default_duty == nil and -1,
             grades = ((jobObject.grades and type(jobObject.grades) == "table") and jobObject.grades) or -1,
         }
     else
@@ -35,7 +35,7 @@ function ESX.AddJob(jobObject)
             jobsTable[index] = {
                 name = ((jobObj.name and type(jobObj.name) == "string") and jobObj.name) or -1,
                 label = ((jobObj.label and type(jobObj.label) == "string") and jobObj.label) or -1,
-                whitelisted = ((jobObj.whitelisted ~= nil and (type(jobObj.whitelisted) == "number" or type(jobObj.whitelisted) == "boolean")) and jobObj.whitelisted) or jobObj.whitelisted == nil and -1,
+                default_duty = ((jobObj.default_duty ~= nil and (type(jobObj.default_duty) == "number" or type(jobObj.default_duty) == "boolean")) and jobObj.default_duty) or jobObj.default_duty == nil and -1,
                 grades = ((jobObj.grades and type(jobObj.grades) == "table") and jobObj.grades) or -1,
             }
         end
@@ -69,9 +69,7 @@ function ESX.AddJob(jobObject)
                     }
 
                     for key2, value2 in pairs(gradeObj) do
-                        if value2 == -1 then
-                            return false, ("invalid_grade_%s_%s_parameter"):format(gradeKey, key2)
-                        end
+                        if value2 == -1 then return false, ("invalid_grade_%s_%s_parameter"):format(gradeKey, key2) end
                     end
 
                     queries[#queries + 1] = {
@@ -83,8 +81,8 @@ function ESX.AddJob(jobObject)
         end
 
         queries[#queries + 1] = {
-            query = "INSERT INTO `jobs` SET `name` = ?, `label` = ?, `whitelisted` = ?",
-            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].whitelisted }
+            query = "INSERT INTO `jobs` SET `name` = ?, `label` = ?, `default_duty` = ?",
+            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].default_duty }
         }
     end
 
@@ -109,7 +107,7 @@ end
 ---@class xJobUpdate
 ---@field name string job name
 ---@field label? string job label
----@field whitelisted? boolean | 1 | 0 job whitelisted state
+---@field default_duty? boolean | 1 | 0 job default duty state
 ---@field grades? table<gradeKey, xGradeUpdate>
 
 ---Update a job or a table of jobs on runtime
@@ -128,8 +126,8 @@ function ESX.UpdateJob(jobObject)
         jobsTable[1] = {
             name = ((jobObject.name and type(jobObject.name) == "string") and jobObject.name) or -1,
             label = ((jobObject.label and type(jobObject.label) == "string") and jobObject.label) or currentJobs[jobObject.name].label or -1,
-            whitelisted = ((jobObject.whitelisted ~= nil and (type(jobObject.whitelisted) == "number" or type(jobObject.whitelisted) == "boolean")) and jobObject.whitelisted) or
-                jobObject.whitelisted == nil and (currentJobs[jobObject.name].whitelisted or currentJobs[jobObject.name].whitelisted == nil and -1),
+            default_duty = ((jobObject.default_duty ~= nil and (type(jobObject.default_duty) == "number" or type(jobObject.default_duty) == "boolean")) and jobObject.default_duty) or
+                jobObject.default_duty == nil and (currentJobs[jobObject.name].default_duty or currentJobs[jobObject.name].default_duty == nil and -1),
             grades = ((jobObject.grades and type(jobObject.grades) == "table") and jobObject.grades) or currentJobs[jobObject.name].grades or -1,
         }
     else
@@ -139,8 +137,8 @@ function ESX.UpdateJob(jobObject)
             jobsTable[index] = {
                 name = ((jobObj.name and type(jobObj.name) == "string") and jobObj.name) or -1,
                 label = ((jobObj.label and type(jobObj.label) == "string") and jobObj.label) or currentJobs[jobObj.name].label or -1,
-                whitelisted = ((jobObj.whitelisted ~= nil and (type(jobObj.whitelisted) == "number" or type(jobObj.whitelisted) == "boolean")) and jobObj.whitelisted) or
-                    jobObj.whitelisted == nil and (currentJobs[jobObj.name].whitelisted or currentJobs[jobObj.name].whitelisted == nil and -1),
+                default_duty = ((jobObj.default_duty ~= nil and (type(jobObj.default_duty) == "number" or type(jobObj.default_duty) == "boolean")) and jobObj.default_duty) or
+                    jobObj.default_duty == nil and (currentJobs[jobObj.name].default_duty or currentJobs[jobObj.name].default_duty == nil and -1),
                 grades = ((jobObj.grades and type(jobObj.grades) == "table") and jobObj.grades) or currentJobs[jobObj.name].grades or -1,
             }
         end
@@ -190,8 +188,8 @@ function ESX.UpdateJob(jobObject)
         end
 
         queries[#queries + 1] = {
-            query = "REPLACE INTO `jobs` SET `name` = ?, `label` = ?, `whitelisted` = ?",
-            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].whitelisted }
+            query = "REPLACE INTO `jobs` SET `name` = ?, `label` = ?, `default_duty` = ?",
+            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].default_duty }
         }
     end
 
