@@ -297,7 +297,6 @@ function ESX.RefreshJobs()
             ["unemployed"] = {
                 name = "unemployed",
                 label = "Unemployed",
-                whitelisted = false,
                 default_duty = false,
                 grades = { ["0"] = { job_name = "unemployed", grade = 0, name = "unemployed", label = "Unemployed", salary = 200, skin_male = {}, skin_female = {} } }
             }
