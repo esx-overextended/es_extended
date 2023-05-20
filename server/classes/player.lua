@@ -358,6 +358,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.job.id    = jobObject.id
             self.job.name  = jobObject.name
             self.job.label = jobObject.label
+            self.job.type  = jobObject.type
             self.job.duty  = type(duty) == "boolean" and duty or jobObject.default_duty
 
             self.job.grade        = tonumber(grade)
