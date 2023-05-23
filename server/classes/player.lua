@@ -388,7 +388,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     ---Gets the current player's job duty state
-    ---@return any
+    ---@return boolean
     function self.getDuty()
         return self.job.duty
     end
@@ -402,6 +402,12 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
         Player(self.source).state:set("duty", self.job.duty, true)
+    end
+
+    ---Gets the current player's job type
+    ---@return string | nil
+    function self.getJobType()
+        return self.job.type
     end
 
     function self.addWeapon(weaponName, ammo)
