@@ -87,7 +87,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                 userData.weight = userData.weight + (item.weight * count)
             end
 
-            table.insert(userData.inventory, { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove })
+            userData.inventory[#userData.inventory+1] = { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove }
         end
 
         table.sort(userData.inventory, function(a, b)
@@ -129,7 +129,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                         weapon.tintIndex = 0
                     end
 
-                    table.insert(userData.loadout, { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex })
+                    userData.loadout[#userData.loadout+1] = { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex }
                 end
             end
         end
