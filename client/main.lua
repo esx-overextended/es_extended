@@ -87,7 +87,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
                 end
 
                 if Config.DisableWeaponWheel then
-                    BlockWeaponWheelThisFrame()
+                    HudWeaponWheelIgnoreSelection()
                     DisableControlAction(0, 37, true)
                 end
 

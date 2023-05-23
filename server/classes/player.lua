@@ -387,13 +387,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         if not self.hasWeapon(weaponName) then
             local weaponLabel = ESX.GetWeaponLabel(weaponName)
 
-            table.insert(self.loadout, {
+            self.loadout[#self.loadout+1] = {
                 name = weaponName,
                 ammo = ammo,
                 label = weaponLabel,
                 components = {},
                 tintIndex = 0
-            })
+            }
 
             GiveWeaponToPed(GetPlayerPed(self.source), joaat(weaponName), ammo, false, false)
             self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true})
