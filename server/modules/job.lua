@@ -10,6 +10,7 @@
 ---@class xJobNew
 ---@field name string job name
 ---@field label string job label
+---@field type? string job type
 ---@field default_duty boolean | 1 | 0 job default duty state
 ---@field grades table<gradeKey, xGradeNew>
 
@@ -27,6 +28,7 @@ function ESX.AddJob(jobObject)
         jobsTable[1] = {
             name = ((jobObject.name and type(jobObject.name) == "string") and jobObject.name) or -1,
             label = ((jobObject.label and type(jobObject.label) == "string") and jobObject.label) or -1,
+            type = ((jobObject.type and type(jobObject.type) == "string") and jobObject.type) or -1,
             default_duty = ((jobObject.default_duty ~= nil and (type(jobObject.default_duty) == "number" or type(jobObject.default_duty) == "boolean")) and jobObject.default_duty) or jobObject.default_duty == nil and -1,
             grades = ((jobObject.grades and type(jobObject.grades) == "table") and jobObject.grades) or -1,
         }
@@ -35,6 +37,7 @@ function ESX.AddJob(jobObject)
             jobsTable[index] = {
                 name = ((jobObj.name and type(jobObj.name) == "string") and jobObj.name) or -1,
                 label = ((jobObj.label and type(jobObj.label) == "string") and jobObj.label) or -1,
+                type = ((jobObj.type and type(jobObj.type) == "string") and jobObj.type) or -1,
                 default_duty = ((jobObj.default_duty ~= nil and (type(jobObj.default_duty) == "number" or type(jobObj.default_duty) == "boolean")) and jobObj.default_duty) or jobObj.default_duty == nil and -1,
                 grades = ((jobObj.grades and type(jobObj.grades) == "table") and jobObj.grades) or -1,
             }
@@ -81,8 +84,8 @@ function ESX.AddJob(jobObject)
         end
 
         queries[#queries + 1] = {
-            query = "INSERT INTO `jobs` SET `name` = ?, `label` = ?, `default_duty` = ?",
-            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].default_duty }
+            query = "INSERT INTO `jobs` SET `name` = ?, `label` = ?, `type` = ?, `default_duty` = ?",
+            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].type, jobsTable[index].default_duty }
         }
     end
 
@@ -107,6 +110,7 @@ end
 ---@class xJobUpdate
 ---@field name string job name
 ---@field label? string job label
+---@field type? string job type
 ---@field default_duty? boolean | 1 | 0 job default duty state
 ---@field grades? table<gradeKey, xGradeUpdate>
 
@@ -126,6 +130,7 @@ function ESX.UpdateJob(jobObject)
         jobsTable[1] = {
             name = ((jobObject.name and type(jobObject.name) == "string") and jobObject.name) or -1,
             label = ((jobObject.label and type(jobObject.label) == "string") and jobObject.label) or currentJobs[jobObject.name].label or -1,
+            type = ((jobObject.type and type(jobObject.type) == "string") and jobObject.type) or currentJobs[jobObject.name].type or -1,
             default_duty = ((jobObject.default_duty ~= nil and (type(jobObject.default_duty) == "number" or type(jobObject.default_duty) == "boolean")) and jobObject.default_duty) or
                 jobObject.default_duty == nil and (currentJobs[jobObject.name].default_duty or currentJobs[jobObject.name].default_duty == nil and -1),
             grades = ((jobObject.grades and type(jobObject.grades) == "table") and jobObject.grades) or currentJobs[jobObject.name].grades or -1,
@@ -137,6 +142,7 @@ function ESX.UpdateJob(jobObject)
             jobsTable[index] = {
                 name = ((jobObj.name and type(jobObj.name) == "string") and jobObj.name) or -1,
                 label = ((jobObj.label and type(jobObj.label) == "string") and jobObj.label) or currentJobs[jobObj.name].label or -1,
+                type = ((jobObj.type and type(jobObj.type) == "string") and jobObj.type) or currentJobs[jobObj.name].type or -1,
                 default_duty = ((jobObj.default_duty ~= nil and (type(jobObj.default_duty) == "number" or type(jobObj.default_duty) == "boolean")) and jobObj.default_duty) or
                     jobObj.default_duty == nil and (currentJobs[jobObj.name].default_duty or currentJobs[jobObj.name].default_duty == nil and -1),
                 grades = ((jobObj.grades and type(jobObj.grades) == "table") and jobObj.grades) or currentJobs[jobObj.name].grades or -1,
@@ -188,8 +194,8 @@ function ESX.UpdateJob(jobObject)
         end
 
         queries[#queries + 1] = {
-            query = "REPLACE INTO `jobs` SET `name` = ?, `label` = ?, `default_duty` = ?",
-            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].default_duty }
+            query = "REPLACE INTO `jobs` SET `name` = ?, `label` = ?, `type` = ?, `default_duty` = ?",
+            values = { jobsTable[index].name, jobsTable[index].label, jobsTable[index].type, jobsTable[index].default_duty }
         }
     end
 
