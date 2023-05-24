@@ -473,17 +473,18 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local lastJob = json.decode(json.encode(self.job))
         local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
-        self.job.id           = jobObject.id
-        self.job.name         = jobObject.name
-        self.job.label        = jobObject.label
-        self.job.type         = jobObject.type
-        self.job.duty         = type(duty) == "boolean" and duty or jobObject.default_duty
-        self.job.grade        = tonumber(grade)
-        self.job.grade_name   = gradeObject.name
-        self.job.grade_label  = gradeObject.label
-        self.job.grade_salary = gradeObject.salary
-        self.job.skin_male    = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}     --[[@diagnostic disable-line: param-type-mismatch]]
-        self.job.skin_female  = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
+        self.job.id                   = jobObject.id
+        self.job.name                 = jobObject.name
+        self.job.label                = jobObject.label
+        self.job.type                 = jobObject.type
+        self.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
+        self.job.grade                = tonumber(grade)
+        self.job.grade_name           = gradeObject.name
+        self.job.grade_label          = gradeObject.label
+        self.job.grade_salary         = gradeObject.salary
+        self.job.grade_offduty_salary = gradeObject.offduty_salary
+        self.job.skin_male            = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}     --[[@diagnostic disable-line: param-type-mismatch]]
+        self.job.skin_female          = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
 
         self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
         Player(self.source).state:set("job", self.job, true)

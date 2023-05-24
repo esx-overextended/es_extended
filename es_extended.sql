@@ -56,7 +56,7 @@ ALTER TABLE `jobs`
 ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
 ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
 
-INSERT IGNORE INTO `jobs` (`name`, `label`) VALUES ('unemployed', 'Unemployed');
+INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ('unemployed', 'Unemployed', 'CIV', 0);
 
 
 CREATE TABLE IF NOT EXISTS `job_grades` (
@@ -65,11 +65,18 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
     `grade` INT NOT NULL,
     `name` VARCHAR(50) NOT NULL,
     `label` VARCHAR(50) NOT NULL,
-    `salary` INT NOT NULL,
-    `skin_male` LONGTEXT NOT NULL,
-    `skin_female` LONGTEXT NOT NULL,
+    `salary` INT NOT NULL DEFAULT 0,
+    `offduty_salary` INT NOT NULL DEFAULT 0,
+    `skin_male` LONGTEXT NOT NULL DEFAULT '{}',
+    `skin_female` LONGTEXT NOT NULL DEFAULT '{}',
 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-INSERT IGNORE INTO `job_grades` VALUES (1, 'unemployed', 0, 'unemployed', 'Unemployed', 200, '{}', '{}');
+/*
+for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
+*/
+ALTER TABLE `job_grades`
+ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
+
+INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, 'unemployed', 0, 'unemployed', 'Unemployed', 0, 200, '{}', '{}');

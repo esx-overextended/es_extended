@@ -4,6 +4,7 @@
 ---@field name string grade name
 ---@field label string grade label
 ---@field salary number grade salary
+---@field offduty_salary number grade off-duty salary
 ---@field skin_male table grade male skin
 ---@field skin_female table grade female skin
 
@@ -67,6 +68,7 @@ function ESX.AddJob(jobObject)
                         name = ((gradeObject.name and type(gradeObject.name) == "string") and gradeObject.name) or -1,
                         label = ((gradeObject.label and type(gradeObject.label) == "string") and gradeObject.label) or -1,
                         salary = ((gradeObject.salary and type(gradeObject.salary) == "number") and gradeObject.salary) or -1,
+                        offduty_salary = ((gradeObject.offduty_salary and type(gradeObject.offduty_salary) == "number") and gradeObject.offduty_salary) or -1,
                         skin_male = ((gradeObject.skin_male and type(gradeObject.skin_male) == "table") and (next(gradeObject.skin_male) and json.encode(gradeObject.skin_male) or "{}")) or -1,
                         skin_female = ((gradeObject.skin_female and type(gradeObject.skin_female) == "table") and (next(gradeObject.skin_female) and json.encode(gradeObject.skin_female) or "{}")) or -1,
                     }
@@ -76,8 +78,8 @@ function ESX.AddJob(jobObject)
                     end
 
                     queries[#queries + 1] = {
-                        query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `skin_male` = ?, `skin_female` = ?",
-                        values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.skin_male, gradeObj.skin_female }
+                        query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `offduty_salary` = ?, `skin_male` = ?, `skin_female` = ?",
+                        values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.offduty_salary, gradeObj.skin_male, gradeObj.skin_female }
                     }
                 end
             end
@@ -104,6 +106,7 @@ end
 ---@field name? string grade name
 ---@field label? string grade label
 ---@field salary? number grade salary
+---@field offduty_salary? number grade off-duty salary
 ---@field skin_male? table grade male skin
 ---@field skin_female? table grade female skin
 
@@ -172,6 +175,7 @@ function ESX.UpdateJob(jobObject)
                         name = ((gradeObject.name and type(gradeObject.name) == "string") and gradeObject.name) or currentJobGradeObject.name or -1,
                         label = ((gradeObject.label and type(gradeObject.label) == "string") and gradeObject.label) or currentJobGradeObject.label or -1,
                         salary = ((gradeObject.salary and type(gradeObject.salary) == "number") and gradeObject.salary) or currentJobGradeObject.salary or -1,
+                        offduty_salary = ((gradeObject.offduty_salary and type(gradeObject.offduty_salary) == "number") and gradeObject.offduty_salary) or currentJobGradeObject.offduty_salary or -1,
                         skin_male = ((gradeObject.skin_male and type(gradeObject.skin_male) == "table") and (next(gradeObject.skin_male) and json.encode(gradeObject.skin_male) or "{}")) or currentJobGradeObject.skin_male or -1,
                         skin_female = ((gradeObject.skin_female and type(gradeObject.skin_female) == "table") and (next(gradeObject.skin_female) and json.encode(gradeObject.skin_female) or "{}")) or currentJobGradeObject.skin_female or -1,
                     }
@@ -186,8 +190,8 @@ function ESX.UpdateJob(jobObject)
                     }
 
                     queries[#queries + 1] = {
-                        query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `skin_male` = ?, `skin_female` = ?",
-                        values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.skin_male, gradeObj.skin_female }
+                        query = "INSERT INTO `job_grades` SET `job_name` = ?, `grade` = ?, `name` = ?, `label` = ?, `salary` = ?, `offduty_salary` = ?, `skin_male` = ?, `skin_female` = ?",
+                        values = { jobsTable[index].name, gradeObj.grade, gradeObj.name, gradeObj.label, gradeObj.salary, gradeObj.offduty_salary, gradeObj.skin_male, gradeObj.skin_female }
                     }
                 end
             end
@@ -302,7 +306,7 @@ function ESX.RefreshJobs()
                 name = "unemployed",
                 label = "Unemployed",
                 default_duty = false,
-                grades = { ["0"] = { job_name = "unemployed", grade = 0, name = "unemployed", label = "Unemployed", salary = 200, skin_male = {}, skin_female = {} } }
+                grades = { ["0"] = { job_name = "unemployed", grade = 0, name = "unemployed", label = "Unemployed", salary = 0, offduty_salary = 200, skin_male = {}, skin_female = {} } }
             }
         }
     else

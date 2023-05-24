@@ -52,17 +52,18 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
-    userData.job.id              = jobObject.id
-    userData.job.name            = jobObject.name
-    userData.job.label           = jobObject.label
-    userData.job.type            = jobObject.type
-    userData.job.duty            = type(duty) == "boolean" and duty or jobObject.default_duty
-    userData.job.grade           = tonumber(grade)
-    userData.job.grade_name      = gradeObject.name
-    userData.job.grade_label     = gradeObject.label
-    userData.job.grade_salary    = gradeObject.salary
-    userData.job.skin_male       = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {} --[[@diagnostic disable-line: param-type-mismatch]]
-    userData.job.skin_female     = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
+    userData.job.id                   = jobObject.id
+    userData.job.name                 = jobObject.name
+    userData.job.label                = jobObject.label
+    userData.job.type                 = jobObject.type
+    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
+    userData.job.grade                = tonumber(grade)
+    userData.job.grade_name           = gradeObject.name
+    userData.job.grade_label          = gradeObject.label
+    userData.job.grade_salary         = gradeObject.salary
+    userData.job.grade_offduty_salary = gradeObject.offduty_salary
+    userData.job.skin_male            = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {} --[[@diagnostic disable-line: param-type-mismatch]]
+    userData.job.skin_female          = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
 
     -- Inventory
     if not Config.OxInventory then
