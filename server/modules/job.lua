@@ -334,3 +334,25 @@ function Core.RefreshPlayersJob()
         xPlayer.setJob(doesJobExist and xPlayer.job.name or "unemployed", doesJobExist and xPlayer.job.grade or 0, doesJobExist and xPlayer.job.duty)
     end
 end
+
+---Gets all players with the specified job type
+---@param jobType string Type
+---@param dutyState? boolean if it's provided and not nil, it will only return players with the specified duty state
+---@return xPlayer[], integer
+function ESX.GetPlayersByJobType(jobType, dutyState)
+    local xPlayers = {}
+    local count = 0
+
+    if type(jobType) == "string" and (type(dutyState) == "nil" or type(dutyState) == "boolean") then
+        jobType = jobType:lower()
+
+        for _, xPlayer in pairs(ESX.Players) do
+            if xPlayer.job.type:lower() == jobType and (dutyState == nil or xPlayer.job.duty == dutyState) then
+                count = count + 1
+                xPlayers[count] = xPlayer
+            end
+        end
+    end
+
+    return xPlayers, count
+end
