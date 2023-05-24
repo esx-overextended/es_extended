@@ -1,5 +1,5 @@
 ESX = {}
-ESX.Players = {}
+ESX.Players = {} --[[@type xPlayer[] ]]
 ESX.Jobs = {}
 ESX.Items = {}
 Core = {}

@@ -57,13 +57,12 @@ local function loadESXPlayer(identifier, playerId, isNew)
     userData.job.label           = jobObject.label
     userData.job.type            = jobObject.type
     userData.job.duty            = type(duty) == "boolean" and duty or jobObject.default_duty
-
     userData.job.grade           = tonumber(grade)
     userData.job.grade_name      = gradeObject.name
     userData.job.grade_label     = gradeObject.label
     userData.job.grade_salary    = gradeObject.salary
-    userData.job.skin_male       = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}
-    userData.job.skin_female     = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {}
+    userData.job.skin_male       = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {} --[[@diagnostic disable-line: param-type-mismatch]]
+    userData.job.skin_female     = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
 
     -- Inventory
     if not Config.OxInventory then
@@ -87,7 +86,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                 userData.weight = userData.weight + (item.weight * count)
             end
 
-            userData.inventory[#userData.inventory+1] = { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove }
+            userData.inventory[#userData.inventory + 1] = { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove }
         end
 
         table.sort(userData.inventory, function(a, b)
@@ -129,7 +128,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                         weapon.tintIndex = 0
                     end
 
-                    userData.loadout[#userData.loadout+1] = { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex }
+                    userData.loadout[#userData.loadout + 1] = { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex }
                 end
             end
         end

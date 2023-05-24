@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `jobs` (
     `name` VARCHAR(50) NOT NULL,
-    `label` VARCHAR(50) DEFAULT NULL,
-    `type` VARCHAR(50) NOT NULL DEFAULT 'civ',
+    `label` VARCHAR(50) NOT NULL,
+    `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
     `default_duty` tinyint(1) NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`name`)
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
 for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `jobs`' not to execute and apply the needed changes...
 */
 ALTER TABLE `jobs`
-ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'civ',
+ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
 ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
 
 INSERT IGNORE INTO `jobs` (`name`, `label`) VALUES ('unemployed', 'Unemployed');

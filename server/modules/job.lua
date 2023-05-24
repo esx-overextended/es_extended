@@ -348,7 +348,7 @@ function ESX.GetPlayersByJobType(jobType, dutyState)
 
         for _, xPlayer in pairs(ESX.Players) do
             if xPlayer.job.type:lower() == jobType and (dutyState == nil or xPlayer.job.duty == dutyState) then
-                count = count + 1
+                count += 1
                 xPlayers[count] = xPlayer
             end
         end
