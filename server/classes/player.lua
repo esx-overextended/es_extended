@@ -523,7 +523,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         if self.hasWeapon(weaponName) then return false end
 
         local weaponLabel = ESX.GetWeaponLabel(weaponName)
-        self.loadout[#self.loadout+1] = { 
+        self.loadout[#self.loadout+1] = {
             name = weaponName,
             ammo = ammo,
             label = weaponLabel,
