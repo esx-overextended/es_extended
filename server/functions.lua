@@ -148,6 +148,7 @@ function Core.SavePlayer(xPlayer, cb)
         json.encode(xPlayer.getAccounts(true)),
         xPlayer.job.name,
         xPlayer.job.grade,
+        xPlayer.job.duty,
         xPlayer.group,
         json.encode(xPlayer.getCoords()),
         json.encode(xPlayer.getInventory(true)),
@@ -156,7 +157,7 @@ function Core.SavePlayer(xPlayer, cb)
         xPlayer.identifier
     }
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
         if affectedRows == 1 then
             print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
             TriggerEvent('esx:playerSaved', xPlayer.source, xPlayer)
@@ -180,6 +181,7 @@ function Core.SavePlayers(cb)
             json.encode(xPlayer.getAccounts(true)),
             xPlayer.job.name,
             xPlayer.job.grade,
+            xPlayer.job.duty,
             xPlayer.group,
             json.encode(xPlayer.getCoords()),
             json.encode(xPlayer.getInventory(true)),
@@ -189,7 +191,7 @@ function Core.SavePlayers(cb)
         }
     end
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
         if not results then
             return
         end
@@ -218,6 +220,7 @@ function ESX.GetExtendedPlayers(key, val)
     return xPlayers
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
 function ESX.GetPlayerFromId(source)
     return ESX.Players[tonumber(source)]
 end
@@ -231,7 +234,7 @@ end
 ---@return string | nil
 function ESX.GetIdentifier(playerId)
     if GetConvarInt("sv_fxdkMode", 0) == 1 then
-        return "ESX-DEBUG-LICENCE"
+        return "ESX-DEBUG-LICENSE"
     end
 
     local identifier = nil
@@ -241,6 +244,10 @@ function ESX.GetIdentifier(playerId)
             identifier = string.gsub(v, "license:", "")
             break
         end
+    end
+
+    if Config.EnableDebug then
+        identifier = string.format("%s-%s", identifier, playerId) -- should let client with same identifier join and use ox_inventory
     end
 
     return identifier
@@ -310,43 +317,6 @@ function ESX.DiscordLogFields(name, title, color, fields)
     }), {
         ['Content-Type'] = 'application/json'
     })
-end
-
-function ESX.RefreshJobs()
-    local Jobs = {}
-    local jobs = MySQL.query.await('SELECT * FROM jobs')
-
-    for _, v in ipairs(jobs) do
-        Jobs[v.name] = v
-        Jobs[v.name].grades = {}
-    end
-
-    local jobGrades = MySQL.query.await('SELECT * FROM job_grades')
-
-    for _, v in ipairs(jobGrades) do
-        if Jobs[v.job_name] then
-            Jobs[v.job_name].grades[tostring(v.grade)] = v
-        else
-            print(('[^3WARNING^7] Ignoring job grades for ^5"%s"^0 due to missing job'):format(v.job_name))
-        end
-    end
-
-    for _, v in pairs(Jobs) do
-        if ESX.Table.SizeOf(v.grades) == 0 then
-            Jobs[v.name] = nil
-            print(('[^3WARNING^7] Ignoring job ^5"%s"^0 due to no job grades found'):format(v.name))
-        end
-    end
-
-    if not Jobs then
-        -- Fallback data, if no jobs exist
-        ESX.Jobs['unemployed'] = {
-            label = 'Unemployed',
-            grades = { ['0'] = { grade = 0, label = 'Unemployed', salary = 200, skin_male = {}, skin_female = {} } }
-        }
-    else
-        ESX.Jobs = Jobs
-    end
 end
 
 function ESX.RegisterUsableItem(item, cb)
@@ -434,18 +404,6 @@ if not Config.OxInventory then
 
         Core.PickupId = pickupId
     end
-end
-
-function ESX.DoesJobExist(job, grade)
-    grade = tostring(grade)
-
-    if job and grade then
-        if ESX.Jobs[job] and ESX.Jobs[job].grades[grade] then
-            return true
-        end
-    end
-
-    return false
 end
 
 function Core.IsPlayerAdmin(playerId)

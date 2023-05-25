@@ -1,5 +1,5 @@
 ESX = {}
-ESX.Players = {}
+ESX.Players = {} --[[@type xPlayer[] ]]
 ESX.Jobs = {}
 ESX.Items = {}
 Core = {}
@@ -61,11 +61,14 @@ MySQL.ready(function()
         end
     end
 
+    while not ESX.RefreshJobs do Wait(0) end
+
     ESX.RefreshJobs()
 
-    print(('[^2INFO^7] ESX ^5Legacy %s^0 initialized!'):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
+    print(("[^2INFO^7] ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
 
     StartDBSync()
+
     if Config.EnablePaycheck then
         StartPayCheck()
     end

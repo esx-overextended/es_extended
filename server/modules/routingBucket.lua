@@ -66,7 +66,7 @@ end
 local function onPlayerJoining(source)
     source = tonumber(source) --[[@as number]]
 
-    local bucketId = GetPlayerRoutingBucket(source) --[[@as routingBucket]]
+    local bucketId = GetPlayerRoutingBucket(source--[[@as string]])
 
     ESX.SetPlayerRoutingBucket(source, bucketId)
 end
@@ -97,7 +97,7 @@ local function onResourceStart(resource)
     if resource ~= GetCurrentResourceName() then return end
 
     for _, playerId in ipairs(GetPlayers()) do
-        onPlayerJoining(playerId)
+        onPlayerJoining(playerId --[[@as number]])
     end
 end
 
@@ -126,7 +126,7 @@ function ESX.SetPlayerRoutingBucket(playerId, bucketId)
     playerId = tonumber(playerId) --[[@as number]]
     bucketId = tonumber(bucketId) --[[@as number]]
 
-    if not playerId or not bucketId or GetPlayerPing(playerId) == 0 then return false end
+    if not playerId or not bucketId or GetPlayerPing(playerId --[[@as string]]) == 0 then return false end
 
     local currentBucketId = routingBucketPlayers[playerId]
 

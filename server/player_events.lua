@@ -14,6 +14,10 @@ ESX.RegisterSafeEvent("esx:setJob", function(value)
     TriggerEvent("esx:setJob", value.source, value.currentJob, value.lastJob)
 end)
 
+ESX.RegisterSafeEvent("esx:setDuty", function(value)
+    TriggerEvent("esx:setDuty", value.source, value.duty)
+end)
+
 ESX.RegisterSafeEvent("esx:setMetadata", function(value)
     TriggerEvent("esx:setMetadata", value.source, value.currentMetadata, value.lastMetadata)
 end)
