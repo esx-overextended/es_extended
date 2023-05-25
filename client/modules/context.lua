@@ -145,8 +145,11 @@ function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
         close = ESX.CloseContext, -- populate the table for backward-compatibility with esx_context
         canClose = canClose == nil and true or canClose,
         onExit = function()
-            contextData = nil
-            return onClose ~= nil and onClose()
+            local _contextData = contextData contextData = nil
+
+            CreateThread(function()
+                return onClose ~= nil and onClose(_contextData)
+            end)
         end,
     }
 
