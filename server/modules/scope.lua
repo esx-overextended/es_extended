@@ -62,7 +62,7 @@ local function onResourceStart(resource)
     if resource ~= GetCurrentResourceName() then return end
 
     for _, playerId in ipairs(GetPlayers()) do
-        onPlayerJoining(playerId)
+        onPlayerJoining(playerId --[[@as number]])
     end
 end
 

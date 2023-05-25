@@ -774,7 +774,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     end
 
     ---Gets the current player specified metadata
-    ---@param index string
+    ---@param index? string
     ---@param subIndex? string | table
     ---@return nil | string | table
     function self.getMetadata(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases...

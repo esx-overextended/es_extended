@@ -1,10 +1,10 @@
 Config.DiscordLogs = {
     Webhooks = {
-        default = '',
-        test = '',
-        Chat = '',
-        UserActions = '',
-        Resources = ''
+        default = "",
+        test = "",
+        Chat = "",
+        UserActions = "",
+        Resources = ""
     },
     Colors = {
         -- https://www.spycolor.com/

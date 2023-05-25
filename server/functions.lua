@@ -220,6 +220,7 @@ function ESX.GetExtendedPlayers(key, val)
     return xPlayers
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
 function ESX.GetPlayerFromId(source)
     return ESX.Players[tonumber(source)]
 end

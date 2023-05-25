@@ -50,7 +50,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
         print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
     end
 
-    local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
+    local jobObject, gradeObject      = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
     userData.job.id                   = jobObject.id
     userData.job.name                 = jobObject.name
@@ -382,7 +382,7 @@ if not Config.OxInventory then
         if type == 'item_standard' then
             local sourceItem = sourceXPlayer.getInventoryItem(itemName)
 
-            if itemCount > 0 and sourceItem.count >= itemCount then
+            if sourceItem and itemCount > 0 and sourceItem.count >= itemCount then
                 if targetXPlayer.canCarryItem(itemName, itemCount) then
                     sourceXPlayer.removeInventoryItem(itemName, itemCount)
                     targetXPlayer.addInventoryItem(itemName, itemCount)
@@ -412,6 +412,9 @@ if not Config.OxInventory then
                 local weaponLabel = ESX.GetWeaponLabel(itemName)
                 if not targetXPlayer.hasWeapon(itemName) then
                     local _, weapon = sourceXPlayer.getWeapon(itemName)
+
+                    if not weapon then return end
+
                     local _, weaponObject = ESX.GetWeapon(itemName)
                     itemCount = weapon.ammo
                     local weaponComponents = ESX.Table.Clone(weapon.components)
@@ -443,6 +446,8 @@ if not Config.OxInventory then
         elseif type == 'item_ammo' then
             if sourceXPlayer.hasWeapon(itemName) then
                 local _, weapon = sourceXPlayer.getWeapon(itemName)
+
+                if not weapon then return end
 
                 if targetXPlayer.hasWeapon(itemName) then
                     local _, weaponObject = ESX.GetWeapon(itemName)
@@ -476,7 +481,7 @@ if not Config.OxInventory then
             else
                 local xItem = xPlayer.getInventoryItem(itemName)
 
-                if (itemCount > xItem.count or xItem.count < 1) then
+                if not xItem or itemCount > xItem.count or xItem.count < 1 then
                     xPlayer.showNotification(_U('imp_invalid_quantity'))
                 else
                     xPlayer.removeInventoryItem(itemName, itemCount)
@@ -491,7 +496,7 @@ if not Config.OxInventory then
             else
                 local account = xPlayer.getAccount(itemName)
 
-                if (itemCount > account.money or account.money < 1) then
+                if not account or itemCount > account.money or account.money < 1 then
                     xPlayer.showNotification(_U('imp_invalid_amount'))
                 else
                     xPlayer.removeAccountMoney(itemName, itemCount, "Threw away")
@@ -505,6 +510,9 @@ if not Config.OxInventory then
 
             if xPlayer.hasWeapon(itemName) then
                 local _, weapon = xPlayer.getWeapon(itemName)
+
+                if not weapon then return end
+
                 local _, weaponObject = ESX.GetWeapon(itemName)
                 local components = ESX.Table.Clone(weapon.components)
                 local weaponAmmo = false
