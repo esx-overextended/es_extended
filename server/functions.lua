@@ -246,6 +246,10 @@ function ESX.GetIdentifier(playerId)
         end
     end
 
+    if Config.EnableDebug then
+        identifier = string.format("%s-%s", identifier, playerId) -- should let client with same identifier join and use ox_inventory
+    end
+
     return identifier
 end
 

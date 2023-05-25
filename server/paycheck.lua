@@ -9,7 +9,6 @@ function StartPayCheck()
                 local offduty_salary = xPlayer.job.grade_offduty_salary
                 local duty = xPlayer.job.duty
 
-                print(job, duty, salary, offduty_salary)
                 if duty and salary > 0 then
                     if not Config.EnableSocietyPayouts then
                         xPlayer.addAccountMoney("bank", salary, job == "unemployed" and "Welfare Check" or "On-Duty Paycheck")
