@@ -72,7 +72,7 @@ end
 
 ---@param eventName string
 ---@param source integer
----@param eventData? table<string, any>
+---@param eventData? table
 ---@param eventOptions? CEventOptions
 function ESX.TriggerSafeEvent(eventName, source, eventData, eventOptions)
     if not eventName or not source then return end

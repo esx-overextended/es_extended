@@ -10,7 +10,6 @@ local events = {
     ["esx:removeInventoryItem"] = false,
     ["esx:setMaxWeight"] = false,
     ["esx:setJob"] = false,
-    ["esx:setDuty"] = false,
     ["esx:setWeaponTint"] = false,
     ["esx:updatePlayerData"] = false,
     ["esx:setMetadata"] = false,
@@ -59,10 +58,6 @@ end)
 
 ESX.RegisterSafeEvent("esx:setJob", function(value)
     TriggerEvent("esx:setJob", value.currentJob, value.lastJob)
-end)
-
-ESX.RegisterSafeEvent("esx:setDuty", function(value)
-    TriggerEvent("esx:setDuty", value.duty)
 end)
 
 ESX.RegisterSafeEvent("esx:setWeaponTint", function(value)

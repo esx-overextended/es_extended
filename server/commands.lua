@@ -31,22 +31,6 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand("setduty", "admin", function(_, args, showError)
-    local toBoolean = { ["true"] = true, ["false"] = false }
-    local duty = args.duty ~= nil and toBoolean[args.duty:lower()]
-
-    if duty == nil then return showError(_U("command_setduty_invalid")) end
-
-    args.playerId.setDuty(duty)
-end, true, {
-    help = _U("command_setduty"),
-    validate = true,
-    arguments = {
-        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
-        { name = "duty",     help = _U("command_setjob_duty"),     type = "string" }
-    }
-})
-
 local upgrades = Config.SpawnVehMaxUpgrades and
     {
         plate = "ADMINCAR",
@@ -308,8 +292,7 @@ ESX.RegisterCommand('group', { "user", "admin" }, function(xPlayer, _, _)
 end, true)
 
 ESX.RegisterCommand('job', { "user", "admin" }, function(xPlayer, _, _)
-    local data = ("%s, You are currently: ^5%s^0 - ^5%s^0 (^5%s-Duty^0)"):format(xPlayer.getName(), xPlayer.getJob().name, xPlayer.getJob().grade_label, xPlayer.getDuty() and "On" or "Off")
-    print(data)
+    print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getJob().name .. "^0 - ^5" .. xPlayer.getJob().grade_label .. "^0")
 end, true)
 
 ESX.RegisterCommand('info', { "user", "admin" }, function(xPlayer, _, _)

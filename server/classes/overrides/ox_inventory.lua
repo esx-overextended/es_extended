@@ -1,8 +1,10 @@
 local Inventory
 
-AddEventHandler("ox_inventory:loadInventory", function(module)
-    Inventory = module
-end)
+if Config.OxInventory then
+    AddEventHandler('ox_inventory:loadInventory', function(module)
+        Inventory = module
+    end)
+end
 
 Core.PlayerFunctionOverrides.OxInventory = {
     getInventory = function(self)
@@ -42,7 +44,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
 
     setAccountMoney = function(self)
         return function(accountName, money, reason)
-            reason = reason or "Unknown"
+            reason = reason or 'unknown'
             if money >= 0 then
                 local account = self.getAccount(accountName)
 
@@ -62,7 +64,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
 
     addAccountMoney = function(self)
         return function(accountName, money, reason)
-            reason = reason or "Unknown"
+            reason = reason or 'unknown'
             if money > 0 then
                 local account = self.getAccount(accountName)
 
@@ -70,7 +72,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money += money
 
-                    TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
+                    TriggerEvent('esx:addAccountMoney', self.source, accountName, money, reason)
                     self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
 
                     if Inventory.accounts[accountName] then
@@ -83,7 +85,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
 
     removeAccountMoney = function(self)
         return function(accountName, money, reason)
-            reason = reason or "Unknown"
+            reason = reason or 'unknown'
             if money > 0 then
                 local account = self.getAccount(accountName)
 
@@ -91,7 +93,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money = self.accounts[account.index].money - money
 
-                    TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
+                    TriggerEvent('esx:removeAccountMoney', self.source, accountName, money, reason)
                     self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
 
                     if Inventory.accounts[accountName] then
@@ -142,7 +144,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
         return function(newWeight)
             self.maxWeight = newWeight
             self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
-            return Inventory.Set(self.source, "maxWeight", newWeight)
+            return Inventory.Set(self.source, 'maxWeight', newWeight)
         end
     end,
 

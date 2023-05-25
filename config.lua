@@ -1,22 +1,22 @@
 Config                             = {}
 Config.EnableDebug                 = false -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
 
-Config.Locale                      = GetConvar("esx:locale", "en")
+Config.Locale                      = GetConvar('esx:locale', 'en')
 
 Config.MapName                     = "Los Santos"
 Config.GameType                    = "ESX Overextended"
 
 Config.Accounts                    = {
     bank = {
-        label = _U("account_bank"),
+        label = _U('account_bank'),
         round = true
     },
     money = {
-        label = _U("account_money"),
+        label = _U('account_money'),
         round = true
     },
     black_money = {
-        label = _U("account_black_money"),
+        label = _U('account_black_money'),
         round = true
     }
 }
@@ -73,7 +73,7 @@ Config.RemoveHudCommonents         = {
 }
 
 Config.SpawnVehMaxUpgrades         = true       -- admin vehicles spawn with max vehicle settings
-Config.CustomAIPlates              = "ESX.A111" -- Custom plates for AI vehicles
+Config.CustomAIPlates              = 'ESX.A111' -- Custom plates for AI vehicles
 -- Pattern string format
 --1 will lead to a random number from 0-9.
 --A will lead to a random letter from A-Z.
@@ -83,7 +83,7 @@ Config.CustomAIPlates              = "ESX.A111" -- Custom plates for AI vehicles
 --Any other character will lead to said character being emitted.
 -- A string shorter than 8 characters will be padded on the right.
 
-Config.DefaultNotificationPosition = "center-right" -- "top" | "top-right" | "top-left" | "bottom" | "bottom-right" | "bottom-left" | "center-right" | "center-left"
-Config.DefaultTextUIPosition       = "left-center"  -- "right-center" | "left-center" | "top-center"
-Config.DefaultProgressBarType      = "bar"          -- "bar" or "circle"
-Config.DefaultProgressBarPosition  = "bottom"       -- "middle" or "bottom"
+Config.DefaultNotificationPosition = "center-right" -- 'top' | 'top-right' | 'top-left' | 'bottom' | 'bottom-right' | 'bottom-left' | 'center-right' | 'center-left'
+Config.DefaultTextUIPosition       = "left-center"  -- 'right-center' | 'left-center' | 'top-center'
+Config.DefaultProgressBarType      = "bar"          -- 'bar' or 'circle'
+Config.DefaultProgressBarPosition  = "bottom"       -- 'middle' or 'bottom'
