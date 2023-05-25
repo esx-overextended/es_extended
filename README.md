@@ -18,6 +18,10 @@
 
 * Reduced Framework Dependency Resources: This aims to streamline resource allocation by minimizing the framework's dependency resources. **(WIP)**
 
+* Enhanced Job Module: Integrated pre-defined job duties and job types
+
+* Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
+
 
 ### ℹ Information
 
