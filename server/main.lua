@@ -3,7 +3,7 @@ SetGameType(Config.GameType)
 
 local oneSyncState = GetConvar('onesync', 'off')
 local newPlayer = 'INSERT INTO `users` SET `accounts` = ?, `identifier` = ?, `group` = ?'
-local loadPlayer = 'SELECT `accounts`, `job`, `job_grade`, `job_duty`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`'
+local loadPlayer = 'SELECT `accounts`, `job`, `job_grade`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`'
 
 if Config.Multichar then
     newPlayer = newPlayer .. ', `firstname` = ?, `lastname` = ?, `dateofbirth` = ?, `sex` = ?, `height` = ?'
@@ -18,7 +18,7 @@ loadPlayer = loadPlayer .. ' FROM `users` WHERE identifier = ?'
 local function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
-    local job, grade, duty = result.job, tostring(result.job_grade), result.job_duty and (result.job_duty == 1 and true or result.job_duty == 0 and false)
+    local job, grade = result.job, tostring(result.job_grade)
     local foundAccounts, foundItems = {}, {}
 
     -- Accounts
@@ -46,24 +46,21 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     -- Job
     if not ESX.DoesJobExist(job, grade) then
-        job, grade, duty = 'unemployed', '0', false
+        job, grade = 'unemployed', '0'
         print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
     end
 
-    local jobObject, gradeObject      = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
+    local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
-    userData.job.id                   = jobObject.id
-    userData.job.name                 = jobObject.name
-    userData.job.label                = jobObject.label
-    userData.job.type                 = jobObject.type
-    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
-    userData.job.grade                = tonumber(grade)
-    userData.job.grade_name           = gradeObject.name
-    userData.job.grade_label          = gradeObject.label
-    userData.job.grade_salary         = gradeObject.salary
-    userData.job.grade_offduty_salary = gradeObject.offduty_salary
-    userData.job.skin_male            = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {} --[[@diagnostic disable-line: param-type-mismatch]]
-    userData.job.skin_female          = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
+    userData.job.id              = jobObject.id
+    userData.job.name            = jobObject.name
+    userData.job.label           = jobObject.label
+    userData.job.grade           = tonumber(grade)
+    userData.job.grade_name      = gradeObject.name
+    userData.job.grade_label     = gradeObject.label
+    userData.job.grade_salary    = gradeObject.salary
+    userData.job.skin_male       = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}
+    userData.job.skin_female     = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {}
 
     -- Inventory
     if not Config.OxInventory then
@@ -87,7 +84,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                 userData.weight = userData.weight + (item.weight * count)
             end
 
-            userData.inventory[#userData.inventory + 1] = { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove }
+            userData.inventory[#userData.inventory+1] = { name = name, count = count, label = item.label, weight = item.weight, usable = Core.UsableItemsCallbacks[name] ~= nil, rare = item.rare, canRemove = item.canRemove }
         end
 
         table.sort(userData.inventory, function(a, b)
@@ -129,7 +126,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                         weapon.tintIndex = 0
                     end
 
-                    userData.loadout[#userData.loadout + 1] = { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex }
+                    userData.loadout[#userData.loadout+1] = { name = name, ammo = weapon.ammo, label = label, components = weapon.components, tintIndex = weapon.tintIndex }
                 end
             end
         end
@@ -382,7 +379,7 @@ if not Config.OxInventory then
         if type == 'item_standard' then
             local sourceItem = sourceXPlayer.getInventoryItem(itemName)
 
-            if sourceItem and itemCount > 0 and sourceItem.count >= itemCount then
+            if itemCount > 0 and sourceItem.count >= itemCount then
                 if targetXPlayer.canCarryItem(itemName, itemCount) then
                     sourceXPlayer.removeInventoryItem(itemName, itemCount)
                     targetXPlayer.addInventoryItem(itemName, itemCount)
@@ -412,9 +409,6 @@ if not Config.OxInventory then
                 local weaponLabel = ESX.GetWeaponLabel(itemName)
                 if not targetXPlayer.hasWeapon(itemName) then
                     local _, weapon = sourceXPlayer.getWeapon(itemName)
-
-                    if not weapon then return end
-
                     local _, weaponObject = ESX.GetWeapon(itemName)
                     itemCount = weapon.ammo
                     local weaponComponents = ESX.Table.Clone(weapon.components)
@@ -446,8 +440,6 @@ if not Config.OxInventory then
         elseif type == 'item_ammo' then
             if sourceXPlayer.hasWeapon(itemName) then
                 local _, weapon = sourceXPlayer.getWeapon(itemName)
-
-                if not weapon then return end
 
                 if targetXPlayer.hasWeapon(itemName) then
                     local _, weaponObject = ESX.GetWeapon(itemName)
@@ -481,7 +473,7 @@ if not Config.OxInventory then
             else
                 local xItem = xPlayer.getInventoryItem(itemName)
 
-                if not xItem or itemCount > xItem.count or xItem.count < 1 then
+                if (itemCount > xItem.count or xItem.count < 1) then
                     xPlayer.showNotification(_U('imp_invalid_quantity'))
                 else
                     xPlayer.removeInventoryItem(itemName, itemCount)
@@ -496,7 +488,7 @@ if not Config.OxInventory then
             else
                 local account = xPlayer.getAccount(itemName)
 
-                if not account or itemCount > account.money or account.money < 1 then
+                if (itemCount > account.money or account.money < 1) then
                     xPlayer.showNotification(_U('imp_invalid_amount'))
                 else
                     xPlayer.removeAccountMoney(itemName, itemCount, "Threw away")
@@ -510,9 +502,6 @@ if not Config.OxInventory then
 
             if xPlayer.hasWeapon(itemName) then
                 local _, weapon = xPlayer.getWeapon(itemName)
-
-                if not weapon then return end
-
                 local _, weaponObject = ESX.GetWeapon(itemName)
                 local components = ESX.Table.Clone(weapon.components)
                 local weaponAmmo = false
