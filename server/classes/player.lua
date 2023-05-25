@@ -506,8 +506,10 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     function self.setDuty(duty)
         if type(duty) ~= "boolean" then return false end
 
+        local lastJob = json.decode(json.encode(self.job))
         self.job.duty = duty
 
+        self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
         Player(self.source).state:set("job", self.job, true)
 
         self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
