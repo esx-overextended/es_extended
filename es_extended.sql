@@ -29,6 +29,45 @@ ALTER TABLE `users`
 ADD COLUMN IF NOT EXISTS `job_duty` tinyint(1) NULL DEFAULT 0 AFTER `job_grade`;
 
 
+CREATE TABLE IF NOT EXISTS `user_groups` (
+    `identifier` VARCHAR(60) NOT NULL,
+    `name` VARCHAR(50) NOT NULL,
+    `grade` INT NOT NULL DEFAULT 0,
+
+    KEY `FK_user_groups_users` (`identifier`),
+    CONSTRAINT `FK_user_groups_users` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+DELIMITER //
+DROP TRIGGER IF EXISTS insert_user_groups;
+
+CREATE TRIGGER insert_user_groups
+AFTER INSERT ON `users` FOR EACH ROW
+BEGIN
+    INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+END //
+
+DROP TRIGGER IF EXISTS update_user_groups;
+
+CREATE TRIGGER update_user_groups
+AFTER UPDATE ON `users` FOR EACH ROW
+BEGIN
+    IF OLD.group <> NEW.group THEN
+        UPDATE `user_groups` SET `name` = NEW.group WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
+    END IF;
+END //
+DELIMITER ;
+
+-- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
+INSERT IGNORE INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `group`, 0 FROM `users`
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM `user_groups`
+    WHERE `user_groups`.`identifier` = `users`.`identifier` AND `user_groups`.`name` = `users`.`group`
+);
+
+
 CREATE TABLE IF NOT EXISTS `items` (
     `name` VARCHAR(50) NOT NULL,
     `label` VARCHAR(50) NOT NULL,
@@ -74,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
 ) ENGINE=InnoDB;
 
 /*
-for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
+for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
 */
 ALTER TABLE `job_grades`
 ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
