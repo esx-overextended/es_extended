@@ -320,6 +320,14 @@ function ESX.RefreshJobs()
     Core.RefreshPlayersJob()
 end
 
+
+---Gets the specified job object data
+---@param jobName  string
+---@return xJob?
+function ESX.GetJob(jobName)
+    return ESX.Jobs[jobName]
+end
+
 ---Gets all of the job objects
 ---@return xJob[]
 function ESX.GetJobs()
