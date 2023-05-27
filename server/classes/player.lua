@@ -578,7 +578,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.job.name                 = jobObject.name
         self.job.label                = jobObject.label
         self.job.type                 = jobObject.type
-        self.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
+        self.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty --[[@as boolean]]
         self.job.grade                = tonumber(grade)
         self.job.grade_name           = gradeObject.name
         self.job.grade_label          = gradeObject.label
@@ -590,7 +590,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
         Player(self.source).state:set("job", self.job, true)
 
-        self.setDuty(self.job.duty)
+        self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
+        Player(self.source).state:set("duty", self.job.duty, true)
 
         return true
     end
@@ -607,16 +608,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     function self.setDuty(duty)
         if type(duty) ~= "boolean" then return false end
 
-        local lastJob = json.decode(json.encode(self.job))
-        self.job.duty = duty
-
-        self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
-        Player(self.source).state:set("job", self.job, true)
-
-        self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
-        Player(self.source).state:set("duty", self.job.duty, true)
-
-        return true
+        return self.setJob(self.job.name, self.job.grade, duty)
     end
 
     ---Adds a weapon with the specified ammo to the current player

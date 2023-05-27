@@ -367,10 +367,6 @@ function ESX.GetItemLabel(item)
     end
 end
 
-function ESX.GetJobs()
-    return ESX.Jobs
-end
-
 function ESX.GetUsableItems()
     local Usables = {}
     for k in pairs(Core.UsableItemsCallbacks) do

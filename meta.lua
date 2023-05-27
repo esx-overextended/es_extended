@@ -56,7 +56,7 @@
 ---@field canCarryItem fun(itemName: string, itemCount: integer | number): boolean
 ---@field canSwapItem fun(firstItem: string, firstItemCount: integer | number, testItem: string, testItemCount: integer | number): boolean
 ---@field getJob fun(): table
----@field setJob fun(job: string, grade: integer | number | string, duty?: boolean): integer | number
+---@field setJob fun(job: string, grade: integer | number | string, duty?: boolean): boolean
 ---@field getDuty fun(): boolean
 ---@field setDuty fun(duty: boolean): boolean
 ---@field addWeapon fun(weaponName: string, ammo: integer | number): boolean

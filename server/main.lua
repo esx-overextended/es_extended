@@ -56,7 +56,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     userData.job.name                 = jobObject.name
     userData.job.label                = jobObject.label
     userData.job.type                 = jobObject.type
-    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
+    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty --[[@as boolean]]
     userData.job.grade                = tonumber(grade)
     userData.job.grade_name           = gradeObject.name
     userData.job.grade_label          = gradeObject.label
@@ -197,6 +197,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),
+            duty = xPlayer.getDuty(),
             loadout = xPlayer.getLoadout(),
             maxWeight = xPlayer.getMaxWeight(),
             money = xPlayer.getMoney(),

@@ -1,6 +1,6 @@
 ---@alias gradeKey string starts from 0 (must be string)
 
----@class xGradeNew
+---@class xGrade
 ---@field name string grade name
 ---@field label string grade label
 ---@field salary number grade salary
@@ -8,15 +8,18 @@
 ---@field skin_male table grade male skin
 ---@field skin_female table grade female skin
 
----@class xJobNew
+---@class xJob
 ---@field name string job name
 ---@field label string job label
----@field type? string job type
+---@field type string job type
 ---@field default_duty boolean | 1 | 0 job default duty state
----@field grades table<gradeKey, xGradeNew>
+---@field grades table<gradeKey, xGrade>
+
+---@type xJob[]
+ESX.Jobs = {}
 
 ---Adds a job or a table of jobs on runtime
----@param jobObject xJobNew | xJobNew[]
+---@param jobObject xJob | xJob[]
 ---@return boolean
 ---@return string
 function ESX.AddJob(jobObject)
@@ -305,6 +308,7 @@ function ESX.RefreshJobs()
             ["unemployed"] = {
                 name = "unemployed",
                 label = "Unemployed",
+                type = "CIV",
                 default_duty = false,
                 grades = { ["0"] = { job_name = "unemployed", grade = 0, name = "unemployed", label = "Unemployed", salary = 0, offduty_salary = 200, skin_male = {}, skin_female = {} } }
             }
@@ -314,6 +318,12 @@ function ESX.RefreshJobs()
     end
 
     Core.RefreshPlayersJob()
+end
+
+---Gets all of the job objects
+---@return xJob[]
+function ESX.GetJobs()
+    return ESX.Jobs
 end
 
 ---Checks if a job with the specified name and grade exist
