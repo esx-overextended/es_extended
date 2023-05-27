@@ -5,6 +5,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     local self = {}
 
     self.accounts = playerAccounts
+    self.groups = {playerGroup = 0}
     self.group = playerGroup
     self.identifier = playerIdentifier
     self.license = string.format("license:%s", Config.Multichar and playerIdentifier:sub(playerIdentifier:find(":") + 1, playerIdentifier:len()) or playerIdentifier)
@@ -19,7 +20,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
 
-    ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
+    for groupName in pairs(self.groups) do
+        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, groupName))
+    end
 
     local stateBag = Player(self.source).state
     stateBag:set("identifier", self.identifier, true)
@@ -118,16 +121,95 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         return self.license
     end
 
-    ---Sets the current player group
-    ---@param newGroup string
-    function self.setGroup(newGroup)
-        ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, self.group))
-        self.group = newGroup
-        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
-        Player(self.source).state:set("group", self.group, true)
+    ---Checks if the current player has the specified group
+    ---@param groupName string
+    ---@param groupGrade? integer | number
+    ---@return boolean, integer | number | nil
+    function self.hasGroup(groupName, groupGrade)
+        if not groupName then return false end
+
+        if groupGrade ~= nil then return self.groups[groupName] == groupGrade end
+
+        return self.groups[groupName] ~= nil, self.groups[groupName]
     end
 
-    ---Gets the current player group
+    ---Adds the specified group to the current player
+    ---@param groupName string
+    ---@param groupGrade integer | number
+    ---@return boolean
+    function self.addGroup(groupName, groupGrade)
+        if type(groupName) ~= "string" or type(groupGrade) ~= "number" or self.hasGroup(groupName, groupGrade) then return false end
+
+        --TODO: check if the new group exists
+
+        local triggerRemoveGroup, previousGroup = false, self.group
+        local lastGroups = json.decode(json.encode(self.groups))
+
+        if Config.AdminGroup[groupName] or groupName == "user" then
+            self.groups[self.group], self.group = nil, groupName
+            triggerRemoveGroup = true
+
+            ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, previousGroup))
+        end
+
+        self.groups[groupName] = groupGrade
+
+        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, groupName))
+
+        self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
+        self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
+
+        if triggerRemoveGroup then
+            self.triggerSafeEvent("esx:removeGroup", {groupName = previousGroup, groupGrade = lastGroups[previousGroup]}, {server = true, client = true})
+        end
+
+        Player(self.source).state:set("groups", self.groups, true)
+        Player(self.source).state:set("group", self.group, true)
+
+        return true
+    end
+
+    ---Removes the specified group from the current player
+    ---@param groupName string
+    ---@return boolean
+    function self.removeGroup(groupName)
+        if type(groupName) ~= "string" or groupName == "user" or not self.hasGroup(groupName) then return false end
+
+        local triggerAddGroup, defaultGroup = false, "user"
+        local lastGroups = json.decode(json.encode(self.groups))
+
+        ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, groupName))
+
+        self.groups[groupName] = nil
+
+        if Config.AdminGroup[groupName] then
+            self.groups[defaultGroup], self.group = 0, defaultGroup
+            triggerAddGroup = true
+
+            ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
+        end
+
+        self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
+        self.triggerSafeEvent("esx:removeGroup", {groupName = groupName, groupGrade = lastGroups[groupName]}, {server = true, client = true})
+
+        if triggerAddGroup then
+            self.triggerSafeEvent("esx:addGroup", {groupName = defaultGroup, groupGrade = self.groups[defaultGroup]}, {server = true, client = true})
+        end
+
+        Player(self.source).state:set("groups", self.groups, true)
+        Player(self.source).state:set("group", self.group, true)
+
+        return true
+    end
+
+    ---Sets the current player's permission/user/admin group
+    ---@param newGroup string
+    ---@return boolean
+    function self.setGroup(newGroup)
+        return self.addGroup(newGroup, 0)
+    end
+
+    ---Gets the current player's permission/user/admin group
     ---@return string
     function self.getGroup()
         return self.group

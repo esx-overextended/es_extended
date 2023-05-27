@@ -10,6 +10,18 @@ ESX.RegisterSafeEvent("esx:setMaxWeight", function(value)
     TriggerEvent("esx:setMaxWeight", value.source, value.maxWeight)
 end)
 
+ESX.RegisterSafeEvent("esx:setGroups", function(value)
+    TriggerEvent("esx:setGroups", value.source, value.currentGroups, value.lastGroups)
+end)
+
+ESX.RegisterSafeEvent("esx:addGroup", function(value)
+    TriggerEvent("esx:addGroup", value.source, value.groupName, value.groupGrade)
+end)
+
+ESX.RegisterSafeEvent("esx:removeGroup", function(value)
+    TriggerEvent("esx:removeGroup", value.source, value.groupName, value.groupGrade)
+end)
+
 ESX.RegisterSafeEvent("esx:setJob", function(value)
     TriggerEvent("esx:setJob", value.source, value.currentJob, value.lastJob)
 end)

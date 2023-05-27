@@ -2,6 +2,7 @@
 
 ---@class xPlayer
 ---@field accounts table
+---@field groups table<string, integer | number>
 ---@field group string
 ---@field identifier string
 ---@field license string
@@ -26,7 +27,10 @@
 ---@field removeMoney fun(money?: integer | number, reason?: string): boolean
 ---@field getIdentifier fun(): string
 ---@field getLicense fun(): string
----@field setGroup fun(newGroup?: string)
+---@field hasGroup fun(groupName: string, groupGrade?: integer | number): boolean, integer | number | nil
+---@field addGroup fun(groupName: string, groupGrade: integer | number): boolean
+---@field removeGroup fun(groupName: string): boolean
+---@field setGroup fun(newGroup?: string): boolean
 ---@field getGroup fun(): string
 ---@field setVariable fun(key: string, value: any)
 ---@field set fun(key: string, value: any)
