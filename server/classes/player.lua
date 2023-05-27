@@ -29,6 +29,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     stateBag:set("license", self.license, true)
     stateBag:set("job", self.job, true)
     stateBag:set("duty", self.job.duty, true)
+    stateBag:set("groups", self.groups, true)
     stateBag:set("group", self.group, true)
     stateBag:set("name", self.name, true)
     stateBag:set("metadata", self.metadata, true)
@@ -200,6 +201,12 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         Player(self.source).state:set("group", self.group, true)
 
         return true
+    end
+
+    ---Gets all of the current player's groups
+    ---@return table<string, integer | number>
+    function self.getGroups()
+        return self.groups
     end
 
     ---Sets the current player's permission/user/admin group
