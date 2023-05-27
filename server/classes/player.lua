@@ -158,7 +158,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local triggerRemoveGroup, previousGroup = false, self.group
         local lastGroups = json.decode(json.encode(self.groups))
 
-        if Config.AdminGroup[groupName] or groupName == "user" then
+        if Config.AdminGroups[groupName] or groupName == "user" then
             self.groups[self.group], self.group = nil, groupName
             triggerRemoveGroup = true
 
@@ -195,7 +195,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
 
         self.groups[groupName] = nil
 
-        if Config.AdminGroup[groupName] then
+        if Config.AdminGroups[groupName] then
             self.groups[defaultGroup], self.group = 0, defaultGroup
             triggerAddGroup = true
 
