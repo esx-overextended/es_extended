@@ -110,7 +110,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
             userData.group = result.group
         end
     else
-        userData.group = 'user'
+        userData.group = "user"
     end
 
     -- Loadout
@@ -185,12 +185,15 @@ local function loadESXPlayer(identifier, playerId, isNew)
         end
     end
 
+    xPlayer.setCoords(userData.coords)
+
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
         xPlayerServer = xPlayer,
         xPlayerClient = {
             accounts = xPlayer.getAccounts(),
-            coords = userData.coords,
+            groups = xPlayer.getGroups(),
+            coords = xPlayer.getCoords(),
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),

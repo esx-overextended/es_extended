@@ -1,3 +1,15 @@
+---Creates an xPlayer object
+---@param playerId integer | number
+---@param playerIdentifier string
+---@param playerGroup string
+---@param playerAccounts table
+---@param playerInventory table
+---@param playerInventoryWeight integer | number
+---@param playerJob table
+---@param playerLoadout table
+---@param playerName string
+---@param playerMetadata table
+---@return xPlayer
 function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 

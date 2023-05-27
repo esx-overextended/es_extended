@@ -30,6 +30,7 @@
 ---@field hasGroup fun(groupName: string, groupGrade?: integer | number): boolean, integer | number | nil
 ---@field addGroup fun(groupName: string, groupGrade: integer | number): boolean
 ---@field removeGroup fun(groupName: string): boolean
+---@field getGroups fun(): table<string, integer | number>
 ---@field setGroup fun(newGroup?: string): boolean
 ---@field getGroup fun(): string
 ---@field setVariable fun(key: string, value: any)
