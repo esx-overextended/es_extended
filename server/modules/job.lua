@@ -1,6 +1,4 @@
----@alias gradeKey string starts from 0 (must be string)
-
----@class xGrade
+---@class xJobGrade
 ---@field name string grade name
 ---@field label string grade label
 ---@field salary number grade salary
@@ -13,7 +11,7 @@
 ---@field label string job label
 ---@field type string job type
 ---@field default_duty boolean | 1 | 0 job default duty state
----@field grades table<gradeKey, xGrade>
+---@field grades table<gradeKey, xJobGrade>
 
 ---@type xJob[]
 ESX.Jobs = {}
@@ -319,7 +317,6 @@ function ESX.RefreshJobs()
 
     Core.RefreshPlayersJob()
 end
-
 
 ---Gets the specified job object data
 ---@param jobName  string

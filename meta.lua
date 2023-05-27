@@ -1,5 +1,7 @@
 ---@meta
 
+---@alias gradeKey string starts from 0 (must be string)
+
 ---@class xPlayer
 ---@field accounts table
 ---@field groups table<string, integer | number>

@@ -153,7 +153,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     function self.addGroup(groupName, groupGrade)
         if type(groupName) ~= "string" or type(groupGrade) ~= "number" or self.hasGroup(groupName, groupGrade) then return false end
 
-        --TODO: check if the new group exists
+        if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup()^7 usage for Player ^5%s^7, Group: ^5%s^7"):format(self.source, groupName)) return false end
 
         local triggerRemoveGroup, previousGroup = false, self.group
         local lastGroups = json.decode(json.encode(self.groups))
