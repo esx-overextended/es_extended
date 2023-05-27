@@ -28,6 +28,22 @@ for anyone who is migrating from ESX Legacy and already have `users` table which
 ALTER TABLE `users`
 ADD COLUMN IF NOT EXISTS `job_duty` tinyint(1) NULL DEFAULT 0 AFTER `job_grade`;
 
+CREATE TABLE IF NOT EXISTS `groups` (
+    `name` VARCHAR(50) NOT NULL,
+    `label` VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (`name`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `group_grades` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `group_name` VARCHAR(50) DEFAULT NULL,
+    `grade` INT NOT NULL,
+    `label` VARCHAR(50) NOT NULL,
+    `is_boss` tinyint(1) NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `user_groups` (
     `identifier` VARCHAR(60) NOT NULL,
@@ -45,7 +61,13 @@ DROP TRIGGER IF EXISTS insert_user_groups;
 CREATE TRIGGER insert_user_groups
 AFTER INSERT ON `users` FOR EACH ROW
 BEGIN
-    INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+    IF NOT EXISTS (
+        SELECT 1
+        FROM `user_groups`
+        WHERE `user_groups`.`identifier` = NEW.identifier AND `user_groups`.`name` = NEW.group
+    ) THEN
+        INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+    END IF;
 END //
 
 DROP TRIGGER IF EXISTS update_user_groups;
