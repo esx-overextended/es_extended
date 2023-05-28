@@ -206,11 +206,9 @@ local function createESXPlayer(identifier, playerId, data)
         accounts[account] = money
     end
 
-    local defaultGroup = Core.DefaultGroup
-    if Core.IsPlayerAdmin(playerId) then
-        print(('[^2INFO^0] Player ^5%s^0 Has been granted admin permissions via ^5Ace Perms^7.'):format(playerId))
-        defaultGroup = "admin"
-    end
+    local defaultGroup = Core.GetPlayerAdminGroup(playerId)
+
+    if Core.IsPlayerAdmin(playerId) then print(("[^2INFO^0] Player ^5%s^0 Has been granted %s permissions via ^5Ace Perms^7"):format(playerId, defaultGroup)) end
 
     if not Config.Multichar then
         MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()

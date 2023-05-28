@@ -436,10 +436,31 @@ if not Config.OxInventory then
     end
 end
 
+---@param playerId integer | number | string
+---@return boolean
 function Core.IsPlayerAdmin(playerId)
-    if (IsPlayerAceAllowed(playerId, "command") or GetConvar("sv_lan", "") == "true") and true or false then
+    if (IsPlayerAceAllowed(tostring(playerId), "command") or GetConvar("sv_lan", "") == "true") and true or false then
         return true
     end
 
-    return Config.AdminGroupsByName[ESX.Players[playerId]?.group]
+    playerId = tonumber(playerId) --[[@as number]]
+
+    return Config.AdminGroupsByName[ESX.Players[playerId]?.group] ~= nil
+end
+
+---@param playerId integer | number | string
+---@return string
+function Core.GetPlayerAdminGroup(playerId)
+    playerId = tostring(playerId)
+    local group = Core.DefaultGroup
+
+    for i = 1, #Config.AdminGroups do
+        local principal = ("group.%s"):format(Config.AdminGroups[i])
+        if IsPlayerAceAllowed(playerId, principal) then
+            group = Config.AdminGroups[i]
+            break
+        end
+    end
+
+    return group
 end
