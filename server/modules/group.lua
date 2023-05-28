@@ -7,7 +7,9 @@
 ---@field label string job label
 ---@field grades table<gradeKey, xGroupGrade>
 
+---@type table<string, xGroup>
 ESX.Groups = {}
+Core.DefaultGroup = "user"
 
 ---Refreshes/loads the group table from database
 function ESX.RefreshGroups()
@@ -48,10 +50,10 @@ function ESX.RefreshGroups()
         end
     end
 
-    ESX.Groups["user"] = {
-        name = "user",
-        label = ("user"):gsub("^%l", string.upper),
-        grades = { ["0"] = { group_name = "user", grade = 0, label = ("user"):gsub("^%l", string.upper) } }
+    ESX.Groups[Core.DefaultGroup] = {
+        name = Core.DefaultGroup,
+        label = Core.DefaultGroup:gsub("^%l", string.upper),
+        grades = { ["0"] = { group_name = Core.DefaultGroup, grade = 0, label = Core.DefaultGroup:gsub("^%l", string.upper) } }
     }
 
     Core.RefreshPlayersGroups()

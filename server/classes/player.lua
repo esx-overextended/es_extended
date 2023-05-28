@@ -158,7 +158,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local triggerRemoveGroup, previousGroup = false, self.group
         local lastGroups = json.decode(json.encode(self.groups))
 
-        if Config.AdminGroups[groupName] or groupName == "user" then
+        if Config.AdminGroups[groupName] or groupName == Core.DefaultGroup then
             self.groups[self.group], self.group = nil, groupName
             triggerRemoveGroup = true
 
@@ -186,9 +186,9 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     ---@param groupName string
     ---@return boolean
     function self.removeGroup(groupName)
-        if type(groupName) ~= "string" or groupName == "user" or not self.hasGroup(groupName) then return false end
+        if type(groupName) ~= "string" or groupName == Core.DefaultGroup or not self.hasGroup(groupName) then return false end
 
-        local triggerAddGroup, defaultGroup = false, "user"
+        local triggerAddGroup, defaultGroup = false, Core.DefaultGroup
         local lastGroups = json.decode(json.encode(self.groups))
 
         ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, groupName))

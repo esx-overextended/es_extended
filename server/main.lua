@@ -110,7 +110,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
             userData.group = result.group
         end
     else
-        userData.group = "user"
+        userData.group = Core.DefaultGroup
     end
 
     -- Loadout
@@ -229,7 +229,7 @@ local function createESXPlayer(identifier, playerId, data)
         accounts[account] = money
     end
 
-    local defaultGroup = "user"
+    local defaultGroup = Core.DefaultGroup
     if Core.IsPlayerAdmin(playerId) then
         print(('[^2INFO^0] Player ^5%s^0 Has been granted admin permissions via ^5Ace Perms^7.'):format(playerId))
         defaultGroup = "admin"
@@ -240,10 +240,9 @@ local function createESXPlayer(identifier, playerId, data)
             loadESXPlayer(identifier, playerId, true)
         end)
     else
-        MySQL.prepare(newPlayer,
-            { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
-                loadESXPlayer(identifier, playerId, true)
-            end)
+        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
+            loadESXPlayer(identifier, playerId, true)
+        end)
     end
 end
 
