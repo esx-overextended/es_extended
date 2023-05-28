@@ -117,6 +117,20 @@ function ESX.RefreshGroups()
         ESX.Groups[key].principal = principal
     end
 
+    local adminGroupsCount = #Config.AdminGroups
+
+    for i = 1, #Config.AdminGroups do -- removes the old admin groups ace permissions...
+        local child = Config.AdminGroups[i]
+        local parent = Config.AdminGroups[i + 1] or Core.DefaultGroup
+
+        lib.addPrincipal(ESX.Groups[child].principal, ESX.Groups[parent].principal)
+    end
+
+    if adminGroupsCount > 0 then
+        lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command")
+        lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command.quit", false)
+    end
+
     Core.RefreshPlayersGroups()
 end
 

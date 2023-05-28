@@ -32,8 +32,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
 
-    for groupName in pairs(self.groups) do
-        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, groupName))
+    for groupName, groupGrade in pairs(self.groups) do
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
     end
 
     local stateBag = Player(self.source).state
@@ -162,12 +162,12 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.groups[self.group], self.group = nil, groupName
             triggerRemoveGroup = true
 
-            ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, previousGroup))
+            lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[previousGroup].principal, lastGroups[previousGroup]))
         end
 
         self.groups[groupName] = groupGrade
 
-        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, groupName))
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
 
         self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
         self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
@@ -191,7 +191,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         local triggerAddGroup, defaultGroup = false, Core.DefaultGroup
         local lastGroups = json.decode(json.encode(self.groups))
 
-        ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, groupName))
+        lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, lastGroups[groupName]))
 
         self.groups[groupName] = nil
 
@@ -199,7 +199,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
             self.groups[defaultGroup], self.group = 0, defaultGroup
             triggerAddGroup = true
 
-            ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
+            lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[defaultGroup].principal, self.groups[defaultGroup]))
         end
 
         self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})

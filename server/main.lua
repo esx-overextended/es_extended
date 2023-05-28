@@ -102,16 +102,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Group
-    if result.group and result.group ~= "" then
-        if result.group == "superadmin" then
-            userData.group = "admin"
-            print("[^3WARNING^7] ^5Superadmin^7 detected, setting group to ^5admin^7")
-        else
-            userData.group = result.group
-        end
-    else
-        userData.group = Core.DefaultGroup
-    end
+    userData.group = (result.group and result.group ~= "" and Config.AdminGroupsByName[result.group]) and result.group or Core.GetPlayerAdminGroup(playerId)
 
     -- Loadout
     if not Config.OxInventory then
@@ -144,7 +135,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Identity
     userData.firstname                   = (result.firstname and result.firstname ~= "") and result.firstname
     userData.lastname                    = (result.lastname and result.lastname ~= "") and result.lastname
-    userData.playerName                  = (userData.firstname and userData.lastname) and ("%s %s"):format(userData.firstname, userData.lastname)
+    userData.playerName                  = (userData.firstname and userData.lastname) and ("%s %s"):format(userData.firstname, userData.lastname) or userData.playerName
     userData.dateofbirth                 = (result.dateofbirth and result.dateofbirth ~= "") and result.dateofbirth
     userData.sex                         = (result.sex and result.sex ~= "") and result.sex
     userData.height                      = (result.height and result.height ~= "") and result.height
