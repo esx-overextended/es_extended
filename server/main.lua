@@ -47,7 +47,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Job
     if not ESX.DoesJobExist(job, grade) then
         job, grade, duty = 'unemployed', '0', false
-        print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
+        print(("[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]"):format(identifier, job, grade))
     end
 
     local jobObject, gradeObject      = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
@@ -102,7 +102,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Group
-    if result.group then
+    if result.group and result.group ~= "" then
         if result.group == "superadmin" then
             userData.group = "admin"
             print("[^3WARNING^7] ^5Superadmin^7 detected, setting group to ^5admin^7")
@@ -136,54 +136,31 @@ local function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Position
-    userData.coords = json.decode(result.position) or Config.DefaultSpawn
+    userData.coords                      = (result.position and result.position ~= "") and json.decode(result.position) or Config.DefaultSpawn
 
     -- Skin
-    if result.skin and result.skin ~= '' then
-        userData.skin = json.decode(result.skin)
-    else
-        userData.skin = { sex = userData.sex == "f" and 1 or 0 }
-    end
+    userData.skin                        = (result.skin and result.skin ~= "") and json.decode(result.skin) or { sex = userData.sex == "f" and 1 or 0 }
 
     -- Identity
-    if result.firstname and result.firstname ~= '' then
-        userData.firstname = result.firstname
-        userData.lastname = result.lastname
-        userData.playerName = userData.firstname .. ' ' .. userData.lastname
-        if result.dateofbirth then
-            userData.dateofbirth = result.dateofbirth
-        end
-        if result.sex then
-            userData.sex = result.sex
-        end
-        if result.height then
-            userData.height = result.height
-        end
-    end
+    userData.firstname                   = (result.firstname and result.firstname ~= "") and result.firstname
+    userData.lastname                    = (result.lastname and result.lastname ~= "") and result.lastname
+    userData.playerName                  = (userData.firstname and userData.lastname) and ("%s %s"):format(userData.firstname, userData.lastname)
+    userData.dateofbirth                 = (result.dateofbirth and result.dateofbirth ~= "") and result.dateofbirth
+    userData.sex                         = (result.sex and result.sex ~= "") and result.sex
+    userData.height                      = (result.height and result.height ~= "") and result.height
 
     -- Metadata
-    if result.metadata and result.metadata ~= '' then
-        local metadata = json.decode(result.metadata)
-        userData.metadata = metadata
-    end
+    userData.metadata                    = (result.metadata and result.metadata ~= "") and json.decode(result.metadata) or userData.metadata
 
-    local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
-    ESX.Players[playerId] = xPlayer
+    local xPlayer                        = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
+    ESX.Players[playerId]                = xPlayer
     Core.PlayersByIdentifier[identifier] = xPlayer
 
-    if userData.firstname then
-        xPlayer.set('firstName', userData.firstname)
-        xPlayer.set('lastName', userData.lastname)
-        if userData.dateofbirth then
-            xPlayer.set('dateofbirth', userData.dateofbirth)
-        end
-        if userData.sex then
-            xPlayer.set('sex', userData.sex)
-        end
-        if userData.height then
-            xPlayer.set('height', userData.height)
-        end
-    end
+    xPlayer.set("firstName", userData.firstname)
+    xPlayer.set("lastName", userData.lastname)
+    xPlayer.set("dateofbirth", userData.dateofbirth)
+    xPlayer.set("sex", userData.sex)
+    xPlayer.set("height", userData.height)
 
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
@@ -219,7 +196,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
 
-    print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
+    print(("[^2INFO^0] Player ^5'%s'^0 has connected to the server. ID: ^5%s^7"):format(xPlayer.getName(), playerId))
 end
 
 local function createESXPlayer(identifier, playerId, data)

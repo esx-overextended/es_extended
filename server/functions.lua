@@ -441,5 +441,5 @@ function Core.IsPlayerAdmin(playerId)
         return true
     end
 
-    return Config.AdminGroups[ESX.Players[playerId]?.group]
+    return Config.AdminGroupsByName[ESX.Players[playerId]?.group]
 end

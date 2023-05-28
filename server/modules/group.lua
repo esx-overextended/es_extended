@@ -5,11 +5,16 @@
 ---@class xGroup
 ---@field name string job name
 ---@field label string job label
+---@field principal string
 ---@field grades table<gradeKey, xGroupGrade>
 
----@type table<string, xGroup>
-ESX.Groups = {}
+ESX.Groups = {} --[[@type table<string, xGroup>]]
+Config.AdminGroupsByName = {} --[[@type table<string, integer | number>]]
 Core.DefaultGroup = "user"
+
+for i = 1, #Config.AdminGroups do
+    Config.AdminGroupsByName[Config.AdminGroups[i]] = i
+end
 
 ---Refreshes/loads the group table from database
 function ESX.RefreshGroups()
@@ -38,16 +43,40 @@ function ESX.RefreshGroups()
         end
     end
 
+    for _, xGroup in pairs(ESX.Groups) do -- removes the old groups ace permissions...
+        -- TODO: might need to check for group.admin and user
+        local grades = {}
+        local parent = xGroup.principal
+
+        lib.removeAce(parent, parent)
+
+        for i in pairs(xGroup.grades) do
+            grades[#grades + 1] = tonumber(i)
+        end
+
+        table.sort(grades, function(a, b)
+            return a < b
+        end)
+
+        for i = 1, #grades do
+            local child = ("%s:%s"):format(xGroup.principal, grades[i])
+
+            lib.removeAce(child, child)
+            lib.removePrincipal(child, parent)
+
+            parent = child
+        end
+    end
+
     ESX.Groups = Groups
 
-    for key, value in pairs(Config.AdminGroups) do
-        if value then
-            ESX.Groups[key] = {
-                name = key,
-                label = key:gsub("^%l", string.upper),
-                grades = { ["0"] = { group_name = key, grade = 0, label = key:gsub("^%l", string.upper) } }
-            }
-        end
+    for i = 1, #Config.AdminGroups do
+        local group = Config.AdminGroups[i]
+        ESX.Groups[group] = {
+            name = group,
+            label = group:gsub("^%l", string.upper),
+            grades = { ["0"] = { group_name = group, grade = 0, label = group:gsub("^%l", string.upper) } }
+        }
     end
 
     ESX.Groups[Core.DefaultGroup] = {
@@ -55,6 +84,38 @@ function ESX.RefreshGroups()
         label = Core.DefaultGroup:gsub("^%l", string.upper),
         grades = { ["0"] = { group_name = Core.DefaultGroup, grade = 0, label = Core.DefaultGroup:gsub("^%l", string.upper) } }
     }
+
+    for key, xGroup in pairs(ESX.Groups) do
+        -- TODO: might need to check for group.admin and user
+        local grades = {}
+        local principal = ("group.%s"):format(xGroup.name)
+        local parent = principal
+
+        if not IsPrincipalAceAllowed(principal, principal) then
+            lib.addAce(principal, principal)
+        end
+
+        for i in pairs(xGroup.grades) do
+            grades[#grades + 1] = tonumber(i)
+        end
+
+        table.sort(grades, function(a, b)
+            return a < b
+        end)
+
+        for i = 1, #grades do
+            local child = ("%s:%s"):format(principal, grades[i])
+
+            if not IsPrincipalAceAllowed(child, child) then
+                lib.addAce(child, child)
+                lib.addPrincipal(child, parent)
+            end
+
+            parent = child
+        end
+
+        ESX.Groups[key].principal = principal
+    end
 
     Core.RefreshPlayersGroups()
 end

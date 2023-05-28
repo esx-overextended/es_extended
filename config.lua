@@ -21,8 +21,9 @@ Config.Accounts                    = {
     }
 }
 
-Config.AdminGroups                 = {
-    ["admin"] = true
+Config.AdminGroups                 = { -- The order is *IMPORTANT*. The top group will have the highest permission, while the bottom one will have the lowest one
+    "superadmin",
+    "admin"
 }
 
 Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
