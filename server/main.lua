@@ -185,15 +185,13 @@ local function loadESXPlayer(identifier, playerId, isNew)
         end
     end
 
-    xPlayer.setCoords(userData.coords)
-
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
         xPlayerServer = xPlayer,
         xPlayerClient = {
             accounts = xPlayer.getAccounts(),
             groups = xPlayer.getGroups(),
-            coords = xPlayer.getCoords(),
+            coords = userData.coords,
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),

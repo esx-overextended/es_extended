@@ -17,7 +17,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     local self = {}
 
     self.accounts = playerAccounts
-    self.groups = {playerGroup = 0}
+    self.groups = {[playerGroup] = 0}
     self.group = playerGroup
     self.identifier = playerIdentifier
     self.license = string.format("license:%s", Config.Multichar and playerIdentifier:sub(playerIdentifier:find(":") + 1, playerIdentifier:len()) or playerIdentifier)
@@ -153,7 +153,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     function self.addGroup(groupName, groupGrade)
         if type(groupName) ~= "string" or type(groupGrade) ~= "number" or self.hasGroup(groupName, groupGrade) then return false end
 
-        if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup()^7 usage for Player ^5%s^7, Group: ^5%s^7"):format(self.source, groupName)) return false end
+        if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup(%s, %s)^7 usage for Player ^5%s^7, Group: ^5%s^7"):format(groupName, groupGrade, self.source, groupName)) return false end
 
         local triggerRemoveGroup, previousGroup = false, self.group
         local lastGroups = json.decode(json.encode(self.groups))

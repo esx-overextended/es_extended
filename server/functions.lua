@@ -144,27 +144,43 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 end
 
 function Core.SavePlayer(xPlayer, cb)
-    local parameters <const> = {
-        json.encode(xPlayer.getAccounts(true)),
-        xPlayer.job.name,
-        xPlayer.job.grade,
-        xPlayer.job.duty,
-        xPlayer.group,
-        json.encode(xPlayer.getCoords()),
-        json.encode(xPlayer.getInventory(true)),
-        json.encode(xPlayer.getLoadout(true)),
-        json.encode(xPlayer.getMetadata()),
-        xPlayer.identifier
+    local queries = {
+        {
+            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
+            values = {
+                json.encode(xPlayer.getAccounts(true)),
+                xPlayer.job.name,
+                xPlayer.job.grade,
+                xPlayer.job.duty,
+                xPlayer.group,
+                json.encode(xPlayer.getCoords()),
+                json.encode(xPlayer.getInventory(true)),
+                json.encode(xPlayer.getLoadout(true)),
+                json.encode(xPlayer.getMetadata()),
+                xPlayer.identifier
+            }
+        },
+        {
+            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
+            values = {xPlayer.identifier, xPlayer.group}
+        }
     }
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
-        if affectedRows == 1 then
-            print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
-            TriggerEvent('esx:playerSaved', xPlayer.source, xPlayer)
+    for groupName, groupGrade in pairs(xPlayer.groups) do
+        if groupName ~= xPlayer.group then
+            queries[#queries+1] = {
+                query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
+                values = {xPlayer.identifier, groupName, groupGrade}
+            }
         end
-        if cb then
-            cb()
-        end
+    end
+
+    MySQL.transaction(queries, function(success)
+        print((success and "[^2INFO^7] Saved player ^5'%s'^7" or "[^1ERROR^7] Error in saving player ^5'%s'^7"):format(xPlayer.name))
+
+        if success then TriggerEvent("esx:playerSaved", xPlayer.source, xPlayer) end
+
+        return type(cb) == "function" and cb(success)
     end)
 end
 
@@ -174,33 +190,51 @@ function Core.SavePlayers(cb)
     if not next(xPlayers) then return end
 
     local startTime <const> = os.time()
-    local parameters = {}
 
-    for _, xPlayer in pairs(ESX.Players) do
-        parameters[#parameters + 1] = {
-            json.encode(xPlayer.getAccounts(true)),
-            xPlayer.job.name,
-            xPlayer.job.grade,
-            xPlayer.job.duty,
-            xPlayer.group,
-            json.encode(xPlayer.getCoords()),
-            json.encode(xPlayer.getInventory(true)),
-            json.encode(xPlayer.getLoadout(true)),
-            json.encode(xPlayer.getMetadata()),
-            xPlayer.identifier
+    local queries, count = {}, 0
+    local playerCounts = 0
+
+    for _, xPlayer in pairs(xPlayers) do
+        count += 1
+        queries[count] = {
+            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
+            values = {
+                json.encode(xPlayer.getAccounts(true)),
+                xPlayer.job.name,
+                xPlayer.job.grade,
+                xPlayer.job.duty,
+                xPlayer.group,
+                json.encode(xPlayer.getCoords()),
+                json.encode(xPlayer.getInventory(true)),
+                json.encode(xPlayer.getLoadout(true)),
+                json.encode(xPlayer.getMetadata()),
+                xPlayer.identifier
+            }
         }
+
+        count += 1
+        queries[count] = {
+            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
+            values = {xPlayer.identifier, xPlayer.group}
+        }
+
+        for groupName, groupGrade in pairs(xPlayer.groups) do
+            if groupName ~= xPlayer.group then
+                count += 1
+                queries[count] = {
+                    query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
+                    values = {xPlayer.identifier, groupName, groupGrade}
+                }
+            end
+        end
+
+        playerCounts += 1
     end
 
-    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
-        if not results then
-            return
-        end
+    MySQL.transaction(queries, function(success)
+        print((success and "[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms" or "[^1ERROR^7] Failed to save ^5%s^7 %s over ^5%s^7 ms"):format(playerCounts, playerCounts > 1 and "players" or "player", ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
 
-        if type(cb) == 'function' then
-            return cb()
-        end
-
-        print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player', ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+        return type(cb) == "function" and cb(success)
     end)
 end
 
