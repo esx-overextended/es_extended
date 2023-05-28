@@ -1,6 +1,11 @@
 ---@meta
 
+---@alias playerId integer
 ---@alias gradeKey string starts from 0 (must be string)
+---@alias entityId integer
+---@alias routingBucket integer
+---@alias routingBucketPlayersData table<playerId, true>
+---@alias routingBucketEntitiesData table<entityId, true>
 
 ---@class xPlayer
 ---@field accounts table

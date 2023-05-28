@@ -119,14 +119,16 @@ function ESX.RefreshGroups()
 
     local adminGroupsCount = #Config.AdminGroups
 
-    for i = 1, #Config.AdminGroups do -- removes the old admin groups ace permissions...
+    for i = 1, #Config.AdminGroups do
         local child = Config.AdminGroups[i]
         local parent = Config.AdminGroups[i + 1] or Core.DefaultGroup
 
+        lib.removePrincipal(ESX.Groups[child].principal, ESX.Groups[parent].principal) -- prevents duplication
         lib.addPrincipal(ESX.Groups[child].principal, ESX.Groups[parent].principal)
     end
 
     if adminGroupsCount > 0 then
+        lib.removeAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command") -- prevents duplication
         lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command")
         lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command.quit", false)
     end
