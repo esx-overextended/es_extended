@@ -75,8 +75,20 @@ DROP TRIGGER IF EXISTS update_user_groups;
 CREATE TRIGGER update_user_groups
 AFTER UPDATE ON `users` FOR EACH ROW
 BEGIN
-    IF OLD.group <> NEW.group THEN
-        UPDATE `user_groups` SET `name` = NEW.group WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
+    IF EXISTS (
+        SELECT 1
+        FROM `user_groups`
+        WHERE `identifier` = NEW.identifier AND `name` = OLD.group
+    ) THEN
+        UPDATE `user_groups`
+        SET `name` = NEW.group, `grade` = 0
+        WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
+    ELSEIF NOT EXISTS (
+        SELECT 1
+        FROM `user_groups`
+        WHERE `user_groups`.`identifier` = NEW.identifier AND `user_groups`.`name` = NEW.group
+    ) THEN
+        INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
     END IF;
 END //
 DELIMITER ;
