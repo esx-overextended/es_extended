@@ -1,10 +1,23 @@
-function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
+---Creates an xPlayer object
+---@param playerId integer | number
+---@param playerIdentifier string
+---@param playerGroup string
+---@param playerAccounts table
+---@param playerInventory table
+---@param playerInventoryWeight integer | number
+---@param playerJob table
+---@param playerLoadout table
+---@param playerName string
+---@param playerMetadata table
+---@return xPlayer
+function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 
     ---@type xPlayer
     local self = {}
 
     self.accounts = playerAccounts
+    self.groups = playerGroups
     self.group = playerGroup
     self.identifier = playerIdentifier
     self.license = string.format("license:%s", Config.Multichar and playerIdentifier:sub(playerIdentifier:find(":") + 1, playerIdentifier:len()) or playerIdentifier)
@@ -19,13 +32,16 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     self.maxWeight = Config.MaxWeight
     self.metadata = playerMetadata
 
-    ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
+    for groupName, groupGrade in pairs(self.groups) do
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+    end
 
     local stateBag = Player(self.source).state
     stateBag:set("identifier", self.identifier, true)
     stateBag:set("license", self.license, true)
     stateBag:set("job", self.job, true)
     stateBag:set("duty", self.job.duty, true)
+    stateBag:set("groups", self.groups, true)
     stateBag:set("group", self.group, true)
     stateBag:set("name", self.name, true)
     stateBag:set("metadata", self.metadata, true)
@@ -118,16 +134,101 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         return self.license
     end
 
-    ---Sets the current player group
-    ---@param newGroup string
-    function self.setGroup(newGroup)
-        ExecuteCommand(("remove_principal identifier.%s group.%s"):format(self.license, self.group))
-        self.group = newGroup
-        ExecuteCommand(("add_principal identifier.%s group.%s"):format(self.license, self.group))
-        Player(self.source).state:set("group", self.group, true)
+    ---Checks if the current player has the specified group
+    ---@param groupName string
+    ---@param groupGrade? integer | number
+    ---@return boolean, integer | number | nil
+    function self.hasGroup(groupName, groupGrade)
+        if not groupName then return false end
+
+        if groupGrade ~= nil then return self.groups[groupName] == groupGrade end
+
+        return self.groups[groupName] ~= nil, self.groups[groupName]
     end
 
-    ---Gets the current player group
+    ---Adds the specified group to the current player
+    ---@param groupName string
+    ---@param groupGrade integer | number
+    ---@return boolean
+    function self.addGroup(groupName, groupGrade)
+        if type(groupName) ~= "string" or type(groupGrade) ~= "number" or self.hasGroup(groupName, groupGrade) then return false end
+
+        if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup(%s, %s)^7 usage for Player ^5%s^7"):format(groupName, groupGrade, self.source)) return false end
+
+        local triggerRemoveGroup, previousGroup = false, self.group
+        local lastGroups = json.decode(json.encode(self.groups))
+
+        if Config.AdminGroupsByName[groupName] or groupName == Core.DefaultGroup then
+            self.groups[self.group], self.group = nil, groupName
+            triggerRemoveGroup = true
+
+            lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[previousGroup].principal, lastGroups[previousGroup]))
+        end
+
+        self.groups[groupName] = groupGrade
+
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+
+        self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
+        self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
+
+        if triggerRemoveGroup then
+            self.triggerSafeEvent("esx:removeGroup", {groupName = previousGroup, groupGrade = lastGroups[previousGroup]}, {server = true, client = true})
+        end
+
+        Player(self.source).state:set("groups", self.groups, true)
+        Player(self.source).state:set("group", self.group, true)
+
+        return true
+    end
+
+    ---Removes the specified group from the current player
+    ---@param groupName string
+    ---@return boolean
+    function self.removeGroup(groupName)
+        if type(groupName) ~= "string" or groupName == Core.DefaultGroup or not self.hasGroup(groupName) then return false end
+
+        local triggerAddGroup, defaultGroup = false, Core.DefaultGroup
+        local lastGroups = json.decode(json.encode(self.groups))
+
+        lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, lastGroups[groupName]))
+
+        self.groups[groupName] = nil
+
+        if Config.AdminGroupsByName[groupName] then
+            self.groups[defaultGroup], self.group = 0, defaultGroup
+            triggerAddGroup = true
+
+            lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[defaultGroup].principal, self.groups[defaultGroup]))
+        end
+
+        self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
+        self.triggerSafeEvent("esx:removeGroup", {groupName = groupName, groupGrade = lastGroups[groupName]}, {server = true, client = true})
+
+        if triggerAddGroup then
+            self.triggerSafeEvent("esx:addGroup", {groupName = defaultGroup, groupGrade = self.groups[defaultGroup]}, {server = true, client = true})
+        end
+
+        Player(self.source).state:set("groups", self.groups, true)
+        Player(self.source).state:set("group", self.group, true)
+
+        return true
+    end
+
+    ---Gets all of the current player's groups
+    ---@return table<string, integer | number>
+    function self.getGroups()
+        return self.groups
+    end
+
+    ---Sets the current player's permission/user/admin group
+    ---@param newGroup string
+    ---@return boolean
+    function self.setGroup(newGroup)
+        return self.addGroup(newGroup, 0)
+    end
+
+    ---Gets the current player's permission/user/admin group
     ---@return string
     function self.getGroup()
         return self.group
@@ -477,7 +578,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.job.name                 = jobObject.name
         self.job.label                = jobObject.label
         self.job.type                 = jobObject.type
-        self.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
+        self.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty --[[@as boolean]]
         self.job.grade                = tonumber(grade)
         self.job.grade_name           = gradeObject.name
         self.job.grade_label          = gradeObject.label
@@ -489,7 +590,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
         self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
         Player(self.source).state:set("job", self.job, true)
 
-        self.setDuty(self.job.duty)
+        self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
+        Player(self.source).state:set("duty", self.job.duty, true)
 
         return true
     end
@@ -506,16 +608,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAcc
     function self.setDuty(duty)
         if type(duty) ~= "boolean" then return false end
 
-        local lastJob = json.decode(json.encode(self.job))
-        self.job.duty = duty
-
-        self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
-        Player(self.source).state:set("job", self.job, true)
-
-        self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
-        Player(self.source).state:set("duty", self.job.duty, true)
-
-        return true
+        return self.setJob(self.job.name, self.job.grade, duty)
     end
 
     ---Adds a weapon with the specified ammo to the current player

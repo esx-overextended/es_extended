@@ -1,7 +1,15 @@
 ---@meta
 
+---@alias playerId integer
+---@alias gradeKey string starts from 0 (must be string)
+---@alias entityId integer
+---@alias routingBucket integer
+---@alias routingBucketPlayersData table<playerId, true>
+---@alias routingBucketEntitiesData table<entityId, true>
+
 ---@class xPlayer
 ---@field accounts table
+---@field groups table<string, integer | number>
 ---@field group string
 ---@field identifier string
 ---@field license string
@@ -26,7 +34,11 @@
 ---@field removeMoney fun(money?: integer | number, reason?: string): boolean
 ---@field getIdentifier fun(): string
 ---@field getLicense fun(): string
----@field setGroup fun(newGroup?: string)
+---@field hasGroup fun(groupName: string, groupGrade?: integer | number): boolean, integer | number | nil
+---@field addGroup fun(groupName: string, groupGrade: integer | number): boolean
+---@field removeGroup fun(groupName: string): boolean
+---@field getGroups fun(): table<string, integer | number>
+---@field setGroup fun(newGroup?: string): boolean
 ---@field getGroup fun(): string
 ---@field setVariable fun(key: string, value: any)
 ---@field set fun(key: string, value: any)
@@ -51,7 +63,7 @@
 ---@field canCarryItem fun(itemName: string, itemCount: integer | number): boolean
 ---@field canSwapItem fun(firstItem: string, firstItemCount: integer | number, testItem: string, testItemCount: integer | number): boolean
 ---@field getJob fun(): table
----@field setJob fun(job: string, grade: integer | number | string, duty?: boolean): integer | number
+---@field setJob fun(job: string, grade: integer | number | string, duty?: boolean): boolean
 ---@field getDuty fun(): boolean
 ---@field setDuty fun(duty: boolean): boolean
 ---@field addWeapon fun(weaponName: string, ammo: integer | number): boolean
