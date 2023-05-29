@@ -278,17 +278,14 @@ end
 
 ESX.RegisterCommand("setgroup", "admin", function(xPlayer, args, _)
     if not args.playerId then args.playerId = xPlayer.source end
-    if args.group == "superadmin" then
-        args.group = "admin"
-        print("[^3WARNING^7] ^5Superadmin^7 detected, setting group to ^5admin^7")
-    end
+
     args.playerId.setGroup(args.group)
 end, true, {
-    help = _U('command_setgroup'),
+    help = _U("command_setgroup"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' },
-        { name = 'group',    help = _U('command_setgroup_group'),  type = 'string' },
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
+        { name = "group",    help = _U("command_setgroup_group"),  type = "string" },
     }
 })
 

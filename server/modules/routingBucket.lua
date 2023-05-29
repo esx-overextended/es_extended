@@ -29,7 +29,7 @@ local function configureBucket(bucketId)
                     if ESX.Players[index] then ESX.Players[index].set("routingBucket", bucketId) end
                 end
 
-                if next(routingBuckets[bucketId].players) or next(routingBuckets[bucketId].entities) then return end
+                if routingBuckets[bucketId].players and next(routingBuckets[bucketId].players) or routingBuckets[bucketId].entities and next(routingBuckets[bucketId].entities) then return end
 
                 routingBuckets[bucketId] = nil
             end
@@ -47,7 +47,7 @@ local function configureBucket(bucketId)
                     Entity(index).state:set("routingBucket", bucketId, true) -- TODO: once vehicle class is implemented, change this
                 end
 
-                if next(routingBuckets[bucketId].entities) or next(routingBuckets[bucketId].players) then return end
+                if routingBuckets[bucketId].entities and next(routingBuckets[bucketId].entities) or routingBuckets[bucketId].players and next(routingBuckets[bucketId].players) then return end
 
                 routingBuckets[bucketId] = nil
             end
