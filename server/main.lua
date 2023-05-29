@@ -332,14 +332,17 @@ local function onPlayerLogout(source, reason, cb)
     if xPlayer then
         TriggerEvent("esx:playerDropped", source, reason)
 
-        for groupName in pairs(xPlayer.groups) do
-            xPlayer.removeGroup(groupName) -- to remove principals in case they want to log back with another character
-        end
-
         Core.SavePlayer(xPlayer, function()
-            ESX.Players[source] = nil
+            local playerGroups = json.decode(json.encode(xPlayer.groups)) -- avoid holding reference since it will add Core.DefaultGroup if the admin group is removed which causes error
+
+            for groupName in pairs(playerGroups) do
+                xPlayer.removeGroup(groupName) -- to remove principals in case they want to log back with another character
+            end
+
             Core.PlayersByIdentifier[xPlayer.identifier] = nil
-            if cb then return cb() end
+            ESX.Players[source] = nil
+
+            return cb and cb()
         end)
     end
 
