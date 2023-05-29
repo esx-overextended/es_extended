@@ -134,53 +134,37 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
         end
     end, true)
 
-    if type(group) == "table" then
+    if type(group) == 'table' then
         for _, v in ipairs(group) do
-            lib.addAce(("group.%s"):format(v), ("command.%s"):format(name), true)
+            ExecuteCommand(('add_ace group.%s command.%s allow'):format(v, name))
         end
     else
-        lib.addAce(("group.%s"):format(group), ("command.%s"):format(name), true)
+        ExecuteCommand(('add_ace group.%s command.%s allow'):format(group, name))
     end
 end
 
 function Core.SavePlayer(xPlayer, cb)
-    local queries = {
-        {
-            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
-            values = {
-                json.encode(xPlayer.getAccounts(true)),
-                xPlayer.job.name,
-                xPlayer.job.grade,
-                xPlayer.job.duty,
-                xPlayer.group,
-                json.encode(xPlayer.getCoords()),
-                json.encode(xPlayer.getInventory(true)),
-                json.encode(xPlayer.getLoadout(true)),
-                json.encode(xPlayer.getMetadata()),
-                xPlayer.identifier
-            }
-        },
-        {
-            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
-            values = {xPlayer.identifier, xPlayer.group}
-        }
+    local parameters <const> = {
+        json.encode(xPlayer.getAccounts(true)),
+        xPlayer.job.name,
+        xPlayer.job.grade,
+        xPlayer.job.duty,
+        xPlayer.group,
+        json.encode(xPlayer.getCoords()),
+        json.encode(xPlayer.getInventory(true)),
+        json.encode(xPlayer.getLoadout(true)),
+        json.encode(xPlayer.getMetadata()),
+        xPlayer.identifier
     }
 
-    for groupName, groupGrade in pairs(xPlayer.groups) do
-        if groupName ~= xPlayer.group then
-            queries[#queries+1] = {
-                query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
-                values = {xPlayer.identifier, groupName, groupGrade}
-            }
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(affectedRows)
+        if affectedRows == 1 then
+            print(('[^2INFO^7] Saved player ^5"%s^7"'):format(xPlayer.name))
+            TriggerEvent('esx:playerSaved', xPlayer.source, xPlayer)
         end
-    end
-
-    MySQL.transaction(queries, function(success)
-        print((success and "[^2INFO^7] Saved player ^5'%s'^7" or "[^1ERROR^7] Error in saving player ^5'%s'^7"):format(xPlayer.name))
-
-        if success then TriggerEvent("esx:playerSaved", xPlayer.source, xPlayer) end
-
-        return type(cb) == "function" and cb(success)
+        if cb then
+            cb()
+        end
     end)
 end
 
@@ -190,77 +174,50 @@ function Core.SavePlayers(cb)
     if not next(xPlayers) then return end
 
     local startTime <const> = os.time()
+    local parameters = {}
 
-    local queries, count = {}, 0
-    local playerCounts = 0
-
-    for _, xPlayer in pairs(xPlayers) do
-        count += 1
-        queries[count] = {
-            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
-            values = {
-                json.encode(xPlayer.getAccounts(true)),
-                xPlayer.job.name,
-                xPlayer.job.grade,
-                xPlayer.job.duty,
-                xPlayer.group,
-                json.encode(xPlayer.getCoords()),
-                json.encode(xPlayer.getInventory(true)),
-                json.encode(xPlayer.getLoadout(true)),
-                json.encode(xPlayer.getMetadata()),
-                xPlayer.identifier
-            }
+    for _, xPlayer in pairs(ESX.Players) do
+        parameters[#parameters + 1] = {
+            json.encode(xPlayer.getAccounts(true)),
+            xPlayer.job.name,
+            xPlayer.job.grade,
+            xPlayer.job.duty,
+            xPlayer.group,
+            json.encode(xPlayer.getCoords()),
+            json.encode(xPlayer.getInventory(true)),
+            json.encode(xPlayer.getLoadout(true)),
+            json.encode(xPlayer.getMetadata()),
+            xPlayer.identifier
         }
-
-        count += 1
-        queries[count] = {
-            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
-            values = {xPlayer.identifier, xPlayer.group}
-        }
-
-        for groupName, groupGrade in pairs(xPlayer.groups) do
-            if groupName ~= xPlayer.group then
-                count += 1
-                queries[count] = {
-                    query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
-                    values = {xPlayer.identifier, groupName, groupGrade}
-                }
-            end
-        end
-
-        playerCounts += 1
     end
 
-    MySQL.transaction(queries, function(success)
-        print((success and "[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms" or "[^1ERROR^7] Failed to save ^5%s^7 %s over ^5%s^7 ms"):format(playerCounts, playerCounts > 1 and "players" or "player", ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+    MySQL.prepare("UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?", parameters, function(results)
+        if not results then
+            return
+        end
 
-        return type(cb) == "function" and cb(success)
+        if type(cb) == 'function' then
+            return cb()
+        end
+
+        print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player', ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
     end)
 end
 
 ESX.GetPlayers = GetPlayers
 
----Returns instance of xPlayers
----@param key? string
----@param value? any
----@return xPlayer[], integer | number
-function ESX.GetExtendedPlayers(key, value)
+function ESX.GetExtendedPlayers(key, val)
     local xPlayers = {}
-    local count = 0
-
-    for _, xPlayer in pairs(ESX.Players) do
+    for _, v in pairs(ESX.Players) do
         if key then
-            if (key == "job" and xPlayer.job.name == value) or (key == "group" and xPlayer.groups[value]) or xPlayer[key] == value then
-                count += 1
-                xPlayers[count] = xPlayer
+            if (key == 'job' and v.job.name == val) or v[key] == val then
+                xPlayers[#xPlayers + 1] = v
             end
         else
-            count += 1
-            xPlayers[count] = xPlayer
+            xPlayers[#xPlayers + 1] = v
         end
     end
-
-    return xPlayers, count
+    return xPlayers
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field
@@ -410,6 +367,10 @@ function ESX.GetItemLabel(item)
     end
 end
 
+function ESX.GetJobs()
+    return ESX.Jobs
+end
+
 function ESX.GetUsableItems()
     local Usables = {}
     for k in pairs(Core.UsableItemsCallbacks) do
@@ -445,31 +406,18 @@ if not Config.OxInventory then
     end
 end
 
----@param playerId integer | number | string
----@return boolean
 function Core.IsPlayerAdmin(playerId)
-    if (IsPlayerAceAllowed(tostring(playerId), "command") or GetConvar("sv_lan", "") == "true") and true or false then
+    if (IsPlayerAceAllowed(playerId, 'command') or GetConvar('sv_lan', '') == 'true') and true or false then
         return true
     end
 
-    playerId = tonumber(playerId) --[[@as number]]
+    local xPlayer = ESX.Players[playerId]
 
-    return Config.AdminGroupsByName[ESX.Players[playerId]?.group] ~= nil
-end
-
----@param playerId integer | number | string
----@return string
-function Core.GetPlayerAdminGroup(playerId)
-    playerId = tostring(playerId)
-    local group = Core.DefaultGroup
-
-    for i = 1, #Config.AdminGroups do
-        local principal = ("group.%s"):format(Config.AdminGroups[i])
-        if IsPlayerAceAllowed(playerId, principal) then
-            group = Config.AdminGroups[i]
-            break
+    if xPlayer then
+        if xPlayer.group == 'admin' then
+            return true
         end
     end
 
-    return group
+    return false
 end

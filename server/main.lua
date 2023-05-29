@@ -16,9 +16,8 @@ end
 loadPlayer = loadPlayer .. ' FROM `users` WHERE identifier = ?'
 
 local function loadESXPlayer(identifier, playerId, isNew)
-    local userData = { accounts = {}, groups = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
+    local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
-    result.groups = MySQL.prepare.await("SELECT DISTINCT * FROM `user_groups` WHERE `identifier` = ?", { identifier })
     local job, grade, duty = result.job, tostring(result.job_grade), result.job_duty and (result.job_duty == 1 and true or result.job_duty == 0 and false)
     local foundAccounts, foundItems = {}, {}
 
@@ -48,7 +47,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Job
     if not ESX.DoesJobExist(job, grade) then
         job, grade, duty = 'unemployed', '0', false
-        print(("[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]"):format(identifier, job, grade))
+        print(('[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]'):format(identifier, job, grade))
     end
 
     local jobObject, gradeObject      = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
@@ -57,7 +56,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     userData.job.name                 = jobObject.name
     userData.job.label                = jobObject.label
     userData.job.type                 = jobObject.type
-    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty --[[@as boolean]]
+    userData.job.duty                 = type(duty) == "boolean" and duty or jobObject.default_duty
     userData.job.grade                = tonumber(grade)
     userData.job.grade_name           = gradeObject.name
     userData.job.grade_label          = gradeObject.label
@@ -103,31 +102,16 @@ local function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Group
-    userData.group = (result.group and result.group ~= "" and Config.AdminGroupsByName[result.group]) and result.group or Core.GetPlayerAdminGroup(playerId)
-
-    -- Groups
-    if result.groups and type(result.groups) == "table" then
-        if table.type(result.groups) ~= "array" then
-            result.groups = { result.groups }
+    if result.group then
+        if result.group == "superadmin" then
+            userData.group = "admin"
+            print("[^3WARNING^7] ^5Superadmin^7 detected, setting group to ^5admin^7")
+        else
+            userData.group = result.group
         end
-
-        for i = 1, #result.groups do
-            local groupData = result.groups[i]
-
-            if not ESX.DoesGroupExist(groupData.name, groupData.grade) then
-                print(("[^3WARNING^7] Ignoring invalid group for ^5%s^7 [group: ^5%s^7, grade: ^5%s^7]"):format(identifier, groupData.name, groupData.grade))
-                goto skip
-            end
-
-            if Config.AdminGroupsByName[groupData.name] then goto skip end
-
-            userData.groups[groupData.name] = groupData.grade
-
-            ::skip::
-        end
+    else
+        userData.group = 'user'
     end
-
-    userData.groups[userData.group] = 0
 
     -- Loadout
     if not Config.OxInventory then
@@ -152,43 +136,64 @@ local function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Position
-    userData.coords                      = (result.position and result.position ~= "") and json.decode(result.position) or Config.DefaultSpawn
+    userData.coords = json.decode(result.position) or Config.DefaultSpawn
 
     -- Skin
-    userData.skin                        = (result.skin and result.skin ~= "") and json.decode(result.skin) or { sex = userData.sex == "f" and 1 or 0 }
+    if result.skin and result.skin ~= '' then
+        userData.skin = json.decode(result.skin)
+    else
+        userData.skin = { sex = userData.sex == "f" and 1 or 0 }
+    end
 
     -- Identity
-    userData.firstname                   = (result.firstname and result.firstname ~= "") and result.firstname
-    userData.lastname                    = (result.lastname and result.lastname ~= "") and result.lastname
-    userData.playerName                  = (userData.firstname and userData.lastname) and ("%s %s"):format(userData.firstname, userData.lastname) or userData.playerName
-    userData.dateofbirth                 = (result.dateofbirth and result.dateofbirth ~= "") and result.dateofbirth
-    userData.sex                         = (result.sex and result.sex ~= "") and result.sex
-    userData.height                      = (result.height and result.height ~= "") and result.height
+    if result.firstname and result.firstname ~= '' then
+        userData.firstname = result.firstname
+        userData.lastname = result.lastname
+        userData.playerName = userData.firstname .. ' ' .. userData.lastname
+        if result.dateofbirth then
+            userData.dateofbirth = result.dateofbirth
+        end
+        if result.sex then
+            userData.sex = result.sex
+        end
+        if result.height then
+            userData.height = result.height
+        end
+    end
 
     -- Metadata
-    userData.metadata                    = (result.metadata and result.metadata ~= "") and json.decode(result.metadata) or userData.metadata
+    if result.metadata and result.metadata ~= '' then
+        local metadata = json.decode(result.metadata)
+        userData.metadata = metadata
+    end
 
-    local xPlayer                        = CreateExtendedPlayer(playerId, identifier, userData.groups, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
-    ESX.Players[playerId]                = xPlayer
+    local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
+    ESX.Players[playerId] = xPlayer
     Core.PlayersByIdentifier[identifier] = xPlayer
 
-    xPlayer.set("firstName", userData.firstname)
-    xPlayer.set("lastName", userData.lastname)
-    xPlayer.set("dateofbirth", userData.dateofbirth)
-    xPlayer.set("sex", userData.sex)
-    xPlayer.set("height", userData.height)
+    if userData.firstname then
+        xPlayer.set('firstName', userData.firstname)
+        xPlayer.set('lastName', userData.lastname)
+        if userData.dateofbirth then
+            xPlayer.set('dateofbirth', userData.dateofbirth)
+        end
+        if userData.sex then
+            xPlayer.set('sex', userData.sex)
+        end
+        if userData.height then
+            xPlayer.set('height', userData.height)
+        end
+    end
 
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
         xPlayerServer = xPlayer,
         xPlayerClient = {
             accounts = xPlayer.getAccounts(),
-            groups = xPlayer.getGroups(),
             coords = userData.coords,
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),
-            duty = xPlayer.getDuty(),
             loadout = xPlayer.getLoadout(),
             maxWeight = xPlayer.getMaxWeight(),
             money = xPlayer.getMoney(),
@@ -212,7 +217,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
 
-    print(("[^2INFO^0] Player ^5'%s'^0 has connected to the server. ID: ^5%s^7"):format(xPlayer.getName(), playerId))
+    print(('[^2INFO^0] Player ^5"%s"^0 has connected to the server. ID: ^5%s^7'):format(xPlayer.getName(), playerId))
 end
 
 local function createESXPlayer(identifier, playerId, data)
@@ -222,18 +227,21 @@ local function createESXPlayer(identifier, playerId, data)
         accounts[account] = money
     end
 
-    local defaultGroup = Core.GetPlayerAdminGroup(playerId)
-
-    if Core.IsPlayerAdmin(playerId) then print(("[^2INFO^0] Player ^5%s^0 Has been granted %s permissions via ^5Ace Perms^7"):format(playerId, defaultGroup)) end
+    local defaultGroup = "user"
+    if Core.IsPlayerAdmin(playerId) then
+        print(('[^2INFO^0] Player ^5%s^0 Has been granted admin permissions via ^5Ace Perms^7.'):format(playerId))
+        defaultGroup = "admin"
+    end
 
     if not Config.Multichar then
         MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()
             loadESXPlayer(identifier, playerId, true)
         end)
     else
-        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
-            loadESXPlayer(identifier, playerId, true)
-        end)
+        MySQL.prepare(newPlayer,
+            { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
+                loadESXPlayer(identifier, playerId, true)
+            end)
     end
 end
 
@@ -332,14 +340,12 @@ local function onPlayerLogout(source, reason, cb)
     if xPlayer then
         TriggerEvent("esx:playerDropped", source, reason)
 
-        for groupName in pairs(xPlayer.groups) do
-            xPlayer.removeGroup(groupName) -- to remove principals in case they want to log back with another character
-        end
-
+        Core.PlayersByIdentifier[xPlayer.identifier] = nil
         Core.SavePlayer(xPlayer, function()
             ESX.Players[source] = nil
-            Core.PlayersByIdentifier[xPlayer.identifier] = nil
-            if cb then return cb() end
+            if cb then
+                cb()
+            end
         end)
     end
 
