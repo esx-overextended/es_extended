@@ -240,18 +240,27 @@ end
 
 ESX.GetPlayers = GetPlayers
 
-function ESX.GetExtendedPlayers(key, val)
+---Returns instance of xPlayers
+---@param key? string
+---@param value? any
+---@return xPlayer[], integer | number
+function ESX.GetExtendedPlayers(key, value)
     local xPlayers = {}
-    for _, v in pairs(ESX.Players) do
+    local count = 0
+
+    for _, xPlayer in pairs(ESX.Players) do
         if key then
-            if (key == 'job' and v.job.name == val) or v[key] == val then
-                xPlayers[#xPlayers + 1] = v
+            if (key == "job" and xPlayer.job.name == value) or (key == "group" and xPlayer.groups[value]) or xPlayer[key] == value then
+                count += 1
+                xPlayers[count] = xPlayer
             end
         else
-            xPlayers[#xPlayers + 1] = v
+            count += 1
+            xPlayers[count] = xPlayer
         end
     end
-    return xPlayers
+
+    return xPlayers, count
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field

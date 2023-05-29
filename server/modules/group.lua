@@ -133,6 +133,8 @@ function ESX.RefreshGroups()
         lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command.quit", false)
     end
 
+    GlobalState:set("ESX.Groups", ESX.Groups, true)
+
     Core.RefreshPlayersGroups()
 end
 
@@ -174,6 +176,22 @@ function Core.RefreshPlayersGroups()
     end
 end
 
-RegisterCommand("groups", function()
-    print(ESX.DumpTable(ESX.Groups))
-end, false)
+---Gets all players with the specified group
+---@param groupName string group name
+---@param groupGrade? number | integer if it's provided and not nil, it will only return players with the specified group grade
+---@return xPlayer[], integer
+function ESX.GetPlayersByGroup(groupName, groupGrade)
+    local xPlayers = {}
+    local count = 0
+
+    if type(groupName) == "string" and (type(groupGrade) == "nil" or type(groupGrade) == "number") then
+        for _, xPlayer in pairs(ESX.Players) do
+            if xPlayer.groups[groupName] and (groupGrade == nil or xPlayer.groups[groupName] == groupGrade) then
+                count += 1
+                xPlayers[count] = xPlayer
+            end
+        end
+    end
+
+    return xPlayers, count
+end

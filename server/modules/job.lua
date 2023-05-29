@@ -315,6 +315,8 @@ function ESX.RefreshJobs()
         ESX.Jobs = Jobs
     end
 
+    GlobalState:set("ESX.Jobs", ESX.Jobs, true)
+
     Core.RefreshPlayersJob()
 end
 
