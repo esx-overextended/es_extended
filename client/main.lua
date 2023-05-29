@@ -325,6 +325,10 @@ if not Config.OxInventory then
     end)
 end
 
+AddEventHandler("esx:setGroups", function(groups)
+    ESX.SetPlayerData("groups", groups)
+end)
+
 AddEventHandler("esx:setJob", function(job)
     ESX.SetPlayerData("job", job)
 end)

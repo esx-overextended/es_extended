@@ -1,6 +1,5 @@
 ESX = {}
 ESX.Players = {} --[[@type xPlayer[] ]]
-ESX.Jobs = {}
 ESX.Items = {}
 Core = {}
 Core.UsableItemsCallbacks = {}
@@ -39,20 +38,19 @@ local function StartDBSync()
 end
 
 MySQL.ready(function()
-    Core.DatabaseConnected = true
     if not Config.OxInventory then
-        local items = MySQL.query.await('SELECT * FROM items')
+        local items = MySQL.query.await("SELECT * FROM items")
         for _, v in ipairs(items) do
             ESX.Items[v.name] = { label = v.label, weight = v.weight, rare = v.rare, canRemove = v.can_remove }
         end
     else
-        TriggerEvent('__cfx_export_ox_inventory_Items', function(ref)
+        TriggerEvent("__cfx_export_ox_inventory_Items", function(ref)
             if ref then
                 ESX.Items = ref()
             end
         end)
 
-        AddEventHandler('ox_inventory:itemList', function(items)
+        AddEventHandler("ox_inventory:itemList", function(items)
             ESX.Items = items
         end)
 
@@ -61,9 +59,10 @@ MySQL.ready(function()
         end
     end
 
-    while not ESX.RefreshJobs do Wait(0) end
+    while not ESX.RefreshJobs or not ESX.RefreshGroups do Wait(0) end
 
     ESX.RefreshJobs()
+    ESX.RefreshGroups()
 
     print(("[^2INFO^7] ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
 
@@ -72,6 +71,8 @@ MySQL.ready(function()
     if Config.EnablePaycheck then
         StartPayCheck()
     end
+
+    Core.DatabaseConnected = true
 end)
 
 RegisterServerEvent('esx:clientLog', function(msg)
