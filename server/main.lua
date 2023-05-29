@@ -119,7 +119,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                 goto skip
             end
 
-            if Config.AdminGroupsByName[groupData.name] then goto skip end
+            if Config.AdminGroupsByName[groupData.name] or groupData.name == Core.DefaultGroup then goto skip end
 
             userData.groups[groupData.name] = groupData.grade
 
