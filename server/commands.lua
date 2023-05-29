@@ -238,13 +238,9 @@ ESX.RegisterCommand({ 'clearall', 'clsall' }, 'admin', function(_, _, _)
     TriggerClientEvent('chat:clear', -1)
 end, true, { help = _U('command_clearall') })
 
-ESX.RegisterCommand("refreshjobs", "admin", function(_, _, _)
+ESX.RegisterCommand("refreshjobs", 'admin', function(_, _, _)
     ESX.RefreshJobs()
-end, true, { help = _U("command_refreshjobs") })
-
-ESX.RegisterCommand("refreshgroups", "admin", function(_, _, _)
-    ESX.RefreshGroups()
-end, true, { help = _U("command_refreshgroups") })
+end, true, { help = _U('command_clearall') })
 
 if not Config.OxInventory then
     ESX.RegisterCommand('clearinventory', 'admin', function(_, args, _)
@@ -276,7 +272,7 @@ if not Config.OxInventory then
     })
 end
 
-ESX.RegisterCommand("setgroup", "admin", function(xPlayer, args, _)
+ESX.RegisterCommand('setgroup', 'admin', function(xPlayer, args, _)
     if not args.playerId then args.playerId = xPlayer.source end
     if args.group == "superadmin" then
         args.group = "admin"
@@ -289,33 +285,6 @@ end, true, {
     arguments = {
         { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' },
         { name = 'group',    help = _U('command_setgroup_group'),  type = 'string' },
-    }
-})
-
-ESX.RegisterCommand("addgroup", "admin", function(xPlayer, args, _)
-    if not args.playerId then args.playerId = xPlayer.source --[[@type xPlayer]] end
-
-    args.playerId.addGroup(args.group, args.grade)
-end, true, {
-    help = _U("command_addgroup"),
-    validate = true,
-    arguments = {
-        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
-        { name = "group",    help = _U("command_addgroup_group"),  type = "string" },
-        { name = "grade",    help = _U("command_addgroup_grade"),  type = "number" },
-    }
-})
-
-ESX.RegisterCommand("removegroup", "admin", function(xPlayer, args, _)
-    if not args.playerId then args.playerId = xPlayer.source --[[@type xPlayer]] end
-
-    args.playerId.removeGroup(args.group)
-end, true, {
-    help = _U("command_removegroup"),
-    validate = true,
-    arguments = {
-        { name = "playerId", help = _U("commandgeneric_playerid"),   type = "player" },
-        { name = "group",    help = _U("command_removegroup_group"), type = "string" }
     }
 })
 

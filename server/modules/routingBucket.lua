@@ -1,3 +1,9 @@
+---@alias playerId integer
+---@alias entityId integer
+---@alias routingBucket integer
+---@alias routingBucketPlayersData table<playerId, true>
+---@alias routingBucketEntitiesData table<entityId, true>
+
 ---@class routingBucketData
 ---@field players routingBucketPlayersData
 ---@field entities routingBucketEntitiesData
