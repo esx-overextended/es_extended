@@ -22,6 +22,7 @@
 
 * Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
 
+* Multiple Group Support: Implemented a comprehensive multiple group support system that remains fully backward compatibile with ESX Legacy. This enhancement enables player objects to seamlessly associate with multiple groups such as administrators, gangs, VIPs, and more, expanding the flexibility and functionality of the system.
 
 ### ℹ Information
 
