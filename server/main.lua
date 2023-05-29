@@ -332,12 +332,14 @@ local function onPlayerLogout(source, reason, cb)
     if xPlayer then
         TriggerEvent("esx:playerDropped", source, reason)
 
-        Core.PlayersByIdentifier[xPlayer.identifier] = nil
+        for groupName in pairs(xPlayer.groups) do
+            xPlayer.removeGroup(groupName) -- to remove principals in case they want to log back with another character
+        end
+
         Core.SavePlayer(xPlayer, function()
             ESX.Players[source] = nil
-            if cb then
-                cb()
-            end
+            Core.PlayersByIdentifier[xPlayer.identifier] = nil
+            if cb then return cb() end
         end)
     end
 
