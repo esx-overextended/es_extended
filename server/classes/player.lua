@@ -10,14 +10,14 @@
 ---@param playerName string
 ---@param playerMetadata table
 ---@return xPlayer
-function CreateExtendedPlayer(playerId, playerIdentifier, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
+function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
 
     ---@type xPlayer
     local self = {}
 
     self.accounts = playerAccounts
-    self.groups = {[playerGroup] = 0}
+    self.groups = playerGroups
     self.group = playerGroup
     self.identifier = playerIdentifier
     self.license = string.format("license:%s", Config.Multichar and playerIdentifier:sub(playerIdentifier:find(":") + 1, playerIdentifier:len()) or playerIdentifier)

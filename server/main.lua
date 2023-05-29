@@ -16,8 +16,9 @@ end
 loadPlayer = loadPlayer .. ' FROM `users` WHERE identifier = ?'
 
 local function loadESXPlayer(identifier, playerId, isNew)
-    local userData = { accounts = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
+    local userData = { accounts = {}, groups = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
+    result.groups = MySQL.prepare.await("SELECT DISTINCT * FROM `user_groups` WHERE `identifier` = ?", { identifier })
     local job, grade, duty = result.job, tostring(result.job_grade), result.job_duty and (result.job_duty == 1 and true or result.job_duty == 0 and false)
     local foundAccounts, foundItems = {}, {}
 
@@ -104,6 +105,30 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Group
     userData.group = (result.group and result.group ~= "" and Config.AdminGroupsByName[result.group]) and result.group or Core.GetPlayerAdminGroup(playerId)
 
+    -- Groups
+    if result.groups and type(result.groups) == "table" then
+        if table.type(result.groups) ~= "array" then
+            result.groups = { result.groups }
+        end
+
+        for i = 1, #result.groups do
+            local groupData = result.groups[i]
+
+            if not ESX.DoesGroupExist(groupData.name, groupData.grade) then
+                print(("[^3WARNING^7] Ignoring invalid group for ^5%s^7 [group: ^5%s^7, grade: ^5%s^7]"):format(identifier, groupData.name, groupData.grade))
+                goto skip
+            end
+
+            if Config.AdminGroupsByName[groupData.name] then goto skip end
+
+            userData.groups[groupData.name] = groupData.grade
+
+            ::skip::
+        end
+    end
+
+    userData.groups[userData.group] = 0
+
     -- Loadout
     if not Config.OxInventory then
         if result.loadout and result.loadout ~= '' then
@@ -143,7 +168,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Metadata
     userData.metadata                    = (result.metadata and result.metadata ~= "") and json.decode(result.metadata) or userData.metadata
 
-    local xPlayer                        = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
+    local xPlayer                        = CreateExtendedPlayer(playerId, identifier, userData.groups, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
     ESX.Players[playerId]                = xPlayer
     Core.PlayersByIdentifier[identifier] = xPlayer
 
