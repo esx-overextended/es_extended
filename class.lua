@@ -49,7 +49,7 @@ local CLASS_CTOR_KEY              = {}
 -- Keys to access to state private info
 local STATE_ID_KEY           = {}
 local STATE_CLASS_KEY        = {}
-local STATE_PARENT_KEY       = {}
+-- local STATE_PARENT_KEY       = {}
 
 -- Special value to tag and identify state handles
 local STATE_HANDLE_TAG       = {}
@@ -98,7 +98,7 @@ local function make_member_def(class, name, params)
 
             if params.method == true then
                 -- Pure virtual (abstract)
-                def.method = function(this)
+                def.method = function(_ --[[this]])
                     error(string.format("Pure virtual method '%s' of class '%s' not implemented by any derived class", name, class.name))
                 end
             elseif params.final then
@@ -159,7 +159,7 @@ local function make_double_cache()
     local primary = {}
 
     return {
-        get = function(self, primary_key, secondary_key)
+        get = function(_ --[[self]], primary_key, secondary_key)
             local secondary = primary[primary_key]
 
             if not secondary then
@@ -169,7 +169,7 @@ local function make_double_cache()
             return secondary[secondary_key]
         end,
 
-        set = function(self, primary_key, secondary_key, value)
+        set = function(_ --[[self]], primary_key, secondary_key, value)
             local secondary = primary[primary_key]
 
             if not secondary then
@@ -238,7 +238,7 @@ local function make_state_handle(state, target_class, target_scope)
         -- Publicly accessible stuff
         __ref              = state[STATE_ID_KEY],
         __class            = primary_class[CLASS_HANDLE_KEY],
-        __is_a             = function(self, test_class_handle)
+        __is_a             = function(_ --[[self]], test_class_handle)
             assert(getmetatable(test_class_handle) == CLASS_HANDLE_TAG, "Class argument must be a class")
             return state_is_a(state, test_class_handle[CLASS_INNER_KEY])
         end,
@@ -264,7 +264,7 @@ local function make_state_handle(state, target_class, target_scope)
     end
 
     local MT = {
-        __index = function(t, key)
+        __index = function(_ --[[t]], key)
             -- Requesting private data?
             local private_data = private[key]
             if private_data then
@@ -288,7 +288,7 @@ local function make_state_handle(state, target_class, target_scope)
             return read_member(key)
         end,
 
-        __newindex = function(t, key, value)
+        __newindex = function(_ --[[t]], key, value)
             if private[key] or qualified_members[key] then
                 error("Attempting to write to a built-in symbol")
             end
@@ -406,7 +406,7 @@ local function override_view_member(view_members, member_name, new_member)
 end
 
 -- Create an instance of a class
-function new(__class, ...)
+function _G.new(__class, ...)
     assert(getmetatable(__class) == CLASS_HANDLE_TAG, "Argument 1 must be a class")
 
     -- The __class argument is a wrapper (handle) of the actual class
@@ -419,7 +419,7 @@ function new(__class, ...)
 
     -- Set metatable for capturing garbage collection action and call destructors
     setmetatable(instance_state, {
-        __gc = function(t)
+        __gc = function(_ --[[t]])
             for i = #hierarchy, 1, -1 do
                 hierarchy[i][CLASS_UNINIT_KEY](instance_state)
             end
@@ -440,7 +440,7 @@ function new(__class, ...)
 end
 
 -- Cast an instance to a given class, if possible.
-function cast(instance, __class)
+function _G.cast(instance, __class)
     assert(getmetatable(instance) == STATE_HANDLE_TAG, "First argument must be an instance")
     assert(getmetatable(__class) == CLASS_HANDLE_TAG, "Second argument must be a class")
     return cast_state_handle(instance, __class[CLASS_INNER_KEY])
@@ -450,7 +450,7 @@ end
 -- @param instance Object to test
 -- @param __class If not nil, test if the instance is of the given class.
 -- @param strict If true, class test is done in a strict manner.
-function is_object(instance, __class, strict)
+function _G.is_object(instance, __class, strict)
     if getmetatable(instance) == STATE_HANDLE_TAG then
         if __class then
             assert(getmetatable(__class) == CLASS_HANDLE_TAG, "Class argument must be a class")
@@ -467,12 +467,12 @@ function is_object(instance, __class, strict)
 end
 
 -- Check if the given argument is a class
-function is_class(__class)
+function _G.is_class(__class)
     return getmetatable(__class) == CLASS_HANDLE_TAG
 end
 
 -- Access an instance as a friend
-function friend(instance, key)
+function _G.friend(instance, key)
     assert(getmetatable(instance) == STATE_HANDLE_TAG, "First argument must be an instance")
     local state = instance[HANDLE_STATE_KEY]
     local class = state[STATE_CLASS_KEY]
@@ -485,7 +485,7 @@ function friend(instance, key)
 end
 
 -- Create a class
-function class(class_name, __parent, class_attrs)
+function _G.class(class_name, __parent, class_attrs)
     -- The __parent argument is a wrapper (handle) of the actual parent class
     local parent
     if __parent then
@@ -562,7 +562,7 @@ function class(class_name, __parent, class_attrs)
 
     this_class[CLASS_CTOR_KEY]      = function(this, ...)
         local ctor = class_attrs.ctor
-        local state = this[HANDLE_STATE_KEY]
+        -- local state = this[HANDLE_STATE_KEY]
 
         local parent_ctor_called_by_user = false
 
@@ -646,7 +646,7 @@ function class(class_name, __parent, class_attrs)
     -- Protect and return the handle for the class
     return setmetatable(this_class_handle, {
         __index = this_class,
-        __newindex = function(t, k, v)
+        __newindex = function(_ --[[t]], _ --[[k]], _ --[[v]])
             error("Cannot change class properties")
         end,
         __metatable = CLASS_HANDLE_TAG -- Lock metatable
