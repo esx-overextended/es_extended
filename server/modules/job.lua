@@ -13,8 +13,7 @@
 ---@field default_duty boolean | 1 | 0 job default duty state
 ---@field grades table<gradeKey, xJobGrade>
 
----@type xJob[]
-ESX.Jobs = {}
+ESX.Jobs = {} --[[@type table<string, xJob>]]
 
 ---Adds a job or a table of jobs on runtime
 ---@param jobObject xJob | xJob[]
@@ -301,7 +300,6 @@ function ESX.RefreshJobs()
     end
 
     if not next(Jobs) then
-        -- fallback data, if no job exist
         ESX.Jobs = {
             ["unemployed"] = {
                 name = "unemployed",
@@ -310,7 +308,7 @@ function ESX.RefreshJobs()
                 default_duty = false,
                 grades = { ["0"] = { job_name = "unemployed", grade = 0, name = "unemployed", label = "Unemployed", salary = 0, offduty_salary = 200, skin_male = {}, skin_female = {} } }
             }
-        }
+        } -- fallback data, if no job exist
     else
         ESX.Jobs = Jobs
     end

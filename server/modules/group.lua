@@ -141,13 +141,13 @@ end
 ---Gets the specified group object data
 ---@param groupName string
 ---@return xGroup?
-function ESX.GetGroup(groupName)
+function ESX.GetGroup(groupName) ---@diagnostic disable-line: duplicate-set-field
     return ESX.Groups[groupName]
 end
 
 ---Gets all of the group objects
----@return xGroup[]
-function ESX.GetGroups()
+---@return table<string, xGroup>
+function ESX.GetGroups() ---@diagnostic disable-line: duplicate-set-field
     return ESX.Groups
 end
 
