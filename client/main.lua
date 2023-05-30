@@ -329,14 +329,6 @@ AddEventHandler("esx:setGroups", function(groups)
     ESX.SetPlayerData("groups", groups)
 end)
 
-AddEventHandler("esx:setJob", function(job)
-    ESX.SetPlayerData("job", job)
-end)
-
-AddEventHandler("esx:setDuty", function(duty)
-    ESX.SetPlayerData("duty", duty)
-end)
-
 AddEventHandler("esx:setMetadata", function(metadata)
     ESX.SetPlayerData("metadata", metadata)
 end)

@@ -1,6 +1,7 @@
 ---Creates an xPlayer object
 ---@param playerId integer | number
 ---@param playerIdentifier string
+---@param playerGroups table<string, integer | number>
 ---@param playerGroup string
 ---@param playerAccounts table
 ---@param playerInventory table

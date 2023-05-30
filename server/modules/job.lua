@@ -321,15 +321,15 @@ function ESX.RefreshJobs()
 end
 
 ---Gets the specified job object data
----@param jobName  string
+---@param jobName string
 ---@return xJob?
-function ESX.GetJob(jobName)
+function ESX.GetJob(jobName) ---@diagnostic disable-line: duplicate-set-field
     return ESX.Jobs[jobName]
 end
 
 ---Gets all of the job objects
----@return xJob[]
-function ESX.GetJobs()
+---@return table<string, xJob>
+function ESX.GetJobs() ---@diagnostic disable-line: duplicate-set-field
     return ESX.Jobs
 end
 
