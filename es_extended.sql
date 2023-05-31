@@ -153,16 +153,16 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM `user_groups`
-        WHERE `identifier` = NEW.identifier AND `name` = OLD.group
+        WHERE `identifier` = OLD.identifier AND `name` = OLD.group
     ) THEN
-        UPDATE `user_groups` SET `name` = NEW.group, `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
+        UPDATE `user_groups` SET `identifier` = NEW.identifier, `name` = NEW.group, `grade` = 0 WHERE `identifier` = OLD.identifier AND `name` = OLD.group;
     ELSE
         IF EXISTS (
             SELECT 1
             FROM `user_groups`
             WHERE `identifier` = NEW.identifier AND `name` = NEW.group
         ) THEN
-            UPDATE `user_groups` SET `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = NEW.group;
+            UPDATE `user_groups` SET `identifier` = NEW.identifier, `name` = NEW.group, `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = NEW.group;
         ELSE
             INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
         END IF;
@@ -171,16 +171,16 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM `user_groups`
-        WHERE `identifier` = NEW.identifier AND `name` = OLD.job
+        WHERE `identifier` = OLD.identifier AND `name` = OLD.job
     ) THEN
-        UPDATE `user_groups` SET `name` = NEW.job, `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = OLD.job;
+        UPDATE `user_groups` SET `identifier` = NEW.identifier, `name` = NEW.job, `grade` = NEW.job_grade WHERE `identifier` = OLD.identifier AND `name` = OLD.job;
     ELSE
         IF EXISTS (
             SELECT 1
             FROM `user_groups`
             WHERE `identifier` = NEW.identifier AND `name` = NEW.job
         ) THEN
-            UPDATE `user_groups` SET `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = NEW.job;
+            UPDATE `user_groups` SET `identifier` = NEW.identifier, `name` = NEW.job, `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = NEW.job;
         ELSE
             INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.job, NEW.job_grade);
         END IF;
@@ -204,7 +204,7 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM `groups`
-        WHERE `groups`.`name` = NEW.name
+        WHERE `name` = NEW.name
     ) THEN
         UPDATE `groups` SET `label` = NEW.label WHERE `name` = NEW.name;
     ELSE
@@ -220,15 +220,19 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM `groups`
-        WHERE `groups`.`name` = NEW.name
+        WHERE `name` = OLD.name
     ) THEN
-        UPDATE `groups` SET `label` = NEW.label WHERE `name` = NEW.name;
-    ELSEIF NOT EXISTS (
-        SELECT 1
-        FROM `groups`
-        WHERE `groups`.`name` = NEW.name AND `groups`.`label` = NEW.label
-    ) THEN
-        INSERT INTO `groups` (`name`, `label`) VALUES (NEW.name, NEW.label);
+        UPDATE `groups` SET `name` = NEW.name, `label` = NEW.label WHERE `name` = OLD.name;
+    ELSE
+        IF EXISTS (
+            SELECT 1
+            FROM `groups`
+            WHERE `name` = NEW.name
+        ) THEN
+            UPDATE `groups` SET `name` = NEW.name, `label` = NEW.label WHERE `name` = NEW.name;
+        ELSE
+            INSERT INTO `groups` (`name`, `label`) VALUES (NEW.name, NEW.label);
+        END IF;
     END IF;
 END //
 
@@ -252,7 +256,7 @@ BEGIN
         FROM `group_grades`
         WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade
     ) THEN
-        UPDATE `group_grades` SET `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name;
+        UPDATE `group_grades` SET `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade;
     ELSE
         INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) VALUES (NEW.job_name, NEW.grade, NEW.label, IF(NEW.name = "boss", 1, 0));
     END IF;
@@ -266,11 +270,19 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM `group_grades`
-        WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade
+        WHERE `group_name` = OLD.job_name AND `grade` = OLD.grade
     ) THEN
-        UPDATE `group_grades` SET `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name;
+        UPDATE `group_grades` SET `group_name` = NEW.job_name, `grade` = NEW.grade, `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = OLD.job_name AND `grade` = OLD.grade;
     ELSE
-        INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) VALUES (NEW.job_name, NEW.grade, NEW.label, IF(NEW.name = "boss", 1, 0));
+        IF EXISTS (
+            SELECT 1
+            FROM `group_grades`
+            WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade
+        ) THEN
+            UPDATE `group_grades` SET `group_name` = NEW.job_name, `grade` = NEW.grade, `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade;
+        ELSE
+            INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) VALUES (NEW.job_name, NEW.grade, NEW.label, IF(NEW.name = "boss", 1, 0));
+        END IF;
     END IF;
 END //
 
