@@ -163,3 +163,45 @@ WHERE NOT EXISTS (
     FROM `user_groups`
     WHERE `user_groups`.`identifier` = `users`.`identifier` AND `user_groups`.`name` = `users`.`group`
 );
+
+
+DELIMITER //
+DROP TRIGGER IF EXISTS insert_groups;
+
+CREATE TRIGGER insert_groups
+AFTER INSERT ON `jobs` FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM `groups`
+        WHERE `groups`.`name` = NEW.name
+    ) THEN
+        UPDATE `groups` SET `label` = NEW.label WHERE `name` = NEW.name;
+    ELSE
+        INSERT INTO `groups` (`name`, `label`) VALUES (NEW.name, NEW.label);
+    END IF;
+END //
+
+DROP TRIGGER IF EXISTS update_groups;
+
+CREATE TRIGGER update_groups
+AFTER UPDATE ON `jobs` FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM `groups`
+        WHERE `groups`.`name` = NEW.name
+    ) THEN
+        UPDATE `groups` SET `label` = NEW.label WHERE `name` = NEW.name;
+    ELSEIF NOT EXISTS (
+        SELECT 1
+        FROM `groups`
+        WHERE `groups`.`name` = NEW.name AND `groups`.`label` = NEW.label
+    ) THEN
+        INSERT INTO `groups` (`name`, `label`) VALUES (NEW.name, NEW.label);
+    END IF;
+END //
+DELIMITER ;
+
+-- insert data for existing rows from jobs table into groups table
+INSERT INTO `groups` (`name`, `label`) SELECT `name`, `label` FROM `jobs` ON DUPLICATE KEY UPDATE `label` = VALUES(`label`);
