@@ -201,6 +201,14 @@ BEGIN
         INSERT INTO `groups` (`name`, `label`) VALUES (NEW.name, NEW.label);
     END IF;
 END //
+
+DROP TRIGGER IF EXISTS delete_groups;
+
+CREATE TRIGGER delete_groups
+AFTER DELETE ON `jobs` FOR EACH ROW
+BEGIN
+    DELETE FROM `groups` WHERE `name` = OLD.name;
+END //
 DELIMITER ;
 
 -- insert data for existing rows from jobs table into groups table
