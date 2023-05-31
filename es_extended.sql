@@ -1,12 +1,11 @@
 CREATE DATABASE IF NOT EXISTS `es_extended`;
 
-ALTER DATABASE `es_extended`
-    DEFAULT CHARACTER SET UTF8MB4;
+ALTER DATABASE `es_extended` DEFAULT CHARACTER SET UTF8MB4;
     
-ALTER DATABASE `es_extended`
-    DEFAULT COLLATE UTF8MB4_UNICODE_CI;
+ALTER DATABASE `es_extended` DEFAULT COLLATE UTF8MB4_UNICODE_CI;
 
 
+/* USER */
 CREATE TABLE IF NOT EXISTS `users` (
     `identifier` VARCHAR(60) NOT NULL,
     `accounts` LONGTEXT NULL DEFAULT NULL,
@@ -28,6 +27,63 @@ for anyone who is migrating from ESX Legacy and already have `users` table which
 ALTER TABLE `users`
 ADD COLUMN IF NOT EXISTS `job_duty` tinyint(1) NULL DEFAULT 0 AFTER `job_grade`;
 
+
+/* ITEM */
+CREATE TABLE IF NOT EXISTS `items` (
+    `name` VARCHAR(50) NOT NULL,
+    `label` VARCHAR(50) NOT NULL,
+    `weight` INT NOT NULL DEFAULT 1,
+    `rare` TINYINT NOT NULL DEFAULT 0,
+    `can_remove` TINYINT NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (`name`)
+) ENGINE=InnoDB;
+
+
+/* JOB */
+CREATE TABLE IF NOT EXISTS `jobs` (
+    `name` VARCHAR(50) NOT NULL,
+    `label` VARCHAR(50) NOT NULL,
+    `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
+    `default_duty` tinyint(1) NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`name`)
+) ENGINE=InnoDB;
+
+/*
+for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `jobs`' not to execute and apply the needed changes...
+*/
+ALTER TABLE `jobs`
+ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
+ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
+
+INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ('unemployed', 'Unemployed', 'CIV', 0);
+
+
+CREATE TABLE IF NOT EXISTS `job_grades` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `job_name` VARCHAR(50) DEFAULT NULL,
+    `grade` INT NOT NULL,
+    `name` VARCHAR(50) NOT NULL,
+    `label` VARCHAR(50) NOT NULL,
+    `salary` INT NOT NULL DEFAULT 0,
+    `offduty_salary` INT NOT NULL DEFAULT 0,
+    `skin_male` LONGTEXT NOT NULL DEFAULT '{}',
+    `skin_female` LONGTEXT NOT NULL DEFAULT '{}',
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+/*
+for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
+*/
+ALTER TABLE `job_grades`
+ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
+
+INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, 'unemployed', 0, 'unemployed', 'Unemployed', 0, 200, '{}', '{}');
+
+
+/* GROUP */
 CREATE TABLE IF NOT EXISTS `groups` (
     `name` VARCHAR(50) NOT NULL,
     `label` VARCHAR(50) NOT NULL,
@@ -42,17 +98,24 @@ CREATE TABLE IF NOT EXISTS `group_grades` (
     `label` VARCHAR(50) NOT NULL,
     `is_boss` tinyint(1) NOT NULL DEFAULT 0,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `unique_group_name_grade` (`group_name`, `grade`)
 ) ENGINE=InnoDB;
+
+ALTER TABLE `group_grades` ADD UNIQUE KEY IF NOT EXISTS `unique_group_name_grade` (`group_name`, `grade`);
+
 
 CREATE TABLE IF NOT EXISTS `user_groups` (
     `identifier` VARCHAR(60) NOT NULL,
     `name` VARCHAR(50) NOT NULL,
     `grade` INT NOT NULL DEFAULT 0,
 
+    UNIQUE KEY `unique_identifier_name` (`identifier`, `name`),
     KEY `FK_user_groups_users` (`identifier`),
     CONSTRAINT `FK_user_groups_users` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE `user_groups` ADD UNIQUE KEY IF NOT EXISTS `unique_identifier_name` (`identifier`, `name`);
 
 
 DELIMITER //
@@ -100,56 +163,3 @@ WHERE NOT EXISTS (
     FROM `user_groups`
     WHERE `user_groups`.`identifier` = `users`.`identifier` AND `user_groups`.`name` = `users`.`group`
 );
-
-
-CREATE TABLE IF NOT EXISTS `items` (
-    `name` VARCHAR(50) NOT NULL,
-    `label` VARCHAR(50) NOT NULL,
-    `weight` INT NOT NULL DEFAULT 1,
-    `rare` TINYINT NOT NULL DEFAULT 0,
-    `can_remove` TINYINT NOT NULL DEFAULT 1,
-
-    PRIMARY KEY (`name`)
-) ENGINE=InnoDB;
-
-
-CREATE TABLE IF NOT EXISTS `jobs` (
-    `name` VARCHAR(50) NOT NULL,
-    `label` VARCHAR(50) NOT NULL,
-    `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
-    `default_duty` tinyint(1) NOT NULL DEFAULT 0,
-
-    PRIMARY KEY (`name`)
-) ENGINE=InnoDB;
-
-/*
-for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `jobs`' not to execute and apply the needed changes...
-*/
-ALTER TABLE `jobs`
-ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
-ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
-
-INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ('unemployed', 'Unemployed', 'CIV', 0);
-
-
-CREATE TABLE IF NOT EXISTS `job_grades` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `job_name` VARCHAR(50) DEFAULT NULL,
-    `grade` INT NOT NULL,
-    `name` VARCHAR(50) NOT NULL,
-    `label` VARCHAR(50) NOT NULL,
-    `salary` INT NOT NULL DEFAULT 0,
-    `offduty_salary` INT NOT NULL DEFAULT 0,
-    `skin_male` LONGTEXT NOT NULL DEFAULT '{}',
-    `skin_female` LONGTEXT NOT NULL DEFAULT '{}',
-
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-/*
-for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
-*/
-ALTER TABLE `job_grades`
-ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
-
-INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, 'unemployed', 0, 'unemployed', 'Unemployed', 0, 200, '{}', '{}');
