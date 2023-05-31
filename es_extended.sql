@@ -124,12 +124,24 @@ DROP TRIGGER IF EXISTS insert_user_groups;
 CREATE TRIGGER insert_user_groups
 AFTER INSERT ON `users` FOR EACH ROW
 BEGIN
-    IF NOT EXISTS (
+    IF EXISTS (
         SELECT 1
         FROM `user_groups`
-        WHERE `user_groups`.`identifier` = NEW.identifier AND `user_groups`.`name` = NEW.group
+        WHERE `identifier` = NEW.identifier AND `name` = NEW.group
     ) THEN
+        UPDATE `user_groups` SET `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = NEW.group;
+    ELSE
         INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM `user_groups`
+        WHERE `identifier` = NEW.identifier AND `name` = NEW.job
+    ) THEN
+        UPDATE `user_groups` SET `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = NEW.job;
+    ELSE
+        INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.job, NEW.job_grade);
     END IF;
 END //
 
@@ -144,23 +156,40 @@ BEGIN
         WHERE `identifier` = NEW.identifier AND `name` = OLD.group
     ) THEN
         UPDATE `user_groups` SET `name` = NEW.group, `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
-    ELSEIF NOT EXISTS (
+    ELSE
+        IF EXISTS (
+            SELECT 1
+            FROM `user_groups`
+            WHERE `identifier` = NEW.identifier AND `name` = NEW.group
+        ) THEN
+            UPDATE `user_groups` SET `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = NEW.group;
+        ELSE
+            INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+        END IF;
+    END IF;
+
+    IF EXISTS (
         SELECT 1
         FROM `user_groups`
-        WHERE `user_groups`.`identifier` = NEW.identifier AND `user_groups`.`name` = NEW.group
+        WHERE `identifier` = NEW.identifier AND `name` = OLD.job
     ) THEN
-        INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
+        UPDATE `user_groups` SET `name` = NEW.job, `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = OLD.job;
+    ELSE
+        IF EXISTS (
+            SELECT 1
+            FROM `user_groups`
+            WHERE `identifier` = NEW.identifier AND `name` = NEW.job
+        ) THEN
+            UPDATE `user_groups` SET `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = NEW.job;
+        ELSE
+            INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.job, NEW.job_grade);
+        END IF;
     END IF;
 END //
 DELIMITER ;
 
 -- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
-INSERT IGNORE INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `group`, 0 FROM `users`
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM `user_groups`
-    WHERE `user_groups`.`identifier` = `users`.`identifier` AND `user_groups`.`name` = `users`.`group`
-);
+INSERT INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `group`, 0 FROM `users` ON DUPLICATE KEY UPDATE `grade` = 0;
 
 -- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
 INSERT INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `job`, `job_grade` AS `grade` FROM `users` ON DUPLICATE KEY UPDATE `grade` = VALUES(`grade`);
