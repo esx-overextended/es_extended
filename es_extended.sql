@@ -9,9 +9,9 @@ ALTER DATABASE `es_extended` DEFAULT COLLATE UTF8MB4_UNICODE_CI;
 CREATE TABLE IF NOT EXISTS `users` (
     `identifier` VARCHAR(60) NOT NULL,
     `accounts` LONGTEXT NULL DEFAULT NULL,
-    `group` VARCHAR(50) NULL DEFAULT 'user',
+    `group` VARCHAR(50) NULL DEFAULT "user",
     `inventory` LONGTEXT NULL DEFAULT NULL,
-    `job` VARCHAR(20) NULL DEFAULT 'unemployed',
+    `job` VARCHAR(20) NULL DEFAULT "unemployed",
     `job_grade` INT NULL DEFAULT 0,
     `job_duty` tinyint(1) NULL DEFAULT 0,
     `loadout` LONGTEXT NULL DEFAULT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB;
 
 /*
-for anyone who is migrating from ESX Legacy and already have `users` table which causes 'CREATE TABLE IF NOT EXISTS `users`' not to execute and apply the needed changes...
+for anyone who is migrating from ESX Legacy and already have `users` table which causes "CREATE TABLE IF NOT EXISTS `users`" not to execute and apply the needed changes...
 */
 ALTER TABLE `users`
 ADD COLUMN IF NOT EXISTS `job_duty` tinyint(1) NULL DEFAULT 0 AFTER `job_grade`;
@@ -44,20 +44,20 @@ CREATE TABLE IF NOT EXISTS `items` (
 CREATE TABLE IF NOT EXISTS `jobs` (
     `name` VARCHAR(50) NOT NULL,
     `label` VARCHAR(50) NOT NULL,
-    `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
+    `type` VARCHAR(50) NOT NULL DEFAULT "CIV",
     `default_duty` tinyint(1) NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`name`)
 ) ENGINE=InnoDB;
 
 /*
-for anyone who is migrating from ESX Legacy and already have `jobs` table which causes 'CREATE TABLE IF NOT EXISTS `jobs`' not to execute and apply the needed changes...
+for anyone who is migrating from ESX Legacy and already have `jobs` table which causes "CREATE TABLE IF NOT EXISTS `jobs`" not to execute and apply the needed changes...
 */
 ALTER TABLE `jobs`
-ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT 'CIV',
+ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT "CIV",
 ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
 
-INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ('unemployed', 'Unemployed', 'CIV', 0);
+INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ("unemployed", "Unemployed", "CIV", 0);
 
 
 CREATE TABLE IF NOT EXISTS `job_grades` (
@@ -68,19 +68,19 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
     `label` VARCHAR(50) NOT NULL,
     `salary` INT NOT NULL DEFAULT 0,
     `offduty_salary` INT NOT NULL DEFAULT 0,
-    `skin_male` LONGTEXT NOT NULL DEFAULT '{}',
-    `skin_female` LONGTEXT NOT NULL DEFAULT '{}',
+    `skin_male` LONGTEXT NOT NULL DEFAULT "{}",
+    `skin_female` LONGTEXT NOT NULL DEFAULT "{}",
 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 /*
-for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes 'CREATE TABLE IF NOT EXISTS `job_grades`' not to execute and apply the needed changes...
+for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes "CREATE TABLE IF NOT EXISTS `job_grades`" not to execute and apply the needed changes...
 */
 ALTER TABLE `job_grades`
 ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
 
-INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, 'unemployed', 0, 'unemployed', 'Unemployed', 0, 200, '{}', '{}');
+INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, "unemployed", 0, "unemployed", "Unemployed", 0, 200, "{}", "{}");
 
 
 /* GROUP */
@@ -143,9 +143,7 @@ BEGIN
         FROM `user_groups`
         WHERE `identifier` = NEW.identifier AND `name` = OLD.group
     ) THEN
-        UPDATE `user_groups`
-        SET `name` = NEW.group, `grade` = 0
-        WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
+        UPDATE `user_groups` SET `name` = NEW.group, `grade` = 0 WHERE `identifier` = NEW.identifier AND `name` = OLD.group;
     ELSEIF NOT EXISTS (
         SELECT 1
         FROM `user_groups`
@@ -211,5 +209,50 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+DROP TRIGGER IF EXISTS insert_group_grades;
+
+CREATE TRIGGER insert_group_grades
+AFTER INSERT ON `job_grades` FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM `group_grades`
+        WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade
+    ) THEN
+        UPDATE `group_grades` SET `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name;
+    ELSE
+        INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) VALUES (NEW.job_name, NEW.grade, NEW.label, IF(NEW.name = "boss", 1, 0));
+    END IF;
+END //
+
+DROP TRIGGER IF EXISTS update_group_grades;
+
+CREATE TRIGGER update_group_grades
+AFTER UPDATE ON `job_grades` FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM `group_grades`
+        WHERE `group_name` = NEW.job_name AND `grade` = NEW.grade
+    ) THEN
+        UPDATE `group_grades` SET `label` = NEW.label, `is_boss` = IF(NEW.name = "boss", 1, 0) WHERE `group_name` = NEW.job_name;
+    ELSE
+        INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) VALUES (NEW.job_name, NEW.grade, NEW.label, IF(NEW.name = "boss", 1, 0));
+    END IF;
+END //
+
+DROP TRIGGER IF EXISTS delete_group_grades;
+
+CREATE TRIGGER delete_group_grades
+AFTER DELETE ON `job_grades` FOR EACH ROW
+BEGIN
+    DELETE FROM `group_grades` WHERE `group_name` = OLD.job_name;
+END //
+DELIMITER ;
+
 -- insert data for existing rows from jobs table into groups table
 INSERT INTO `groups` (`name`, `label`) SELECT `name`, `label` FROM `jobs` ON DUPLICATE KEY UPDATE `label` = VALUES(`label`);
+
+-- insert data for existing rows from job_grades table into group_grades table
+INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) SELECT `job_name`, `grade`, `label`, IF(`name` = "boss", 1, 0) AS `is_boss` FROM `job_grades` ON DUPLICATE KEY UPDATE `label` = VALUES(`label`), `is_boss` = VALUES(`is_boss`);
