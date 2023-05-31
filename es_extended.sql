@@ -162,6 +162,9 @@ WHERE NOT EXISTS (
     WHERE `user_groups`.`identifier` = `users`.`identifier` AND `user_groups`.`name` = `users`.`group`
 );
 
+-- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
+INSERT INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `job`, `job_grade` AS `grade` FROM `users` ON DUPLICATE KEY UPDATE `grade` = VALUES(`grade`);
+
 
 DELIMITER //
 DROP TRIGGER IF EXISTS insert_groups;
