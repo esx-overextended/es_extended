@@ -34,7 +34,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
     self.metadata = playerMetadata
 
     for groupName, groupGrade in pairs(self.groups) do
-        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, groupGrade))
     end
 
     local stateBag = Player(self.source).state
@@ -156,25 +156,29 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
 
         if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup(%s, %s)^7 usage for Player ^5%s^7"):format(groupName, groupGrade, self.source)) return false end
 
-        local triggerRemoveGroup, previousGroup = false, self.group
+        local triggerRemoveGroup, previousGroup, groupToRemove = false, self.group, nil
         local lastGroups = json.decode(json.encode(self.groups))
 
         if Config.AdminGroupsByName[groupName] or groupName == Core.DefaultGroup then
-            self.groups[self.group], self.group = nil, groupName
             triggerRemoveGroup = true
-
-            lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[previousGroup].principal, lastGroups[previousGroup]))
+            groupToRemove = previousGroup
+            self.groups[self.group], self.group = nil, groupName
+        elseif self.hasGroup(groupName) then
+            triggerRemoveGroup = true
+            groupToRemove = groupName
         end
 
         self.groups[groupName] = groupGrade
 
-        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, groupGrade))
 
         self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
         self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
 
         if triggerRemoveGroup then
-            self.triggerSafeEvent("esx:removeGroup", {groupName = previousGroup, groupGrade = lastGroups[previousGroup]}, {server = true, client = true})
+            lib.removePrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupToRemove, lastGroups[groupToRemove]))
+
+            self.triggerSafeEvent("esx:removeGroup", {groupName = groupToRemove, groupGrade = lastGroups[groupToRemove]}, {server = true, client = true})
         end
 
         Player(self.source).state:set("groups", self.groups, true)
@@ -192,21 +196,21 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         local triggerAddGroup, defaultGroup = false, Core.DefaultGroup
         local lastGroups = json.decode(json.encode(self.groups))
 
-        lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, lastGroups[groupName]))
+        lib.removePrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, lastGroups[groupName]))
 
         self.groups[groupName] = nil
 
         if Config.AdminGroupsByName[groupName] then
-            self.groups[defaultGroup], self.group = 0, defaultGroup
             triggerAddGroup = true
-
-            lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[defaultGroup].principal, self.groups[defaultGroup]))
+            self.groups[defaultGroup], self.group = 0, defaultGroup
         end
 
         self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
         self.triggerSafeEvent("esx:removeGroup", {groupName = groupName, groupGrade = lastGroups[groupName]}, {server = true, client = true})
 
         if triggerAddGroup then
+            lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(defaultGroup, self.groups[defaultGroup]))
+
             self.triggerSafeEvent("esx:addGroup", {groupName = defaultGroup, groupGrade = self.groups[defaultGroup]}, {server = true, client = true})
         end
 

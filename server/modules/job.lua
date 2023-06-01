@@ -316,6 +316,8 @@ function ESX.RefreshJobs()
     GlobalState:set("ESX.Jobs", ESX.Jobs, true)
 
     Core.RefreshPlayersJob()
+
+    ESX.RefreshGroups()
 end
 
 ---Gets the specified job object data

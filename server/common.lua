@@ -62,7 +62,6 @@ MySQL.ready(function()
     while not ESX.RefreshJobs or not ESX.RefreshGroups do Wait(0) end
 
     ESX.RefreshJobs()
-    ESX.RefreshGroups()
 
     print(("[^2INFO^7] ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
 
