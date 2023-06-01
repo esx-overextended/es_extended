@@ -34,7 +34,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
     self.metadata = playerMetadata
 
     for groupName, groupGrade in pairs(self.groups) do
-        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, groupGrade))
     end
 
     local stateBag = Player(self.source).state
@@ -170,13 +170,13 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
 
         self.groups[groupName] = groupGrade
 
-        lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, groupGrade))
+        lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, groupGrade))
 
         self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
         self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
 
         if triggerRemoveGroup then
-            lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupToRemove].principal, lastGroups[groupToRemove]))
+            lib.removePrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupToRemove, lastGroups[groupToRemove]))
 
             self.triggerSafeEvent("esx:removeGroup", {groupName = groupToRemove, groupGrade = lastGroups[groupToRemove]}, {server = true, client = true})
         end
@@ -196,7 +196,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         local triggerAddGroup, defaultGroup = false, Core.DefaultGroup
         local lastGroups = json.decode(json.encode(self.groups))
 
-        lib.removePrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[groupName].principal, lastGroups[groupName]))
+        lib.removePrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, lastGroups[groupName]))
 
         self.groups[groupName] = nil
 
@@ -209,7 +209,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         self.triggerSafeEvent("esx:removeGroup", {groupName = groupName, groupGrade = lastGroups[groupName]}, {server = true, client = true})
 
         if triggerAddGroup then
-            lib.addPrincipal(("identifier.%s"):format(self.license), ("%s:%s"):format(ESX.Groups[defaultGroup].principal, self.groups[defaultGroup]))
+            lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(defaultGroup, self.groups[defaultGroup]))
 
             self.triggerSafeEvent("esx:addGroup", {groupName = defaultGroup, groupGrade = self.groups[defaultGroup]}, {server = true, client = true})
         end

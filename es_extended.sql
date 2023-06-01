@@ -71,8 +71,11 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
     `skin_male` LONGTEXT NOT NULL DEFAULT "{}",
     `skin_female` LONGTEXT NOT NULL DEFAULT "{}",
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `unique_job_name_grade` (`job_name`, `grade`)
 ) ENGINE=InnoDB;
+
+ALTER TABLE `job_grades` ADD UNIQUE KEY IF NOT EXISTS `unique_job_name_grade` (`job_name`, `grade`);
 
 /*
 for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes "CREATE TABLE IF NOT EXISTS `job_grades`" not to execute and apply the needed changes...
@@ -134,7 +137,7 @@ BEGIN
         INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.group, 0);
     END IF;
 
-    IF EXISTS (
+    /*IF EXISTS (
         SELECT 1
         FROM `user_groups`
         WHERE `identifier` = NEW.identifier AND `name` = NEW.job
@@ -142,7 +145,7 @@ BEGIN
         UPDATE `user_groups` SET `grade` = NEW.job_grade WHERE `identifier` = NEW.identifier AND `name` = NEW.job;
     ELSE
         INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.job, NEW.job_grade);
-    END IF;
+    END IF;*/
 END //
 
 DROP TRIGGER IF EXISTS update_user_groups;
@@ -168,7 +171,7 @@ BEGIN
         END IF;
     END IF;
 
-    IF EXISTS (
+    /*IF EXISTS (
         SELECT 1
         FROM `user_groups`
         WHERE `identifier` = OLD.identifier AND `name` = OLD.job
@@ -184,13 +187,14 @@ BEGIN
         ELSE
             INSERT INTO `user_groups` (`identifier`, `name`, `grade`) VALUES (NEW.identifier, NEW.job, NEW.job_grade);
         END IF;
-    END IF;
+    END IF;*/
 END //
 DELIMITER ;
 
 -- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
 INSERT INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `group`, 0 FROM `users` ON DUPLICATE KEY UPDATE `grade` = 0;
 
+/*
 -- insert data for existing rows from users table into user_groups table (after applying backup or for those who migrate from ESX Legacy)
 INSERT INTO `user_groups` (`identifier`, `name`, `grade`) SELECT `identifier`, `job`, `job_grade` AS `grade` FROM `users` ON DUPLICATE KEY UPDATE `grade` = VALUES(`grade`);
 
@@ -300,3 +304,4 @@ INSERT INTO `groups` (`name`, `label`) SELECT `name`, `label` FROM `jobs` ON DUP
 
 -- insert data for existing rows from job_grades table into group_grades table
 INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) SELECT `job_name`, `grade`, `label`, IF(`name` = "boss", 1, 0) AS `is_boss` FROM `job_grades` ON DUPLICATE KEY UPDATE `label` = VALUES(`label`), `is_boss` = VALUES(`is_boss`);
+*/

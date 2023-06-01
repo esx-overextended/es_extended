@@ -68,7 +68,7 @@ function ESX.RefreshGroups()
         end
     end
 
-    ESX.Groups = Groups
+    ESX.Groups = lib.table.merge(Groups, ESX.Jobs)
 
     for i = 1, #Config.AdminGroups do
         local group = Config.AdminGroups[i]
