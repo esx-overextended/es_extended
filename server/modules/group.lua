@@ -136,7 +136,13 @@ function ESX.RefreshGroups()
     GlobalState:set("ESX.Groups", ESX.Groups, true)
 
     Core.RefreshPlayersGroups()
+
+    TriggerEvent("esx:onGroupsRefreshed")
 end
+
+AddEventHandler("esx:onJobsRefreshed", function()
+    ESX.RefreshGroups()
+end)
 
 ---Gets the specified group object data
 ---@param groupName string
