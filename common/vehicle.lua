@@ -1,3 +1,15 @@
+local json = json
+
+function json.load(file)
+    local t = json.decode(LoadResourceFile(cache.resource, file) or "{}")
+
+    if not t then
+        error(("An unknown error occured while loading @%s/%s"):format(cache.resource, file), 2)
+    end
+
+    return t
+end
+
 ---@type TopVehicleStats
 local topStats = json.load("files/topVehicleStats.json")
 

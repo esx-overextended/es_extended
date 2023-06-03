@@ -142,10 +142,6 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, data, c
     return vehicle
 end
 
------------------------------------------------------------------------------------------------
--- Interface
------------------------------------------------------------------------------------------------
-
 ---Loads a vehicle from the database by id, or creates a new vehicle using provided data.
 ---@param data table | number
 ---@param coords vector3 | vector4
@@ -318,7 +314,7 @@ function ESX.GenerateVin(model)
     local vehicle = ESX.GetVehicleData(model:lower())
     local arr = {
         math_random(1, 9),
-        vehicle.make == "" and "OX" or vehicle.make:sub(1, 2):upper(),
+        vehicle.make == "" and "ESX" or vehicle.make:sub(1, 2):upper(), ---@diagnostic disable-line: param-type-mismatch
         model:sub(1, 2):upper(),
         getAlphanumeric(),
         string.char(math_random(65, 90)),
