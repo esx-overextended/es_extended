@@ -1,6 +1,4 @@
-local json = json
-
-function json.load(file)
+local function loadJson(file)
     local t = json.decode(LoadResourceFile(cache.resource, file) or "{}")
 
     if not t then
@@ -11,10 +9,10 @@ function json.load(file)
 end
 
 ---@type TopVehicleStats
-local topStats = json.load("files/topVehicleStats.json")
+local topStats = loadJson("files/topVehicleStats.json")
 
 ---@type table<string, VehicleData>
-local vehicleList = json.load("files/vehicles.json")
+local vehicleList = loadJson("files/vehicles.json")
 
 local function filterData(model, data, filter)
     if filter.model and not model:find(filter.model) then return end
