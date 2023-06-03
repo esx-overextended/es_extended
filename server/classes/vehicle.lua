@@ -8,9 +8,9 @@
 ---@param vehiclePlate string
 ---@param vehicleVin string
 ---@param vehicleScript string
----@param vehicleData any
+---@param vehicleMetadata table
 ---@return xVehicle
-local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehicleNetId, vehicleEntity, vehicleModel, vehiclePlate, vehicleVin, vehicleScript, vehicleData)
+local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehicleNetId, vehicleEntity, vehicleModel, vehiclePlate, vehicleVin, vehicleScript, vehicleMetadata)
     ---@type xVehicle
     local self = {}
 
@@ -117,12 +117,12 @@ end
 ---@param plate string
 ---@param model string
 ---@param script string
----@param data table
+---@param metadata table
 ---@param coords vector3
 ---@param heading number
 ---@param vType string
 ---@return xVehicle?
-local function spawnVehicle(id, owner, group, plate, vin, model, script, data, coords, heading, vType)
+local function spawnVehicle(id, owner, group, plate, vin, model, script, metadata, coords, heading, vType, properties)
     -- New native seems to be missing some types, for now we will convert to known types
     -- https://github.com/citizenfx/fivem/commit/1e266a2ca5c04eb96c090de67508a3475d35d6da
     if vType == "bicycle" or vType == "quadbike" or vType == "amphibious_quadbike" then
@@ -137,9 +137,15 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, data, c
 
     if not DoesEntityExist(entity) then print(("^1Failed to spawn vehicle '%s'^0"):format(model)) end
 
-    local vehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, data)
+    local vehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
 
     ESX.Vehicles[vehicle.entity] = vehicle
+
+    local stateBag = Entity(entity).state
+
+    stateBag:set("initVehicle", true, true)
+    vehicle.set("owner", owner)
+    stateBag:set("vehicleProperties", properties, true)
 
     if owner or group then vehicle.setStored(false) end
 
@@ -195,6 +201,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
 
                 if vData.hash == vehicle.vehicle?.model then
                     vehicleData = {model = vModel, data = vData}
+                    break
                 end
             end
 
@@ -217,7 +224,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model)) return
         end
 
-        return spawnVehicle(data, vehicle.owner, vehicle.group, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type)
+        return spawnVehicle(data, vehicle.owner, vehicle.group, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type, vehicle.vehicle)
     end
 
     local typeModel = type(data.model)
@@ -242,14 +249,17 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local vehicleProperties = data.properties or {}
 
     vehicleProperties.plate = plate
+    vehicleProperties.model = modelData.hash -- backward compatibility with esx-legacy
 
-    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`plate`, `vin`, `owner`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", { plate, vin, owner or nil, group or nil, model, modelData.class, json.encode(metadata), stored }) or nil
+    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`plate`, `vin`, `vehicle`, `owner`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", {
+        plate, vin, json.encode(vehicleProperties), owner or nil, group or nil, model, modelData.class, json.encode(metadata), stored
+    }) or nil
 
     if stored then
         return vehicleId
     end
 
-    return spawnVehicle(vehicleId, owner, group, plate, vin, model, script, metadata, coords, heading or 90.0, modelData.type)
+    return spawnVehicle(vehicleId, owner, group, plate, vin, model, script, metadata, coords, heading or 90.0, modelData.type, vehicleProperties)
 end
 
 ---Returns an instance of xVehicle for the given entityId.

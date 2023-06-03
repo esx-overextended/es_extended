@@ -669,7 +669,7 @@ local DoNotUse = {
 }
 
 for i = 1, #DoNotUse do
-    if GetResourceState(DoNotUse[i]) == 'started' or GetResourceState(DoNotUse[i]) == 'starting' then
+    if GetResourceState(DoNotUse[i]):find("start") then
         print("[^1ERROR^7] YOU ARE USING A RESOURCE THAT WILL BREAK ^1ESX^7, PLEASE REMOVE ^5" .. DoNotUse[i] .. "^7")
     end
 end
@@ -677,4 +677,48 @@ end
 lib.onCache("ped", function(value)
     ESX.SetPlayerData("ped", value)
     TriggerEvent("esx:restoreLoadout")
+end)
+
+AddStateBagChangeHandler("initVehicle", "", function(bagName, _, value, _, _)
+    if not value then return end
+
+    local entity = GetEntityFromStateBagName(bagName)
+
+    if not entity or entity == 0 then return end
+
+    local doesEntityExist, timeout = false, 0
+
+    while not doesEntityExist and (timeout < 1000 or NetworkGetEntityOwner(entity) == cache.playerId) do
+        doesEntityExist = DoesEntityExist(entity)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesEntityExist then print(("[^4WARNING^7] Statebag (%s) timed out while awaiting entity creation on initVehicle!"):format(bagName)) return end
+
+    SetVehicleOnGroundProperly(entity)
+
+    Entity(entity).state:set("initVehicle", nil, true)
+end)
+
+AddStateBagChangeHandler("vehicleProperties", "", function(bagName, _, value, _, _)
+    if not value then return end
+
+    local entity = GetEntityFromStateBagName(bagName)
+
+    if not entity or entity == 0 then return end
+
+    local doesEntityExist, timeout = false, 0
+
+    while not doesEntityExist and (timeout < 1000 or NetworkGetEntityOwner(entity) == cache.playerId) do
+        doesEntityExist = DoesEntityExist(entity)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesEntityExist then print(("[^4WARNING^7] Statebag (%s) timed out while awaiting entity creation on vehicleProperties!"):format(bagName)) return end
+
+    if not lib.setVehicleProperties(entity, value) then return end
+
+    Entity(entity).state:set("vehicleProperties", nil, true)
 end)

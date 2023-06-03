@@ -632,6 +632,34 @@ ESX.RegisterServerCallback('esx:getPlayerNames', function(source, cb, players)
     cb(players)
 end)
 
+AddStateBagChangeHandler("initVehicle", "", function(bagName, _, value, _, _)
+    if not value then return end -- TODO: check if peds are still appearing in vehicles and are not being deleted, changing this to "value ~= nil" might fix it...
+
+    local entity = GetEntityFromStateBagName(bagName)
+
+    if not entity or entity == 0 then return end
+
+    local doesEntityExist, timeout = false, 0
+
+    while not doesEntityExist and timeout < 1000 do
+        doesEntityExist = DoesEntityExist(entity)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesEntityExist then print(("[^4WARNING^7] Statebag (%s) timed out while awaiting entity creation on initVehicle!"):format(bagName)) return end
+
+    -- workaround for server-vehicles that exist in traffic randomly creating peds
+    -- https://forum.cfx.re/t/sometimes-an-npc-spawns-inside-an-vehicle-spawned-with-createvehicleserversetter-or-create-automobile/4947251
+    for i = -1, 0 do
+        local ped = GetPedInVehicleSeat(entity, i)
+
+        if not IsPedAPlayer(ped) then
+            DeleteEntity(ped)
+        end
+    end
+end)
+
 AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
     if eventData?.secondsRemaining ~= 60 then return end
 
