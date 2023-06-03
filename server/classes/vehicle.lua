@@ -207,10 +207,10 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
 
             if not vehicleData then print(("[^1ERROR^7] Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model)) return end
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? FROM `owned_vehicles` WHERE `id` = ? %s", {
+            MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
                 vehicle.vin or ESX.GenerateVin(vehicleData.model),
                 vehicle.model or vehicleData.model,
-                vehicle.class or vehicleData.class,
+                vehicleData.data?.class,
                 vehicle.metadata and json.encode(vehicle.metadata) or "{}",
                 data
             })
