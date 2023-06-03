@@ -425,3 +425,51 @@ ESX.RegisterCommand('players', "admin", function(_, _, _)
             xPlayer.getGroup() .. " ^0 | ^2Identifier : ^5" .. xPlayer.identifier .. "^1]^0\n")
     end
 end, true)
+
+if Config.EnableDebug then
+    ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args, _)
+        local toBoolean = { ["false"] = false, ["true"] = true }
+        args.processAll = args.processAll ~= nil and toBoolean[args.processAll:lower()]
+
+        ---@type table<string, VehicleData>, TopVehicleStats
+        local vehicleData, topStats = lib.callback.await("esx:generateVehicleData", xPlayer.source, args.processAll)
+
+        if vehicleData and next(vehicleData) then
+            if not args.processAll then
+                for k, v in pairs(ESX.GetVehicleData()) do
+                    vehicleData[k] = v
+                end
+            end
+
+            local topVehicleStats = ESX.GetTopVehicleStats() or {}
+
+            if topVehicleStats then
+                for vtype, data in pairs(topVehicleStats) do
+                    if not topStats[vtype] then topStats[vtype] = {} end
+
+                    for stat, value in pairs(data) do
+                        local newValue = topStats[vtype][stat]
+
+                        if newValue and newValue > value then
+                            topVehicleStats[vtype][stat] = newValue
+                        end
+                    end
+                end
+            end
+
+            SaveResourceFile(cache.resource, "files/topVehicleStats.json", json.encode(topVehicleStats, {
+                indent = true, sort_keys = true, indent_count = 4
+            }), -1)
+
+            SaveResourceFile(cache.resource, "files/vehicles.json", json.encode(vehicleData, {
+                indent = true, sort_keys = true, indent_count = 4
+            }), -1)
+        end
+    end, false, {
+        help = "Generate and save vehicle data for available models on the client",
+        validate = false,
+        arguments = {
+            { name = "processAll", help = "Include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
+        }
+    })
+end

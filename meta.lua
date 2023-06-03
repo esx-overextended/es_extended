@@ -133,7 +133,6 @@
 ---@field doors number
 ---@field make string
 ---@field name string
----@field price number
 ---@field seats number
 ---@field type string
 ---@field hash integer | number
