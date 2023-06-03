@@ -246,6 +246,27 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     return spawnVehicle(vehicleId, owner, group, plate, vin, model, script, metadata, coords, heading or 90.0, modelData.type)
 end
 
+---Returns an instance of xVehicle for the given entityId.
+---@param entityId number | integer
+---@return xVehicle?
+function ESX.GetVehicle(entityId)
+    return ESX.Vehicles[entityId]
+end
+
+---Return all vehicle data.
+---@return xVehicle[]
+function ESX.GetVehicles()
+    local size = 0
+    local vehicles = {}
+
+    for _, v in pairs(ESX.Vehicles) do
+        size += 1
+        vehicles[size] = v
+    end
+
+    return vehicles
+end
+
 local math_random = math.random
 
 local function getNumber()
@@ -328,3 +349,4 @@ function ESX.GenerateVin(model)
         if not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `vin` = ?", { vin }) then return vin end
     end
 end
+
