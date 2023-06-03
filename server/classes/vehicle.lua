@@ -152,7 +152,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local typeData = type(data)
     local script = GetInvokingResource()
 
-    if typeData ~= "number" and typeData ~= "string" then print(("[^1ERROR^7] Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData)) return end
+    if typeData ~= "number" and typeData ~= "table" then print(("[^1ERROR^7] Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData)) return end
 
     if typeData == "number" then
         local typeCoords = type(coords)
@@ -237,7 +237,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
 
     vehicleProperties.plate = plate
 
-    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`plate`, `vin`, `owner`, `job`, `model`, `class`, `data`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", { plate, vin, owner or nil, group or nil, model, modelData.class, json.encode(metadata), stored }) or nil
+    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`plate`, `vin`, `owner`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", { plate, vin, owner or nil, group or nil, model, modelData.class, json.encode(metadata), stored }) or nil
 
     if stored then
         return vehicleId

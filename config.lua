@@ -77,8 +77,8 @@ Config.RemoveHudCommonents         = {
     [22] = false,                          --HUD_WEAPONS
 }
 
-Config.SpawnVehMaxUpgrades         = true       -- admin vehicles spawn with max vehicle settings
-Config.CustomAIPlates              = "ESXOX..." -- Custom plates for AI vehicles
+Config.SpawnVehMaxUpgrades         = true      -- admin vehicles spawn with max vehicle settings
+Config.CustomAIPlates              = "ESX1..." -- Custom plates for AI vehicles
 -- Pattern string format
 --1 will lead to a random number from 0-9.
 --A will lead to a random letter from A-Z.
