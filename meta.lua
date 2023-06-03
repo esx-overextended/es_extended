@@ -109,7 +109,7 @@
 ---@field set fun(key: string, value: any)
 ---@field get fun(key?: string): any
 ---@field delete fun(removeFromDb?: boolean)
----@field setStored fun(value?: string, despawn?: boolean)
+---@field setStored fun(value?: boolean, despawn?: boolean)
 ---@field setOwner fun(newOwner?: string)
 ---@field setGroup fun(newGroup?: string)
 ---@field setPlate fun(newPlate: string)

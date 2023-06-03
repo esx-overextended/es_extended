@@ -45,9 +45,13 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     ---Removes the current vehicle entity
     ---@param removeFromDb? boolean delete the entry from database as well or no (defaults to false if not provided and nil)
     function self.delete(removeFromDb)
+        local id = self.id
         local entity = self.entity
+        local netId = self.netId
+        local vin = self.vin
+        local plate = self.plate
 
-        if self.owner ~= false or self.group then -- TODO: why do we need this check?
+        if self.owner or self.group then -- TODO: why do we need this check?
             if removeFromDb then
                 MySQL.prepare("DELETE FROM `owned_vehicles` WHERE `id` = ?", { self.id })
             else
@@ -55,8 +59,10 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
             end
         end
 
-        ESX.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead
+        ESX.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
         DeleteEntity(entity)
+
+        TriggerEvent("esx:vehicleDeleted", id, entity, netId, vin, plate)
     end
 
     ---Sets the stored property for the current vehicle in database
@@ -135,9 +141,9 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, data, c
 
     ESX.Vehicles[vehicle.entity] = vehicle
 
-    if owner ~= false or group then vehicle.setStored(nil) end
+    if owner or group then vehicle.setStored(false) end
 
-    TriggerEvent("esx:createdVehicle", vehicle.id, vehicle, vehicle.entity, vehicle.netId)
+    TriggerEvent("esx:vehicleCreated", vehicle.id, vehicle, vehicle.entity, vehicle.netId)
 
     return vehicle
 end
@@ -281,7 +287,7 @@ local function getAlphanumeric()
     return math_random(0, 1) == 1 and getLetter() or getNumber()
 end
 
-local plateFormat = string.upper(Config.CustomAIPlates)
+local plateFormat = string.upper(Config.PlatePattern)
 local formatLen = #plateFormat
 
 ---Creates a unique vehicle plate.
