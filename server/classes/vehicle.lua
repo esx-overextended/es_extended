@@ -25,7 +25,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     self.script = vehicleScript
     self.stored = nil
     self.variables = {}
-    self.metadata = vehicleData or {}
+    self.metadata = vehicleMetadata or {}
 
     ---Sets the specified value to the key variable for the current vehicle
     ---@param key string
