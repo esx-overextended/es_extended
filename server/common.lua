@@ -1,5 +1,6 @@
 ESX = {}
-ESX.Players = {} --[[@type xPlayer[] ]]
+ESX.Players = {} --[[@type table<number, xPlayer> ]]
+ESX.Vehicles = {} --[[@type table<number, xVehicle> ]]
 ESX.Items = {}
 Core = {}
 Core.UsableItemsCallbacks = {}

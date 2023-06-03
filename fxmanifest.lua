@@ -50,17 +50,16 @@ ui_page {
 files {
     'imports.lua',
     'locale.js',
+
+    'files/*.*',
+
     'html/ui.html',
-
     'html/css/app.css',
-
     'html/js/mustache.min.js',
     'html/js/wrapper.js',
     'html/js/app.js',
-
     'html/fonts/pdown.ttf',
     'html/fonts/bankgothic.ttf',
-
     'html/img/accounts/bank.png',
     'html/img/accounts/black_money.png',
     'html/img/accounts/money.png'

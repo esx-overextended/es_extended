@@ -242,19 +242,17 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
     ---Sets the specified value to the key variable for the current player
     ---@param key string
     ---@param value any
-    function self.setVariable(key, value) -- TODO: sync with client using safe event
+    function self.set(key, value) -- TODO: sync with client using safe event
         self.variables[key] = value
         Player(self.source).state:set(key, value, true)
     end
-    self.set = self.setVariable
 
-    ---Gets the value of the specified key variable from the current player
-    ---@param key any
+    ---Gets the value of the specified key variable from the current player, returning the entire table if key is omitted
+    ---@param key? string
     ---@return any
-    function self.getVariable(key)
-        return self.variables[key]
+    function self.get(key)
+        return key and self.variables[key] or self.variables
     end
-    self.get = self.getVariable
 
     ---Gets all of the current player accounts
     ---@param minimal? boolean

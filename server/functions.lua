@@ -238,6 +238,36 @@ function Core.SavePlayers(cb)
     end)
 end
 
+---Saves all vehicles for the resource and despawns them
+---@param resource string?
+function Core.SaveVehicles(resource)
+    local parameters = {}
+    local size = 0
+
+    if not next(ESX.Vehicles) then return end
+
+    if resource == "es_extended" then resource = nil end
+
+    for _, xVehicle in pairs(ESX.Vehicles) do
+        if not resource or resource == xVehicle.script then
+            if (xVehicle.owner or xVehicle.group) ~= false then
+                size += 1
+                parameters[size] = { xVehicle.stored or "impound", json.encode(xVehicle.metadata), xVehicle.id }
+            end
+
+            if resource then
+                xVehicle.delete()
+            else
+                DeleteEntity(xVehicle.entity)
+            end
+        end
+    end
+
+    if size > 0 then
+        MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", parameters)
+    end
+end
+
 ESX.GetPlayers = GetPlayers
 
 ---Returns instance of xPlayers
@@ -463,10 +493,11 @@ function Core.GetPlayerAdminGroup(playerId)
     playerId = tostring(playerId)
     local group = Core.DefaultGroup
 
-    for i = 1, #Config.AdminGroups do
-        local principal = ("group.%s"):format(Config.AdminGroups[i])
-        if IsPlayerAceAllowed(playerId, principal) then
-            group = Config.AdminGroups[i]
+    for i = 1, #Config.AdminGroups do -- start from the highest perm admin group
+        local groupName = Config.AdminGroups[i]
+
+        if IsPlayerAceAllowed(playerId, ESX.Groups[groupName].principal) then
+            group = groupName
             break
         end
     end
