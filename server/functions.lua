@@ -241,8 +241,8 @@ end
 ---Saves all vehicles for the resource and despawns them
 ---@param resource string?
 function Core.SaveVehicles(resource)
-    local parameters = {}
-    local size = 0
+    local parameters, pSize = {}, 0
+    local vehicles, vSize = {}, 0
 
     if not next(Core.Vehicles) then return end
 
@@ -250,20 +250,21 @@ function Core.SaveVehicles(resource)
 
     for _, xVehicle in pairs(Core.Vehicles) do
         if not resource or resource == xVehicle.script then
-            if (xVehicle.owner or xVehicle.group) ~= false then
-                size += 1
-                parameters[size] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it's handled through xVehicle.delete()
+                pSize += 1
+                parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
             end
 
-            if resource then
-                xVehicle.delete()
-            elseif DoesEntityExist(xVehicle.entity) then
-                DeleteEntity(xVehicle.entity)
-            end
+            vSize += 1
+            vehicles[vSize] = xVehicle.entity
         end
     end
 
-    if size > 0 then
+    if vSize > 0 then
+        ESX.DeleteVehicle(vehicles)
+    end
+
+    if pSize > 0 then
         MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", parameters)
     end
 end
