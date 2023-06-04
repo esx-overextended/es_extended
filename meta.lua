@@ -113,6 +113,8 @@
 ---@field setOwner fun(newOwner?: string)
 ---@field setGroup fun(newGroup?: string)
 ---@field setPlate fun(newPlate: string)
+---@field getMetadata fun(index?: string, subIndex?: string | table): nil | string | table
+---@field setMetadata fun(index: string, value?: string | number | table, subValue?: any): boolean
 
 
 ---@class VehicleData

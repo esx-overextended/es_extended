@@ -27,6 +27,8 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     self.variables = {}
     self.metadata = vehicleMetadata or {}
 
+    Entity(self.entity).state:set("metadata", self.metadata, true)
+
     ---Sets the specified value to the key variable for the current vehicle
     ---@param key string
     ---@param value any
@@ -106,6 +108,75 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
         MySQL.prepare("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
 
         self.set("plate", newPlate)
+    end
+
+    ---Gets the current vehicle specified metadata
+    ---@param index? string
+    ---@param subIndex? string | table
+    ---@return nil | string | table
+    function self.getMetadata(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.getMetadata)...
+        if not index then return self.metadata end
+
+        if type(index) ~= "string" then  print("[^1ERROR^7] xVehicle.getMetadata ^5index^7 should be ^5string^7!") end
+
+        if self.metadata[index] then
+            if subIndex and type(self.metadata[index]) == "table" then
+                local _type = type(subIndex)
+
+                if _type == "string" then return self.metadata[index][subIndex] end
+
+                if _type == "table" then
+                    local returnValues = {}
+
+                    for i = 1, #subIndex do
+                        if self.metadata[index][subIndex[i]] then
+                            returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
+                        end
+                    end
+
+                    return returnValues
+                end
+
+                return nil
+            end
+
+            return self.metadata[index]
+        end
+
+        return nil
+    end
+
+    ---Sets the specified metadata to the current player
+    ---@param index string
+    ---@param value? string | number | table
+    ---@param subValue? any
+    ---@return boolean
+    function self.setMetadata(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.setMetadata)...
+        if not index then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 is Missing!") return false end
+
+        if type(index) ~= "string" then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 should be ^5string^7!") return false end
+
+        local _type = type(value)
+
+        if not subValue then
+            if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
+                print(("[^1ERROR^7] xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
+                return false
+            end
+
+            self.metadata[index] = value
+        else
+            if _type ~= "string" then
+                print(("[^1ERROR^7] xVehicle.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
+                return false
+            end
+
+            self.metadata[index][value] = subValue
+        end
+
+        Entity(self.entity).state:set("metadata", self.metadata, true)
+
+        return true
     end
 
     return self

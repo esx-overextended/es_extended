@@ -886,23 +886,23 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
 
                 if _type == "table" then
                     local returnValues = {}
+
                     for i = 1, #subIndex do
                         if self.metadata[index][subIndex[i]] then
                             returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
-                        else
-                            print(("[^1ERROR^7] xPlayer.getMetadata ^5%s^7 not exist on ^5%s^7!"):format(subIndex[i], index))
                         end
                     end
 
                     return returnValues
                 end
+
+                return nil
             end
 
             return self.metadata[index]
-        else
-            print(("[^1ERROR^7] xPlayer.getMetadata ^5%s^7 not exist!"):format(index))
-            return nil
         end
+
+        return nil
     end
     self.getMeta = self.getMetadata -- backward compatibility with esx-legacy
 
@@ -916,13 +916,11 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
 
         if type(index) ~= "string" then print("[^1ERROR^7] xPlayer.setMetadata ^5index^7 should be ^5string^7!") return false end
 
-        if not value then print(("[^1ERROR^7] xPlayer.setMetadata ^5%s^7 is Missing!"):format(value)) return false end
-
         local _type = type(value)
         local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
         if not subValue then
-            if _type ~= "number" and _type ~= "string" and _type ~= "table" then
+            if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
                 print(("[^1ERROR^7] xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
                 return false
             end
