@@ -51,9 +51,11 @@ Locales['pl'] = {
     ['in_vehicle'] = 'nie możesz przekazywać przedmiotów w pojeździe',
     -- Commands
     ['command_car'] = 'przywołaj pojazd',
-    ['command_car_car'] = 'nazwa lub hash przywołanego pojazdu',
+    ['command_car_model'] = 'nazwa lub hash przywołanego pojazdu',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'usuń pojazd w pobliżu',
     ['command_cardel_radius'] = 'opcjonalnie usuń każdy pojazd w obszarze',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'wyczyść czat',
     ['command_clearall'] = 'wyczyść czat dla wszystkich graczy',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

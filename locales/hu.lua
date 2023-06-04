@@ -52,9 +52,11 @@ Locales["hu"] = {
     -- Commands
     ["command_bring"] = "Játékos magadhoz teleportálása",
     ["command_car"] = "Jármű lehívása",
-    ["command_car_car"] = "Jármű név vagy hash",
+    ["command_car_model"] = "Jármű név vagy hash",
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ["command_cardel"] = "Közeli járművek törlése",
     ["command_cardel_radius"] = "Megadott radiusban lévő járművek törlése",
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ["command_clear"] = "Chat ürítése",
     ["command_clearall"] = "Chat ürítése minden játékosnál",
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

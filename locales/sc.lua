@@ -51,9 +51,11 @@ Locales['sc'] = {
     ['in_vehicle'] = '请离开载具',
     -- Commands
     ['command_car'] = '生成载具',
-    ['command_car_car'] = '生成载具的模型名称或哈希值',
+    ['command_car_model'] = '生成载具的模型名称或哈希值',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = '删除附近的载具',
     ['command_cardel_radius'] = '可选，删除指定半径内的所有车辆',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = '清除聊天记录',
     ['command_clearall'] = '清除所有玩家的聊天记录',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

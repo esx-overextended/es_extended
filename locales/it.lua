@@ -52,9 +52,11 @@ Locales['it'] = {
     -- Commands
     ['command_bring'] = 'Porta il giocatore da te',
     ['command_car'] = 'Spawna un veicolo',
-    ['command_car_car'] = 'Modello o hash veicolo',
+    ['command_car_model'] = 'Modello o hash veicolo',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Rimuovi i veicoli nelle prossimità',
     ['command_cardel_radius'] = 'Rimuovi i veicoli nel raggio specificato',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Pulisci la chat testuale',
     ['command_clearall'] = 'Pulisci la chat testuale per tutti i giocatori',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

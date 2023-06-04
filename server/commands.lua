@@ -47,82 +47,96 @@ end, true, {
     }
 })
 
-local upgrades = Config.SpawnVehMaxUpgrades and
-    {
-        plate = "ADMINCAR",
-        modEngine = 3,
-        modBrakes = 2,
-        modTransmission = 2,
-        modSuspension = 3,
-        modArmor = true,
-        windowTint = 1
-    } or {}
+local upgrades = Config.SpawnVehMaxUpgrades and {
+    plate = "ADMINCAR",
+    modEngine = 3,
+    modBrakes = 2,
+    modTransmission = 2,
+    modSuspension = 3,
+    modArmor = true,
+    windowTint = 1
+} or {}
 
-ESX.RegisterCommand('car', 'admin', function(xPlayer, args, _)
-    if not xPlayer then
-        return print('[^1ERROR^7] The xPlayer value is nil')
-    end
+local arrayOfVehiclesName, count = {}, 0
+for modelName in pairs(ESX.GetVehicleData()) do
+    count += 1
+    arrayOfVehiclesName[count] = modelName
+end
 
-    local playerPed = GetPlayerPed(xPlayer.source)
+local function getRandomVehicleName()
+    return arrayOfVehiclesName[math.random(1, count)]
+end
+
+ESX.RegisterCommand("car", "admin", function(xPlayer, args, _)
+    local playerPed = GetPlayerPed(xPlayer?.source)
     local playerCoords = GetEntityCoords(playerPed)
     local playerHeading = GetEntityHeading(playerPed)
     local playerVehicle = GetVehiclePedIsIn(playerPed, false)
 
-    if not args.car or type(args.car) ~= 'string' then
-        args.car = 'adder'
-    end
+    args.model = type(args.model) == "string" and args.model or getRandomVehicleName()
+    args.owner = args.owner?.identifier
 
-    if playerVehicle then
-        DeleteEntity(playerVehicle)
+    local vehicle = ESX.CreateVehicle({
+        owner = args.owner,
+        model = args.model
+    }, playerCoords, playerHeading)
+
+    if not vehicle then return end
+
+    if playerVehicle and playerVehicle > 0 then ESX.DeleteVehicle(playerVehicle) end
+
+    if next(upgrades) and not args.owner then ESX.SetVehicleProperties(vehicle.entity, upgrades) end
+
+    for _ = 1, 50 do
+        Wait(0)
+        SetPedIntoVehicle(playerPed, vehicle.entity, -1)
+
+        if GetVehiclePedIsIn(playerPed, false) == vehicle.entity then
+            break
+        end
     end
 
     ESX.DiscordLogFields("UserActions", "/car Triggered", "pink", {
         { name = "Player",  value = xPlayer.name,   inline = true },
         { name = "ID",      value = xPlayer.source, inline = true },
-        { name = "Vehicle", value = args.car,       inline = true }
+        { name = "Vehicle", value = args.model,     inline = true },
+        { name = "Owner",   value = args.owner,     inline = true }
     })
-
-    ESX.OneSync.SpawnVehicle(args.car, playerCoords, playerHeading, upgrades, function(networkId)
-        if networkId then
-            local vehicle = NetworkGetEntityFromNetworkId(networkId)
-            for _ = 1, 20 do
-                Wait(0)
-                SetPedIntoVehicle(playerPed, vehicle, -1)
-
-                if GetVehiclePedIsIn(playerPed, false) == vehicle then
-                    break
-                end
-            end
-            if GetVehiclePedIsIn(playerPed, false) ~= vehicle then
-                print('[^1ERROR^7] The player could not be seated in the vehicle')
-            end
-        end
-    end)
 end, false, {
-    help = _U('command_car'),
+    help = _U("command_car"),
     validate = false,
     arguments = {
-        { name = 'car', validate = false, help = _U('command_car_car'), type = 'string' }
+        { name = "model", help = _U("command_car_model"), type = "string" },
+        { name = "owner", help = _U("command_car_owner"), type = "player" }
     }
 })
 
-ESX.RegisterCommand({ 'cardel', 'dv' }, 'admin', function(xPlayer, args, _)
-    local PedVehicle = GetVehiclePedIsIn(GetPlayerPed(xPlayer.source), false)
-    if DoesEntityExist(PedVehicle) then
-        DeleteEntity(PedVehicle)
-    end
-    local Vehicles = ESX.OneSync.GetVehiclesInArea(GetEntityCoords(GetPlayerPed(xPlayer.source)), tonumber(args.radius) or 5.0)
-    for i = 1, #Vehicles do
-        local Vehicle = NetworkGetEntityFromNetworkId(Vehicles[i])
-        if DoesEntityExist(Vehicle) then
-            DeleteEntity(Vehicle)
+ESX.RegisterCommand({"cardel", "dv"}, "admin", function(xPlayer, args, _)
+    local toBoolean = { ["true"] = true, ["false"] = false }
+    local playerPed = GetPlayerPed(xPlayer?.source)
+    local playerCoords = GetEntityCoords(playerPed)
+
+    args.radius = tonumber(args.radius) or 5.0
+    args.owned =  type(args.owned) == "string" and toBoolean[args.owned:lower()]
+
+    local _, vehicleEntities, vehiclesCount = ESX.OneSync.GetVehiclesInArea(playerCoords, args.radius)
+
+    for i = 1, vehiclesCount do
+        local vehicleEntity = vehicleEntities[i]
+        local vehicle = ESX.GetVehicle(vehicleEntity)
+
+        if not vehicle or (not vehicle?.owner and not vehicle?.group) then
+            DeleteEntity(vehicleEntity)
+        elseif vehicle and args.owned then
+            vehicle.delete()
         end
     end
 end, false, {
-    help = _U('command_cardel'),
+    help = _U("command_cardel"),
     validate = false,
     arguments = {
-        { name = 'radius', validate = false, help = _U('command_cardel_radius'), type = 'number' }
+        { name = "radius", help = _U("command_cardel_radius"), type = "number" },
+        { name = "owned", help = _U("command_cardel_owned"), type = "string" }
     }
 })
 

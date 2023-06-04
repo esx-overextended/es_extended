@@ -52,9 +52,11 @@ Locales['tc'] = {
     -- Commands
     ['command_bring'] = '傳送玩家到你旁邊',
     ['command_car'] = '生成載具',
-    ['command_car_car'] = '生成載具的模型名稱或希哈值',
+    ['command_car_model'] = '生成載具的模型名稱或希哈值',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = '刪除附近的載具',
     ['command_cardel_radius'] = '可選擇，刪除指定半徑內的所有車輛',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = '清除聊天紀錄',
     ['command_clearall'] = '清除所有玩家的聊天紀錄',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

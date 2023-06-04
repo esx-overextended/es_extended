@@ -52,9 +52,11 @@ Locales['da'] = {
     -- Commands
     ['command_bring'] = 'Tag en spiller til dig',
     ['command_car'] = 'Spawn et køretøj',
-    ['command_car_car'] = 'Køretøjsmodel eller hash',
+    ['command_car_model'] = 'Køretøjsmodel eller hash',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Fjern køretøjer i nærheden',
     ['command_cardel_radius'] = 'Fjerner alle køretøjer inden for den specificerede radius',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Ryd chatten',
     ['command_clearall'] = 'Ryd chatten for alle spillere',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',
