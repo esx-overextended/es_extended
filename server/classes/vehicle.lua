@@ -1,3 +1,6 @@
+---@type table<entityId, table<number, number>>
+local vehiclesPropertiesQueue = {}
+
 ---Creates an xVehicle object
 ---@param vehicleId? integer | number
 ---@param vehicleOwner? string | boolean
@@ -70,6 +73,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
         end
 
         Core.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+        vehiclesPropertiesQueue[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
         if DoesEntityExist(entity) then DeleteEntity(entity) end
 
@@ -483,6 +487,7 @@ function ESX.DeleteVehicle(vehicleEntity)
         vehicle.delete()
     else
         DeleteEntity(vehicleEntity)
+        vehiclesPropertiesQueue[vehicleEntity] = nil
     end
 end
 
@@ -507,5 +512,63 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
         return
     end
 
-    Entity(vehicleEntity).state:set("vehicleProperties", properties, true)
+    if not vehiclesPropertiesQueue[vehicleEntity] then
+        vehiclesPropertiesQueue[vehicleEntity] = {}
+
+        table.insert(vehiclesPropertiesQueue[vehicleEntity], properties)
+
+        Entity(vehicleEntity).state:set("vehicleProperties", vehiclesPropertiesQueue[vehicleEntity][1], true)
+    elseif vehiclesPropertiesQueue[vehicleEntity] then
+        table.insert(vehiclesPropertiesQueue[vehicleEntity], properties) -- adding the properties to the queue
+    end
 end
+
+AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
+    if not value then return end -- TODO: check if peds are still appearing in vehicles and are not being deleted, changing this to "value ~= nil" might fix it...
+
+    local entity = GetEntityFromStateBagName(bagName)
+
+    if not entity or entity == 0 then return end
+
+    local doesEntityExist, timeout = false, 0
+
+    while not doesEntityExist and timeout < 1000 do
+        doesEntityExist = DoesEntityExist(entity)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesEntityExist then print(("[^3WARNING^7] Statebag (%s) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+
+    -- workaround for server-vehicles that exist in traffic randomly creating peds
+    -- https://forum.cfx.re/t/sometimes-an-npc-spawns-inside-an-vehicle-spawned-with-createvehicleserversetter-or-create-automobile/4947251
+    for i = -1, 0 do
+        local ped = GetPedInVehicleSeat(entity, i)
+
+        if not IsPedAPlayer(ped) then
+            DeleteEntity(ped)
+        end
+    end
+end)
+
+AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, _, _)
+    if value ~= nil then return end
+
+    local entity = GetEntityFromStateBagName(bagName)
+
+    if not entity or entity == 0 then return end
+
+    table.remove(vehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue 
+
+    if next(vehiclesPropertiesQueue[entity]) then
+        return Entity(entity).state:set(key, vehiclesPropertiesQueue[entity][1]) -- applying the next properties from the queue
+        --[[
+        local bagName = ("entity:%d"):format(NetworkGetNetworkIdFromEntity(entity))
+        local payload = msgpack_pack(vehiclesPropertiesQueue[entity][1])
+
+        return SetStateBagValue(bagName, key, payload, payload:len(), true)
+        ]]
+    end
+
+    vehiclesPropertiesQueue[entity] = nil
+end)
