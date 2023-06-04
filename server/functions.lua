@@ -246,18 +246,18 @@ function Core.SaveVehicles(resource)
 
     if not next(ESX.Vehicles) then return end
 
-    if resource == "es_extended" then resource = nil end
+    if resource == cache.resource then resource = nil end
 
     for _, xVehicle in pairs(ESX.Vehicles) do
         if not resource or resource == xVehicle.script then
             if (xVehicle.owner or xVehicle.group) ~= false then
                 size += 1
-                parameters[size] = { xVehicle.stored or "impound", json.encode(xVehicle.metadata), xVehicle.id }
+                parameters[size] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
             end
 
             if resource then
                 xVehicle.delete()
-            else
+            elseif DoesEntityExist(xVehicle.entity) then
                 DeleteEntity(xVehicle.entity)
             end
         end

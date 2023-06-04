@@ -207,7 +207,9 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     local entity = CreateVehicleServerSetter(joaat(model), vType, coords.x, coords.y, coords.z, heading)
 
-    if not DoesEntityExist(entity) then print(("^1Failed to spawn vehicle '%s'^0"):format(model)) end
+    if not DoesEntityExist(entity) then print(("[^1ERROR^7] Failed to spawn vehicle (^4%s^7)"):format(model)) end
+
+    TriggerEvent("entityCreated", entity)
 
     local vehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
 
@@ -301,11 +303,22 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
 
     local typeModel = type(data.model)
 
-    if typeModel ~= "string" then
+    if typeModel ~= "string" and typeModel ~= "number" then
         print(("[^1ERROR^7] Invalid type of data.model (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeModel)) return
     end
 
-    local model = data.model:lower()
+    if typeModel == "number" or type(tonumber(data.model)) == "number" then
+        data.model = tonumber(data.model) --[[@as number]]
+
+        for vModel, vData in pairs(ESX.GetVehicleData()) do
+            if vData.hash == data.model then
+                data.model = vModel
+                break
+            end
+        end
+    end
+
+    local model = typeModel == "string" and data.model:lower() or data.model --[[@as string]]
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
@@ -452,7 +465,7 @@ function ESX.DeleteVehicle(vehicleEntity)
     end
 
     if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
-        print(("[^4WARNING^7] Tried to delete a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        print(("[^3WARNING^7] Tried to delete a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
         return
     end
 
@@ -482,7 +495,7 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
     end
 
     if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
-        print(("[^4WARNING^7] Tried to set properties to a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        print(("[^3WARNING^7] Tried to set properties to a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
         return
     end
 

@@ -647,7 +647,7 @@ AddStateBagChangeHandler("initVehicle", "", function(bagName, _, value, _, _)
         Wait(0)
     end
 
-    if not doesEntityExist then print(("[^4WARNING^7] Statebag (%s) timed out while awaiting entity creation on initVehicle!"):format(bagName)) return end
+    if not doesEntityExist then print(("[^3WARNING^7] Statebag (%s) timed out while awaiting entity creation on initVehicle!"):format(bagName)) return end
 
     -- workaround for server-vehicles that exist in traffic randomly creating peds
     -- https://forum.cfx.re/t/sometimes-an-npc-spawns-inside-an-vehicle-spawned-with-createvehicleserversetter-or-create-automobile/4947251
