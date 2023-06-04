@@ -697,6 +697,8 @@ AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
     if not doesEntityExist then print(("[^3WARNING^7] Statebag (%s) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
 
     SetVehicleOnGroundProperly(entity)
+    SetVehicleNeedsToBeHotwired(entity, false)
+    SetVehRadioStation(entity, "OFF")
 
     Entity(entity).state:set("initVehicle", nil, true)
 end)

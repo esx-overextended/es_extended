@@ -27,7 +27,15 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     self.variables = {}
     self.metadata = vehicleMetadata or {}
 
-    Entity(self.entity).state:set("metadata", self.metadata, true)
+    local stateBag = Entity(self.entity).state
+
+    stateBag:set("id", self.id, true)
+    stateBag:set("owner", self.owner, true)
+    stateBag:set("group", self.group, true)
+    stateBag:set("model", self.model, true)
+    stateBag:set("plate", self.plate, true)
+    stateBag:set("vin", self.vin, true)
+    stateBag:set("metadata", self.metadata, true)
 
     ---Sets the specified value to the key variable for the current vehicle
     ---@param key string
@@ -88,7 +96,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
 
         MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id })
 
-        self.set("owner", newOwner)
+        Entity(self.entity).state:set("owner", self.owner, true)
     end
 
     ---Updates the current vehicle group
@@ -98,7 +106,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
 
         MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { self.group or nil --[[to make sure "false" is not being sent]], self.id })
 
-        self.set("group", newGroup)
+        Entity(self.entity).state:set("group", self.group, true)
     end
 
     ---May mismatch with properties due to "fake plates". Used to prevent duplicate "persistent plates".
@@ -108,7 +116,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
 
         MySQL.prepare("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
 
-        self.set("plate", newPlate)
+        Entity(self.entity).state:set("plate", self.plate, true)
     end
 
     ---Gets the current vehicle specified metadata
@@ -193,6 +201,7 @@ end
 ---@param coords vector3
 ---@param heading number
 ---@param vType string
+---@param properties table
 ---@return xVehicle?
 local function spawnVehicle(id, owner, group, plate, vin, model, script, metadata, coords, heading, vType, properties)
     -- New native seems to be missing some types, for now we will convert to known types
@@ -218,7 +227,6 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     local stateBag = Entity(entity).state
 
     stateBag:set("initVehicle", true, true)
-    vehicle.set("owner", owner)
     stateBag:set("vehicleProperties", properties, true)
 
     if owner or group then vehicle.setStored(false) end
