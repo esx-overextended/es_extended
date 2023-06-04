@@ -62,7 +62,8 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
         end
 
         ESX.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
-        DeleteEntity(entity)
+
+        if DoesEntityExist(entity) then DeleteEntity(entity) end
 
         TriggerEvent("esx:vehicleDeleted", id, entity, netId, vin, plate)
     end
@@ -437,3 +438,53 @@ function ESX.GenerateVin(model)
     end
 end
 
+---Deletes the passed vehicle entity/entities
+---@param vehicleEntity integer | number | table<number, number>
+function ESX.DeleteVehicle(vehicleEntity)
+    local _type = type(vehicleEntity)
+
+    if _type == "table" then
+        for i = 1, #vehicleEntity do
+            ESX.DeleteVehicle(vehicleEntity[i])
+        end
+
+        return
+    end
+
+    if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
+        print(("[^4WARNING^7] Tried to delete a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        return
+    end
+
+    local vehicle = ESX.Vehicles[vehicleEntity]
+
+    if vehicle then
+        vehicle.delete()
+    else
+        DeleteEntity(vehicleEntity)
+    end
+end
+
+---Sets properties to the the passed vehicle entity/entities
+---@param vehicleEntity integer | number | table<number, number>
+---@param properties table<string, any>
+function ESX.SetVehicleProperties(vehicleEntity, properties)
+    if type(properties) ~= "table" or not next(properties) then return end
+
+    local _type = type(vehicleEntity)
+
+    if _type == "table" then
+        for i = 1, #vehicleEntity do
+            ESX.SetVehicleProperties(vehicleEntity[i], properties)
+        end
+
+        return
+    end
+
+    if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
+        print(("[^4WARNING^7] Tried to set properties to a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        return
+    end
+
+    Entity(vehicleEntity).state:set("vehicleProperties", properties, true)
+end
