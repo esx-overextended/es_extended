@@ -61,7 +61,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
             end
         end
 
-        ESX.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+        Core.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
         if DoesEntityExist(entity) then DeleteEntity(entity) end
 
@@ -213,7 +213,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     local vehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
 
-    ESX.Vehicles[vehicle.entity] = vehicle
+    Core.Vehicles[vehicle.entity] = vehicle
 
     local stateBag = Entity(entity).state
 
@@ -351,7 +351,7 @@ end
 ---@param entityId number | integer
 ---@return xVehicle?
 function ESX.GetVehicle(entityId)
-    return ESX.Vehicles[entityId]
+    return Core.Vehicles[entityId]
 end
 
 ---Return all vehicle data.
@@ -360,7 +360,7 @@ function ESX.GetVehicles()
     local size = 0
     local vehicles = {}
 
-    for _, v in pairs(ESX.Vehicles) do
+    for _, v in pairs(Core.Vehicles) do
         size += 1
         vehicles[size] = v
     end
@@ -469,7 +469,7 @@ function ESX.DeleteVehicle(vehicleEntity)
         return
     end
 
-    local vehicle = ESX.Vehicles[vehicleEntity]
+    local vehicle = Core.Vehicles[vehicleEntity]
 
     if vehicle then
         vehicle.delete()

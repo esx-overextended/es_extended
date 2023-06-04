@@ -1,6 +1,5 @@
 ESX = {}
 ESX.Players = {} --[[@type table<number, xPlayer> ]]
-ESX.Vehicles = {} --[[@type table<number, xVehicle> ]]
 ESX.Items = {}
 Core = {}
 Core.UsableItemsCallbacks = {}
@@ -9,7 +8,8 @@ Core.Pickups = {}
 Core.PickupId = 0
 Core.PlayerFunctionOverrides = {}
 Core.DatabaseConnected = false
-Core.PlayersByIdentifier = {}
+Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
+Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
 
 Core.vehicleTypesByModel = {}
 

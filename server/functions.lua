@@ -244,11 +244,11 @@ function Core.SaveVehicles(resource)
     local parameters = {}
     local size = 0
 
-    if not next(ESX.Vehicles) then return end
+    if not next(Core.Vehicles) then return end
 
     if resource == cache.resource then resource = nil end
 
-    for _, xVehicle in pairs(ESX.Vehicles) do
+    for _, xVehicle in pairs(Core.Vehicles) do
         if not resource or resource == xVehicle.script then
             if (xVehicle.owner or xVehicle.group) ~= false then
                 size += 1
