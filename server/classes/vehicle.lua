@@ -228,10 +228,9 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     Core.Vehicles[vehicle.entity] = vehicle
 
-    local stateBag = Entity(entity).state
+    Entity(entity).state:set("initVehicle", true, true)
 
-    stateBag:set("initVehicle", true, true)
-    stateBag:set("vehicleProperties", properties, true)
+    ESX.SetVehicleProperties(entity, properties)
 
     if owner or group then vehicle.setStored(false) end
 
@@ -556,7 +555,7 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
 
     local entity = GetEntityFromStateBagName(bagName)
 
-    if not entity or entity == 0 then return end
+    if not entity or entity == 0 or not vehiclesPropertiesQueue[entity] then return end
 
     table.remove(vehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue 
 

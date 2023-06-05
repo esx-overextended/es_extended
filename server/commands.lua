@@ -115,9 +115,14 @@ ESX.RegisterCommand({"cardel", "dv"}, "admin", function(xPlayer, args, _)
     local toBoolean = { ["true"] = true, ["false"] = false }
     local playerPed = GetPlayerPed(xPlayer?.source)
     local playerCoords = GetEntityCoords(playerPed)
+    local playerVehicle = GetVehiclePedIsIn(playerPed, false)
 
     args.radius = tonumber(args.radius) or 5.0
     args.owned =  type(args.owned) == "string" and toBoolean[args.owned:lower()]
+
+    if playerVehicle and playerVehicle > 0 then
+        return ESX.DeleteVehicle(playerVehicle)
+    end
 
     local _, vehicleEntities, vehiclesCount = ESX.OneSync.GetVehiclesInArea(playerCoords, args.radius)
 
