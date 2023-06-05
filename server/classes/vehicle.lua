@@ -320,6 +320,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     end
 
     if typeModel == "number" or type(tonumber(data.model)) == "number" then
+        typeModel = "number"
         data.model = tonumber(data.model) --[[@as number]]
 
         for vModel, vData in pairs(ESX.GetVehicleData()) do
@@ -359,22 +360,21 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     return spawnVehicle(vehicleId, owner, group, plate, vin, model, script, metadata, coords, heading or 90.0, modelData.type, vehicleProperties)
 end
 
----Returns an instance of xVehicle for the given entityId.
----@param entityId number | integer
+---Returns an instance of xVehicle for the given entity id.
+---@param vehicleEntity number | integer
 ---@return xVehicle?
-function ESX.GetVehicle(entityId)
-    return Core.Vehicles[entityId]
+function ESX.GetVehicle(vehicleEntity)
+    return Core.Vehicles[vehicleEntity]
 end
 
 ---Return all vehicle data.
 ---@return xVehicle[]
 function ESX.GetVehicles()
-    local size = 0
-    local vehicles = {}
+    local vehicles, size = {}, 0
 
-    for _, v in pairs(Core.Vehicles) do
+    for _, xVehicle in pairs(Core.Vehicles) do
         size += 1
-        vehicles[size] = v
+        vehicles[size] = xVehicle
     end
 
     return vehicles
