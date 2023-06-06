@@ -9,6 +9,9 @@ local events = {
     ["esx:addInventoryItem"] = false,
     ["esx:removeInventoryItem"] = false,
     ["esx:setMaxWeight"] = false,
+    ["esx:setGroups"] = false,
+    ["esx:addGroup"] = false,
+    ["esx:removeGroup"] = false,
     ["esx:setJob"] = false,
     ["esx:setDuty"] = false,
     ["esx:setWeaponTint"] = false,
@@ -21,8 +24,9 @@ local events = {
     ["esx:showNotification"] = true,
     ["esx:showAdvancedNotification"] = false,
     ["esx:showHelpNotification"] = false,
-    ["esx:killPlayer"] = false,
     ["esx:freezePlayer"] = false,
+    ["esx:killPlayer"] = false,
+    ["esx:setPlayerRoutingBucket"] = false,
 }
 
 do
@@ -39,6 +43,10 @@ end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
     TriggerEvent("esx:playerLoaded", value.xPlayerClient, value.isNew, value.skin)
+end)
+
+ESX.RegisterSafeEvent("esx:onPlayerLogout", function()
+    TriggerEvent("esx:onPlayerLogout")
 end)
 
 ESX.RegisterSafeEvent("esx:setAccountMoney", function(value)
