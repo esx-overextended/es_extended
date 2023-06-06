@@ -1,6 +1,6 @@
 ESX = exports["es_extended"]:getSharedObject()
 
-if not IsDuplicityVersion() then -- Only register this event for the client
+if not IsDuplicityVersion() then -- Only register these for the client
     AddEventHandler("esx:setPlayerData", function(key, val, last)
         if GetInvokingResource() == "es_extended" then
             ESX.PlayerData[key] = val
@@ -19,10 +19,10 @@ if not IsDuplicityVersion() then -- Only register this event for the client
         ESX.PlayerLoaded = false
         ESX.PlayerData = {}
     end)
-else -- Only register this event for the server
+else -- Only register these for the server
     local _GetPlayerFromId = ESX.GetPlayerFromId
-    ---@diagnostic disable-next-line: duplicate-set-field
-    function ESX.GetPlayerFromId(playerId)
+
+    function ESX.GetPlayerFromId(playerId) ---@diagnostic disable-line: duplicate-set-field
         local xPlayer = _GetPlayerFromId(playerId)
 
         return xPlayer and setmetatable(xPlayer, {
@@ -33,4 +33,12 @@ else -- Only register this event for the server
             end
         })
     end
+
+    AddEventHandler("esx:onJobsRefreshed", function()
+        ESX.Jobs = ESX.GetJobs()
+    end)
+
+    AddEventHandler("esx:onGroupsRefreshed", function()
+        ESX.Groups = ESX.GetGroups()
+    end)
 end

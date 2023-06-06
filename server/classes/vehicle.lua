@@ -1,4 +1,4 @@
----@type table<entityId, table<number, number>>
+---@type table<entityId, table<number, table>>
 local vehiclesPropertiesQueue = {}
 
 ---Creates an xVehicle object
@@ -512,11 +512,9 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
     end
 
     if not vehiclesPropertiesQueue[vehicleEntity] then
-        vehiclesPropertiesQueue[vehicleEntity] = {}
+        vehiclesPropertiesQueue[vehicleEntity] = { properties }
 
-        table.insert(vehiclesPropertiesQueue[vehicleEntity], properties)
-
-        Entity(vehicleEntity).state:set("vehicleProperties", vehiclesPropertiesQueue[vehicleEntity][1], true)
+        Entity(vehicleEntity).state:set("vehicleProperties", properties, true)
     elseif vehiclesPropertiesQueue[vehicleEntity] then
         table.insert(vehiclesPropertiesQueue[vehicleEntity], properties) -- adding the properties to the queue
     end
@@ -560,7 +558,7 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
     table.remove(vehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue 
 
     if next(vehiclesPropertiesQueue[entity]) then
-        return Entity(entity).state:set(key, vehiclesPropertiesQueue[entity][1]) -- applying the next properties from the queue
+        return Entity(entity).state:set(key, vehiclesPropertiesQueue[entity][1], true) -- applying the next properties from the queue
         --[[
         local bagName = ("entity:%d"):format(NetworkGetNetworkIdFromEntity(entity))
         local payload = msgpack_pack(vehiclesPropertiesQueue[entity][1])
