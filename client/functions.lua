@@ -458,6 +458,7 @@ end
 
 function ESX.Game.GetVehicleProperties(vehicle)
     if not DoesEntityExist(vehicle) then
+        print(("[^1ERROR^7] Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle))
         return
     end
 
@@ -467,6 +468,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
     local dashboardColor = GetVehicleDashboardColor(vehicle)
     local interiorColor = GetVehicleInteriorColour(vehicle)
     local customPrimaryColor = nil
+
     if hasCustomPrimaryColor then
         customPrimaryColor = {GetVehicleCustomPrimaryColour(vehicle)}
     end
@@ -608,10 +610,18 @@ end
 
 function ESX.Game.SetVehicleProperties(vehicle, props)
     if not DoesEntityExist(vehicle) then
-        return
+        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle))
+        return false
     end
+
+    if NetworkGetEntityIsNetworked(vehicle) and NetworkGetEntityOwner(vehicle) ~= cache.playerId then
+        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle))
+        return false
+    end
+
     local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
     local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
+
     SetVehicleModKit(vehicle, 0)
 
     if props.plate ~= nil then
@@ -856,6 +866,8 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
             end
         end
     end
+
+    return true
 end
 
 function ESX.Game.Utils.DrawText3D(coords, text, size, font)

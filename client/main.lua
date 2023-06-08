@@ -694,7 +694,9 @@ AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
         Wait(0)
     end
 
-    if not doesEntityExist then print(("[^3WARNING^7] Statebag (%s) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesEntityExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+
+    if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
 
     SetVehicleOnGroundProperly(entity)
     SetVehicleNeedsToBeHotwired(entity, false)
@@ -718,9 +720,11 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
         Wait(0)
     end
 
-    if not doesEntityExist then print(("[^3WARNING^7] Statebag (%s) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesEntityExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
 
-    if not lib.setVehicleProperties(entity, value) then return end
+    if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
+
+    if not ESX.Game.SetVehicleProperties(entity, value) then return end
 
     Entity(entity).state:set("vehicleProperties", nil, true)
 end)
