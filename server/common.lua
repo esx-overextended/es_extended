@@ -11,8 +11,6 @@ Core.DatabaseConnected = false
 Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
 Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
 
-Core.vehicleTypesByModel = {}
-
 AddEventHandler("esx:getSharedObject", function(cb)
     return cb and cb(ESX)
 end)

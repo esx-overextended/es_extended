@@ -328,20 +328,36 @@ function ESX.GetIdentifier(playerId)
 end
 
 ---@param model string | number
----@param player number playerId
----@param cb function
----@diagnostic disable-next-line: duplicate-set-field
-function ESX.GetVehicleType(model, player, cb)
-    model = type(model) == 'string' and joaat(model) or model
+---@param _? number playerId (not used anymore)
+---@param cb? function
+---@return string?
+function ESX.GetVehicleType(model, _, cb) ---@diagnostic disable-line: duplicate-set-field
+    local typeModel = type(model)
 
-    if Core.vehicleTypesByModel[model] then
-        return cb(Core.vehicleTypesByModel[model])
+    if typeModel ~= "string" and typeModel ~= "number" then
+        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel)) return
     end
 
-    ESX.TriggerClientCallback(player, "esx:GetVehicleType", function(vehicleType)
-        Core.vehicleTypesByModel[model] = vehicleType
-        cb(vehicleType)
-    end, model)
+    if typeModel == "number" or type(tonumber(model)) == "number" then
+        typeModel = "number"
+        model = tonumber(model) --[[@as number]]
+
+        for vModel, vData in pairs(ESX.GetVehicleData()) do
+            if vData.hash == model then
+                model = vModel
+                break
+            end
+        end
+    end
+
+    model = typeModel == "string" and model:lower() or model --[[@as string]]
+    local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
+
+    if not modelData then
+        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model))
+    end
+
+    return cb and cb(modelData?.type) or modelData?.type
 end
 
 function ESX.DiscordLog(name, title, color, message)
