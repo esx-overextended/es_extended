@@ -270,23 +270,32 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
 
         heading = heading or 0.0
 
-        local vehicle = MySQL.prepare.await(("SELECT `owner`, `job`, `plate`, `vin`, `model`, `vehicle`, `metadata` FROM `owned_vehicles` WHERE `id` = ? %s"):format(not forceSpawn and "AND `stored` = 1" or ""), { data })
+        local vehicle = MySQL.prepare.await(("SELECT `owner`, `job`, `plate`, `vin`, `model`, `class`, `vehicle`, `metadata` FROM `owned_vehicles` WHERE `id` = ? %s"):format(not forceSpawn and "AND `stored` = 1" or ""), { data })
 
         if not vehicle then
-            print(("[^1ERROR^7] Failed to spawn vehicle with id  (invalid id %s)"):format(not forceSpawn and "or already spawned" or "", data)) return
+            print(("[^1ERROR^7] Failed to spawn vehicle with id %s (invalid id%s)"):format(data, not forceSpawn and " or already spawned" or "")) return
         end
 
         vehicle.vehicle = json.decode(vehicle.vehicle --[[@as string]])
         vehicle.metadata = json.decode(vehicle.metadata --[[@as string]])
 
-        if not vehicle.vin or not vehicle.metadata or not vehicle.model then -- probably first time spawning the vehicle after migrating from esx-legacy
+        if not vehicle.vin or not vehicle.metadata or not vehicle.model or not vehicle.class then -- probably first time spawning the vehicle after migrating from esx-legacy
             local vehicleData = nil
 
-            for vModel, vData in pairs(ESX.GetVehicleData()) do
+            if vehicle.model then
+                local vData = ESX.GetVehicleData(vehicle.model)
 
-                if vData.hash == vehicle.vehicle?.model then
-                    vehicleData = {model = vModel, data = vData}
-                    break
+                if vData then
+                    vehicleData = { model = vehicle.model, data = vData }
+                end
+            end
+
+            if not vehicleData then
+                for vModel, vData in pairs(ESX.GetVehicleData()) do
+                    if vData.hash == vehicle.vehicle?.model then
+                        vehicleData = { model = vModel, data = vData }
+                        break
+                    end
                 end
             end
 
@@ -295,7 +304,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
                 vehicle.vin or ESX.GenerateVin(vehicleData.model),
                 vehicle.model or vehicleData.model,
-                vehicleData.data?.class,
+                vehicle.class or vehicleData.data?.class,
                 vehicle.metadata and json.encode(vehicle.metadata) or "{}",
                 data
             })
