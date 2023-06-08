@@ -59,47 +59,6 @@ function ESX.SetPlayerData(key, val)
     end
 end
 
-function ESX.Progressbar(progressText, progressDuration, progressOptions)
-    local progressType = progressOptions?.type or Config.DefaultProgressBarType
-    local animation = progressOptions?.anim or progressOptions?.animation
-
-    if lib[progressType == "bar" and "progressBar" or progressType == "circle" and "progressCircle"]({
-        label = progressText,
-        duration = progressDuration,
-        position = progressOptions?.position or Config.DefaultProgressBarPosition,
-        useWhileDead = progressOptions?.useWhileDead or false,
-        allowRagdoll = progressOptions?.allowRagdoll or false,
-        allowCuffed = progressOptions?.allowCuffed or false,
-        allowFalling = progressOptions?.allowFalling or false,
-        canCancel = progressOptions?.canCancel or (progressOptions?.onCancel ~= nil and true),
-        anim = {
-            dict = animation?.dict,
-            clip = animation?.clip or animation?.lib,
-            flag = animation?.flag,
-            blendIn = animation?.blendIn,
-            blendOut = animation?.blendOut,
-            duration = animation?.duration,
-            playbackRate = animation?.playbackRate,
-            lockX = animation?.lockX,
-            lockY = animation?.lockY,
-            lockZ = animation?.lockZ,
-            scenario = animation?.scenario or animation?.Scenario,
-            playEnter = animation?.playEnter,
-        },
-        prop = progressOptions?.prop,
-        disable = progressOptions?.disable or {
-            move = progressOptions?.FreezePlayer,
-            car = progressOptions?.FreezePlayer,
-            combat = progressOptions?.FreezePlayer,
-            mouse = false
-        }
-    }) then
-        return progressOptions?.onFinish and progressOptions.onFinish() or true
-    else
-        return progressOptions?.onCancel and progressOptions.onCancel() or false
-    end
-end
-
 function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
     if saveToBrief == nil then
         saveToBrief = true
