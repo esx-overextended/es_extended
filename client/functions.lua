@@ -100,19 +100,6 @@ function ESX.Progressbar(progressText, progressDuration, progressOptions)
     end
 end
 
-function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
-    lib.notify({
-        title = type(notifyText) == "table" and notifyText[1] or notifyExtra?.title,
-        description = type(notifyText) == "table" and notifyText[2] or notifyText,
-        duration = notifyDuration or 3000,
-        position = notifyExtra?.position or Config.DefaultNotificationPosition,
-        type = notifyType == "info" and "inform" or notifyType,
-        style = notifyExtra?.style,
-        icon = notifyExtra?.icon,
-        iconColor = notifyExtra?.iconColor
-    })
-end
-
 function ESX.TextUI(text, textType, textExtra)
     lib.showTextUI(text, {
         position = textExtra?.position or Config.DefaultTextUIPosition,
