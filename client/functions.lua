@@ -100,19 +100,6 @@ function ESX.Progressbar(progressText, progressDuration, progressOptions)
     end
 end
 
-function ESX.TextUI(text, textType, textExtra)
-    lib.showTextUI(text, {
-        position = textExtra?.position or Config.DefaultTextUIPosition,
-        icon = textExtra?.icon or textType == "success" and "fa-circle-check" or textType == "error" and "fa-circle-exclamation" or "fa-circle-info",
-        iconColor = textExtra?.iconColor or textType == "success" and "#2ecc71" or textType == "error" and "#c0392b" or "#2980b9",
-        style = textExtra?.style
-    })
-end
-
-function ESX.HideUI()
-    lib.hideTextUI()
-end
-
 function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
     if saveToBrief == nil then
         saveToBrief = true
