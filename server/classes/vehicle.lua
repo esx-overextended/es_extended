@@ -64,7 +64,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
         local vin = self.vin
         local plate = self.plate
 
-        if self.owner or self.group then -- TODO: why do we need this check?
+        if self.owner or self.group then
             if removeFromDb then
                 MySQL.prepare("DELETE FROM `owned_vehicles` WHERE `id` = ?", { self.id })
             else
@@ -118,7 +118,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     function self.setPlate(newPlate)
         self.plate = ("%-8s"):format(newPlate)
 
-        MySQL.prepare("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
+        MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
 
         Entity(self.entity).state:set("plate", self.plate, true)
     end
