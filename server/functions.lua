@@ -277,7 +277,7 @@ end
 ---@return string | nil
 function ESX.GetIdentifier(playerId)
     if Config.EnableDebug or GetConvarInt("sv_fxdkMode", 0) == 1 then
-        return ("ESX-DEBUG-LICENSE-ID(%s)"):format(playerId or "")
+        return ("ESX-DEBUG-LICENSE%s"):format(playerId and ("-ID(%s)"):format(playerId) or "")
     end
 
     local identifier = nil
