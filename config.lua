@@ -1,5 +1,5 @@
 Config                             = {}
-Config.EnableDebug                 = false -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
+Config.EnableDebug                 = true -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
 
 Config.Locale                      = GetConvar("esx:locale", "en")
 
@@ -21,7 +21,7 @@ Config.Accounts                    = {
     }
 }
 
-Config.AdminGroups                 = { -- The order is *IMPORTANT*. The top group will have the highest permission, while the bottom one will have the lowest one
+Config.AdminGroups                 = { -- The order is *IMPORTANT*. The top group will have the highest permissions, while the bottom one will have the lowest perms
     "superadmin",
     "admin"
 }

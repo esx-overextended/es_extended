@@ -234,7 +234,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     if owner or group then vehicle.setStored(false) end
 
-    TriggerEvent("esx:vehicleCreated", vehicle.id, vehicle, vehicle.entity, vehicle.netId)
+    TriggerEvent("esx:vehicleCreated", vehicle.entity, vehicle.netId, vehicle)
 
     return vehicle
 end
@@ -530,7 +530,7 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
 end
 
 AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
-    if not value then return end -- TODO: check if peds are still appearing in vehicles and are not being deleted, changing this to "value ~= nil" might fix it...
+    if value ~= nil then return end -- TODO: check if peds are still appearing in vehicles and are not being deleted, changing this to "value ~= nil" might fix it...
 
     local entity = GetEntityFromStateBagName(bagName)
 

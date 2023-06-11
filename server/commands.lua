@@ -63,8 +63,13 @@ for modelName in pairs(ESX.GetVehicleData()) do
     arrayOfVehiclesName[count] = modelName
 end
 
-local function getRandomVehicleName()
-    return arrayOfVehiclesName[math.random(1, count)]
+local function getRandomVehicleName() -- TODO: generating random must be achieved way better. Maybe should be implemented manually inside the esx's math module
+    Wait(10)
+    math.randomseed(os.time())
+    math.random(count) math.random(count) -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
+    local model = arrayOfVehiclesName[math.random(count)]
+    local modelType = ESX.GetVehicleData(model)?.type
+    return (modelType == "automobile" or modelType == "bike") and model or getRandomVehicleName()
 end
 
 ESX.RegisterCommand("car", "admin", function(xPlayer, args, _)
