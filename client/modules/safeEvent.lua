@@ -31,7 +31,7 @@ function ESX.RegisterSafeEvent(eventName, cb)
     end
 
     local function stateBagChangeHandler(_, _, value, _, _)
-        if not value or not value?.__esx_triggerClient then return end
+        if type(value) ~= "table" or not value?.__esx_triggerClient then return end
 
         cb(value)
     end

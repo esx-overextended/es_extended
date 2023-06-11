@@ -10,7 +10,7 @@ end
 
 ---@diagnostic disable-next-line: param-type-mismatch
 AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
-    if not value or not value?.__esx_triggerServer then return end
+    if type(value) ~= "table" or not value?.__esx_triggerServer then return end
 
     local bagName = string.match(key, "(.-)%s*->") -- pattern to find the first occurence of a "->"
     local playerId = bagName and tonumber(bagName:gsub("player:", ""), 10)
