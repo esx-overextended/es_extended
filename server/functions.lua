@@ -307,8 +307,8 @@ end
 ---@param playerId integer
 ---@return string | nil
 function ESX.GetIdentifier(playerId)
-    if GetConvarInt("sv_fxdkMode", 0) == 1 then
-        return "ESX-DEBUG-LICENSE"
+    if Config.EnableDebug or GetConvarInt("sv_fxdkMode", 0) == 1 then
+        return ("ESX-DEBUG-LICENSE%s"):format(playerId and ("-ID(%s)"):format(playerId) or "")
     end
 
     local identifier = nil
@@ -318,10 +318,6 @@ function ESX.GetIdentifier(playerId)
             identifier = string.gsub(v, "license:", "")
             break
         end
-    end
-
-    if Config.EnableDebug then
-        identifier = string.format("%s-%s", identifier, playerId) -- should let client with same identifier join and use ox_inventory
     end
 
     return identifier
