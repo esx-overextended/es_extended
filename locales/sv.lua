@@ -51,9 +51,11 @@ Locales['sv'] = {
     ['in_vehicle'] = 'Kan inte utföra åtgärd, spelaren är i ett fordon',
     -- Commands
     ['command_car'] = 'Spawna ett fordon',
-    ['command_car_car'] = 'Fordonsmodell eller hash',
+    ['command_car_model'] = 'Fordonsmodell eller hash',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Ta bort fordon i närheten',
     ['command_cardel_radius'] = 'Tar bort alla fordon inom angiven radie',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Rensa chatttext',
     ['command_clearall'] = 'Rensa chatttext för alla spelare',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

@@ -238,6 +238,37 @@ function Core.SavePlayers(cb)
     end)
 end
 
+---Saves all vehicles for the resource and despawns them
+---@param resource string?
+function Core.SaveVehicles(resource)
+    local parameters, pSize = {}, 0
+    local vehicles, vSize = {}, 0
+
+    if not next(Core.Vehicles) then return end
+
+    if resource == cache.resource then resource = nil end
+
+    for _, xVehicle in pairs(Core.Vehicles) do
+        if not resource or resource == xVehicle.script then
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it's handled through xVehicle.delete()
+                pSize += 1
+                parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
+            end
+
+            vSize += 1
+            vehicles[vSize] = xVehicle.entity
+        end
+    end
+
+    if vSize > 0 then
+        ESX.DeleteVehicle(vehicles)
+    end
+
+    if pSize > 0 then
+        MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", parameters)
+    end
+end
+
 ESX.GetPlayers = GetPlayers
 
 ---Returns instance of xPlayers
@@ -293,20 +324,36 @@ function ESX.GetIdentifier(playerId)
 end
 
 ---@param model string | number
----@param player number playerId
----@param cb function
----@diagnostic disable-next-line: duplicate-set-field
-function ESX.GetVehicleType(model, player, cb)
-    model = type(model) == 'string' and joaat(model) or model
+---@param _? number playerId (not used anymore)
+---@param cb? function
+---@return string?
+function ESX.GetVehicleType(model, _, cb) ---@diagnostic disable-line: duplicate-set-field
+    local typeModel = type(model)
 
-    if Core.vehicleTypesByModel[model] then
-        return cb(Core.vehicleTypesByModel[model])
+    if typeModel ~= "string" and typeModel ~= "number" then
+        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel)) return
     end
 
-    ESX.TriggerClientCallback(player, "esx:GetVehicleType", function(vehicleType)
-        Core.vehicleTypesByModel[model] = vehicleType
-        cb(vehicleType)
-    end, model)
+    if typeModel == "number" or type(tonumber(model)) == "number" then
+        typeModel = "number"
+        model = tonumber(model) --[[@as number]]
+
+        for vModel, vData in pairs(ESX.GetVehicleData()) do
+            if vData.hash == model then
+                model = vModel
+                break
+            end
+        end
+    end
+
+    model = typeModel == "string" and model:lower() or model --[[@as string]]
+    local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
+
+    if not modelData then
+        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model))
+    end
+
+    return cb and cb(modelData?.type) or modelData?.type
 end
 
 function ESX.DiscordLog(name, title, color, message)
@@ -459,10 +506,11 @@ function Core.GetPlayerAdminGroup(playerId)
     playerId = tostring(playerId)
     local group = Core.DefaultGroup
 
-    for i = 1, #Config.AdminGroups do
-        local principal = ("group.%s"):format(Config.AdminGroups[i])
-        if IsPlayerAceAllowed(playerId, principal) then
-            group = Config.AdminGroups[i]
+    for i = 1, #Config.AdminGroups do -- start from the highest perm admin group
+        local groupName = Config.AdminGroups[i]
+
+        if IsPlayerAceAllowed(playerId, ESX.Groups[groupName].principal) then
+            group = groupName
             break
         end
     end

@@ -633,20 +633,29 @@ ESX.RegisterServerCallback('esx:getPlayerNames', function(source, cb, players)
 end)
 
 AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
-    if eventData.secondsRemaining == 60 then
+    if eventData?.secondsRemaining ~= 60 then return end
+
+    Core.SavePlayers()
+    Core.SaveVehicles()
+
+    SetTimeout(50000, function()
         Core.SavePlayers()
-        SetTimeout(50000, Core.SavePlayers)
-    end
+        Core.SaveVehicles()
+    end)
 end)
 
 AddEventHandler('txAdmin:events:serverShuttingDown', function()
     Core.SavePlayers()
+    Core.SaveVehicles()
 end)
 
 ---action(s) to do when the framework is stopped
 ---@param resource string
 local function onResourceStop(resource)
+    Core.SaveVehicles(resource)
+
     if resource ~= GetCurrentResourceName() then return end
+
     Core.SavePlayers()
 end
 

@@ -47,82 +47,106 @@ end, true, {
     }
 })
 
-local upgrades = Config.SpawnVehMaxUpgrades and
-    {
-        plate = "ADMINCAR",
-        modEngine = 3,
-        modBrakes = 2,
-        modTransmission = 2,
-        modSuspension = 3,
-        modArmor = true,
-        windowTint = 1
-    } or {}
+local upgrades = Config.SpawnVehMaxUpgrades and {
+    plate = "ADMINCAR",
+    modEngine = 3,
+    modBrakes = 2,
+    modTransmission = 2,
+    modSuspension = 3,
+    modArmor = true,
+    windowTint = 1
+} or {}
 
-ESX.RegisterCommand('car', 'admin', function(xPlayer, args, _)
-    if not xPlayer then
-        return print('[^1ERROR^7] The xPlayer value is nil')
-    end
+local arrayOfVehiclesName, count = {}, 0
+for modelName in pairs(ESX.GetVehicleData()) do
+    count += 1
+    arrayOfVehiclesName[count] = modelName
+end
 
-    local playerPed = GetPlayerPed(xPlayer.source)
+local function getRandomVehicleName() -- TODO: generating random must be achieved way better. Maybe should be implemented manually inside the esx's math module
+    Wait(10)
+    math.randomseed(os.time())
+    math.random(count) math.random(count) -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
+    local model = arrayOfVehiclesName[math.random(count)]
+    local modelType = ESX.GetVehicleData(model)?.type
+    return (modelType == "automobile" or modelType == "bike") and model or getRandomVehicleName()
+end
+
+ESX.RegisterCommand("car", "admin", function(xPlayer, args, _)
+    local playerPed = GetPlayerPed(xPlayer?.source)
     local playerCoords = GetEntityCoords(playerPed)
     local playerHeading = GetEntityHeading(playerPed)
     local playerVehicle = GetVehiclePedIsIn(playerPed, false)
 
-    if not args.car or type(args.car) ~= 'string' then
-        args.car = 'adder'
-    end
+    args.model = type(args.model) == "string" and args.model or getRandomVehicleName()
+    args.owner = args.owner?.identifier
 
-    if playerVehicle then
-        DeleteEntity(playerVehicle)
+    local vehicle = ESX.CreateVehicle({
+        owner = args.owner,
+        model = args.model
+    }, playerCoords, playerHeading)
+
+    if not vehicle then return end
+
+    if playerVehicle and playerVehicle > 0 then ESX.DeleteVehicle(playerVehicle) end
+
+    if next(upgrades) and not args.owner then ESX.SetVehicleProperties(vehicle.entity, upgrades) end
+
+    for _ = 1, 50 do
+        Wait(0)
+        SetPedIntoVehicle(playerPed, vehicle.entity, -1)
+
+        if GetVehiclePedIsIn(playerPed, false) == vehicle.entity then
+            break
+        end
     end
 
     ESX.DiscordLogFields("UserActions", "/car Triggered", "pink", {
         { name = "Player",  value = xPlayer.name,   inline = true },
         { name = "ID",      value = xPlayer.source, inline = true },
-        { name = "Vehicle", value = args.car,       inline = true }
+        { name = "Vehicle", value = args.model,     inline = true },
+        { name = "Owner",   value = args.owner,     inline = true }
     })
-
-    ESX.OneSync.SpawnVehicle(args.car, playerCoords, playerHeading, upgrades, function(networkId)
-        if networkId then
-            local vehicle = NetworkGetEntityFromNetworkId(networkId)
-            for _ = 1, 20 do
-                Wait(0)
-                SetPedIntoVehicle(playerPed, vehicle, -1)
-
-                if GetVehiclePedIsIn(playerPed, false) == vehicle then
-                    break
-                end
-            end
-            if GetVehiclePedIsIn(playerPed, false) ~= vehicle then
-                print('[^1ERROR^7] The player could not be seated in the vehicle')
-            end
-        end
-    end)
 end, false, {
-    help = _U('command_car'),
+    help = _U("command_car"),
     validate = false,
     arguments = {
-        { name = 'car', validate = false, help = _U('command_car_car'), type = 'string' }
+        { name = "model", help = _U("command_car_model"), type = "string" },
+        { name = "owner", help = _U("command_car_owner"), type = "player" }
     }
 })
 
-ESX.RegisterCommand({ 'cardel', 'dv' }, 'admin', function(xPlayer, args, _)
-    local PedVehicle = GetVehiclePedIsIn(GetPlayerPed(xPlayer.source), false)
-    if DoesEntityExist(PedVehicle) then
-        DeleteEntity(PedVehicle)
+ESX.RegisterCommand({"cardel", "dv"}, "admin", function(xPlayer, args, _)
+    local toBoolean = { ["true"] = true, ["false"] = false }
+    local playerPed = GetPlayerPed(xPlayer?.source)
+    local playerCoords = GetEntityCoords(playerPed)
+    local playerVehicle = GetVehiclePedIsIn(playerPed, false)
+
+    args.radius = tonumber(args.radius) or 5.0
+    args.owned =  type(args.owned) == "string" and toBoolean[args.owned:lower()]
+
+    if playerVehicle and playerVehicle > 0 then
+        return ESX.DeleteVehicle(playerVehicle)
     end
-    local Vehicles = ESX.OneSync.GetVehiclesInArea(GetEntityCoords(GetPlayerPed(xPlayer.source)), tonumber(args.radius) or 5.0)
-    for i = 1, #Vehicles do
-        local Vehicle = NetworkGetEntityFromNetworkId(Vehicles[i])
-        if DoesEntityExist(Vehicle) then
-            DeleteEntity(Vehicle)
+
+    local _, vehicleEntities, vehiclesCount = ESX.OneSync.GetVehiclesInArea(playerCoords, args.radius)
+
+    for i = 1, vehiclesCount do
+        local vehicleEntity = vehicleEntities[i]
+        local vehicle = ESX.GetVehicle(vehicleEntity)
+
+        if not vehicle or (not vehicle?.owner and not vehicle?.group) then
+            DeleteEntity(vehicleEntity)
+        elseif vehicle and args.owned then
+            vehicle.delete()
         end
     end
 end, false, {
-    help = _U('command_cardel'),
+    help = _U("command_cardel"),
     validate = false,
     arguments = {
-        { name = 'radius', validate = false, help = _U('command_cardel_radius'), type = 'number' }
+        { name = "radius", help = _U("command_cardel_radius"), type = "number" },
+        { name = "owned", help = _U("command_cardel_owned"), type = "string" }
     }
 })
 
@@ -425,3 +449,51 @@ ESX.RegisterCommand('players', "admin", function(_, _, _)
             xPlayer.getGroup() .. " ^0 | ^2Identifier : ^5" .. xPlayer.identifier .. "^1]^0\n")
     end
 end, true)
+
+if Config.EnableDebug then
+    ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args, _)
+        local toBoolean = { ["false"] = false, ["true"] = true }
+        args.processAll = args.processAll ~= nil and toBoolean[args.processAll:lower()]
+
+        ---@type table<string, VehicleData>, TopVehicleStats
+        local vehicleData, topStats = lib.callback.await("esx:generateVehicleData", xPlayer.source, args.processAll)
+
+        if vehicleData and next(vehicleData) then
+            if not args.processAll then
+                for k, v in pairs(ESX.GetVehicleData()) do
+                    vehicleData[k] = v
+                end
+            end
+
+            local topVehicleStats = ESX.GetTopVehicleStats() or {}
+
+            if topVehicleStats then
+                for vtype, data in pairs(topVehicleStats) do
+                    if not topStats[vtype] then topStats[vtype] = {} end
+
+                    for stat, value in pairs(data) do
+                        local newValue = topStats[vtype][stat]
+
+                        if newValue and newValue > value then
+                            topVehicleStats[vtype][stat] = newValue
+                        end
+                    end
+                end
+            end
+
+            SaveResourceFile(cache.resource, "files/topVehicleStats.json", json.encode(topVehicleStats, {
+                indent = true, sort_keys = true, indent_count = 4
+            }), -1)
+
+            SaveResourceFile(cache.resource, "files/vehicles.json", json.encode(vehicleData, {
+                indent = true, sort_keys = true, indent_count = 4
+            }), -1)
+        end
+    end, false, {
+        help = "Generate and save vehicle data for available models on the client",
+        validate = false,
+        arguments = {
+            { name = "processAll", help = "Include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
+        }
+    })
+end

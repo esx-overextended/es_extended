@@ -51,9 +51,11 @@ Locales['fi'] = {
     ['in_vehicle'] = 'et voi antaa ajoneuvossa olevalle mitään',
     -- Commands
     ['command_car'] = 'spawn an vehicle',
-    ['command_car_car'] = 'vehicle spawn name or hash',
+    ['command_car_model'] = 'vehicle spawn name or hash',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'delete vehicle in proximity',
     ['command_cardel_radius'] = 'optional, delete every vehicle within the specified radius',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'clear chat',
     ['command_clearall'] = 'clear chat for all players',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

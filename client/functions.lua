@@ -391,6 +391,7 @@ end
 
 function ESX.Game.GetVehicleProperties(vehicle)
     if not DoesEntityExist(vehicle) then
+        print(("[^1ERROR^7] Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle))
         return
     end
 
@@ -400,6 +401,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
     local dashboardColor = GetVehicleDashboardColor(vehicle)
     local interiorColor = GetVehicleInteriorColour(vehicle)
     local customPrimaryColor = nil
+
     if hasCustomPrimaryColor then
         customPrimaryColor = {GetVehicleCustomPrimaryColour(vehicle)}
     end
@@ -541,10 +543,18 @@ end
 
 function ESX.Game.SetVehicleProperties(vehicle, props)
     if not DoesEntityExist(vehicle) then
-        return
+        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle))
+        return false
     end
+
+    if NetworkGetEntityIsNetworked(vehicle) and NetworkGetEntityOwner(vehicle) ~= cache.playerId then
+        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle))
+        return false
+    end
+
     local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
     local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
+
     SetVehicleModKit(vehicle, 0)
 
     if props.plate ~= nil then
@@ -789,6 +799,8 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
             end
         end
     end
+
+    return true
 end
 
 function ESX.Game.Utils.DrawText3D(coords, text, size, font)
@@ -1105,26 +1117,34 @@ AddEventHandler("esx:showHelpNotification", function(message, thisFrame, beep, d
     ESX.ShowHelpNotification(message, thisFrame, beep, duration)
 end)
 
----@param model number | string
----@return string
----@diagnostic disable-next-line: duplicate-set-field
-function ESX.GetVehicleType(model)
-    model = type(model) == 'string' and joaat(model) or model
+---@param model string | number
+---@param cb? function
+---@return string?
+function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-set-field
+    local typeModel = type(model)
 
-    if model == `submersible` or model == `submersible2` then
-        return 'submarine'
+    if typeModel ~= "string" and typeModel ~= "number" then
+        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel)) return
     end
 
-    local vehicleType = GetVehicleClassFromName(model)
-    local types = {
-        [8] = "bike",
-        [11] = "trailer",
-        [13] = "bike",
-        [14] = "boat",
-        [15] = "heli",
-        [16] = "plane",
-        [21] = "train",
-    }
+    if typeModel == "number" or type(tonumber(model)) == "number" then
+        typeModel = "number"
+        model = tonumber(model) --[[@as number]]
 
-    return types[vehicleType] or "automobile"
+        for vModel, vData in pairs(ESX.GetVehicleData()) do
+            if vData.hash == model then
+                model = vModel
+                break
+            end
+        end
+    end
+
+    model = typeModel == "string" and model:lower() or model --[[@as string]]
+    local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
+
+    if not modelData then
+        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model))
+    end
+
+    return cb and cb(modelData?.type) or modelData?.type
 end

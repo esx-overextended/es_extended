@@ -1,5 +1,5 @@
 ESX = {}
-ESX.Players = {} --[[@type xPlayer[] ]]
+ESX.Players = {} --[[@type table<number, xPlayer> ]]
 ESX.Items = {}
 Core = {}
 Core.UsableItemsCallbacks = {}
@@ -8,9 +8,8 @@ Core.Pickups = {}
 Core.PickupId = 0
 Core.PlayerFunctionOverrides = {}
 Core.DatabaseConnected = false
-Core.PlayersByIdentifier = {}
-
-Core.vehicleTypesByModel = {}
+Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
+Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
 
 AddEventHandler("esx:getSharedObject", function(cb)
     return cb and cb(ESX)
@@ -70,6 +69,8 @@ MySQL.ready(function()
     if Config.EnablePaycheck then
         StartPayCheck()
     end
+
+    MySQL.query('UPDATE `owned_vehicles` SET `stored` = ? WHERE `stored` = 0', { nil })
 
     Core.DatabaseConnected = true
 end)

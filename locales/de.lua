@@ -51,9 +51,11 @@ Locales['de'] = {
     ['in_vehicle'] = 'du kannst keine Items in einem Fahrzeug weitergeben',
     -- Commands
     ['command_car'] = 'Fahrzeug spawnen',
-    ['command_car_car'] = 'Fahrzeug spawnname oder hash',
+    ['command_car_model'] = 'Fahrzeug spawnname oder hash',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Fahrzeuge in der nähe löschen',
     ['command_cardel_radius'] = 'Optional, jedes Fahrzeug innerhalb des angegebenen Radius löschen',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Chat leeren',
     ['command_clearall'] = 'Chat leeren für alle spieler',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

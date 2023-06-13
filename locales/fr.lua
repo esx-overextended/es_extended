@@ -51,9 +51,11 @@ Locales['fr'] = {
     ['in_vehicle'] = 'Vous ne pouvez rien donner à quelqu\'un dans un véhicule',
     -- Commands
     ['command_car'] = 'faire appaitre un véhicule',
-    ['command_car_car'] = 'nom ou hash du véhicule',
+    ['command_car_model'] = 'nom ou hash du véhicule',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'supprimer le véhicule à proximité',
     ['command_cardel_radius'] = 'optionnel, supprime les véhicules dans un rayon spécifié',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'vider le chat',
     ['command_clearall'] = 'vider le chat pour tous',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

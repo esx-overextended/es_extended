@@ -125,45 +125,59 @@ function ESX.OneSync.SpawnPedInVehicle(model, vehicle, seat, cb)
     end)
 end
 
+---@param entities table<number, number>
+---@param coords playerId | vector3
+---@param modelFilter? string | table<number, true>
+---@param maxDistance? integer | number
+---@param isPed? boolean
+---@return table<number, number>, table<number, number>, integer | number
 local function getNearbyEntities(entities, coords, modelFilter, maxDistance, isPed)
-    local nearbyEntities = {}
-    coords = type(coords) == 'number' and GetEntityCoords(GetPlayerPed(coords)) or vector3(coords.x, coords.y, coords.z)
-    for _, entity in pairs(entities) do
+    local nearbyEntities, nearbyNetIds, count = {}, {}, 0
+
+    coords = type(coords) == "number" and GetEntityCoords(GetPlayerPed(coords)) or vector3(coords.x, coords.y, coords.z)
+
+    for i = 1, #entities do
+        local entity = entities[i]
+
         if not isPed or (isPed and not IsPedAPlayer(entity)) then
-            if not modelFilter or modelFilter[GetEntityModel(entity)] then
+            if not modelFilter or modelFilter == GetEntityModel(entity) or modelFilter?[GetEntityModel(entity)] then
                 local entityCoords = GetEntityCoords(entity)
-                if not maxDistance or #(coords - entityCoords) <= maxDistance then
-                    nearbyEntities[#nearbyEntities+1] = NetworkGetNetworkIdFromEntity(entity)
+                local distance = #(coords - entityCoords)
+
+                if not maxDistance or distance <= maxDistance then
+                    count += 1
+                    nearbyEntities[count] = entity
+                    nearbyNetIds[count] = NetworkGetNetworkIdFromEntity(entity)
                 end
             end
         end
     end
 
-    return nearbyEntities
+    return nearbyNetIds, nearbyEntities, count
 end
 
----@param coords vector3
----@param maxDistance number
----@param modelFilter table models to ignore, where the key is the model hash and the value is true
----@return table
+---@param coords playerId | vector3
+---@param modelFilter? string | table<number, true> models to check for. if table provided, the key is the model hash and the value is true
+---@param maxDistance? integer | number
+---@return table<number, number>, table<number, number>, integer | number
 function ESX.OneSync.GetPedsInArea(coords, maxDistance, modelFilter)
     return getNearbyEntities(GetAllPeds(), coords, modelFilter, maxDistance, true)
 end
 
----@param coords vector3
----@param maxDistance number
----@param modelFilter table models to ignore, where the key is the model hash and the value is true
----@return table
+---@param coords playerId | vector3
+---@param modelFilter? string | table<number, true> models to check for. if table provided, the key is the model hash and the value is true
+---@param maxDistance? integer | number
+---@return table<number, number>, table<number, number>, integer | number
 function ESX.OneSync.GetObjectsInArea(coords, maxDistance, modelFilter)
     return getNearbyEntities(GetAllObjects(), coords, modelFilter, maxDistance)
 end
 
----@param coords vector3
----@param maxDistance number
----@param modelFilter? table models to ignore, where the key is the model hash and the value is true
----@return table
+---@param coords playerId | vector3
+---@param modelFilter? string | table<number, true> models to check for. if table provided, the key is the model hash and the value is true
+---@param maxDistance? integer | number
+---@return table<number, number>, table<number, number>, integer | number
 function ESX.OneSync.GetVehiclesInArea(coords, maxDistance, modelFilter)
-    return getNearbyEntities(GetAllVehicles(), coords, modelFilter, maxDistance)
+    return getNearbyEntities(GetAllVehicles(), coords, modelFilter, maxDistance) ---@diagnostic disable-line: param-type-mismatch
 end
 
 local function getClosestEntity(entities, coords, modelFilter, isPed)

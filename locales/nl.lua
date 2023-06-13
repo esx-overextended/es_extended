@@ -52,9 +52,11 @@ Locales['nl'] = {
     -- Commands
     ['command_bring'] = 'Breng speler naar jou',
     ['command_car'] = 'Spawn een voertuig',
-    ['command_car_car'] = 'Voertuig model of hash',
+    ['command_car_model'] = 'Voertuig model of hash',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Verwijder voertuigen in straal',
     ['command_cardel_radius'] = 'Verwijderd alle voertuigen in gewenste straal',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Verwijder chat berichten',
     ['command_clearall'] = 'Verwijder chat berichten voor alle spelers',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

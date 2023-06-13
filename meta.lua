@@ -7,6 +7,7 @@
 ---@alias routingBucketPlayersData table<playerId, true>
 ---@alias routingBucketEntitiesData table<entityId, true>
 
+
 ---@class xPlayer
 ---@field accounts table
 ---@field groups table<string, integer | number>
@@ -40,10 +41,8 @@
 ---@field getGroups fun(): table<string, integer | number>
 ---@field setGroup fun(newGroup?: string): boolean
 ---@field getGroup fun(): string
----@field setVariable fun(key: string, value: any)
 ---@field set fun(key: string, value: any)
----@field getVariable fun(key: string): any
----@field get fun(key: string): any
+---@field get fun(key?: string): any
 ---@field getAccounts fun(minimal?: boolean): table
 ---@field getAccount fun(accountName?: string): table?
 ---@field getInventory fun(minimal?: boolean): table
@@ -94,3 +93,48 @@
 ---@field triggerSafeScopedEvent fun(eventName: string, includeSelf?: boolean, eventData?: table<string, any>, eventOptions?: CEventOptions)
 ---@field getRoutingBucket fun(): routingBucket | nil
 ---@field setRoutingBucket fun(bucketId: routingBucket): boolean
+
+
+---@class xVehicle
+---@field id? integer | number
+---@field owner? string | boolean
+---@field group? string | boolean
+---@field netId integer | number
+---@field entity integer | number
+---@field model string
+---@field plate string
+---@field vin string
+---@field script string
+---@field stored? boolean
+---@field set fun(key: string, value: any)
+---@field get fun(key?: string): any
+---@field delete fun(removeFromDb?: boolean)
+---@field setStored fun(value?: boolean, despawn?: boolean)
+---@field setOwner fun(newOwner?: string)
+---@field setGroup fun(newGroup?: string)
+---@field setPlate fun(newPlate: string)
+---@field getMetadata fun(index?: string, subIndex?: string | table): nil | string | table
+---@field setMetadata fun(index: string, value?: string | number | table, subValue?: any): boolean
+
+
+---@class VehicleData
+---@field acceleration number
+---@field braking number
+---@field handling number
+---@field speed number
+
+
+---@class TopVehicleStats
+---@field air VehicleData
+---@field land VehicleData
+---@field sea VehicleData
+
+
+---@class VehicleData
+---@field class number
+---@field doors number
+---@field make string
+---@field name string
+---@field seats number
+---@field type string
+---@field hash integer | number

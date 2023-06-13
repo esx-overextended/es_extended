@@ -52,9 +52,11 @@ Locales['cs'] = {
     -- Commands
     ['command_bring'] = 'Přivolat si hráče k sobě',
     ['command_car'] = 'Spawnout vozidlo',
-    ['command_car_car'] = 'Zadej jméno vozidla nebo spawnname',
+    ['command_car_model'] = 'Zadej jméno vozidla nebo spawnname',
+    ['command_car_owner'] = "Add the vehicle to the database and set its owner as the given player",
     ['command_cardel'] = 'Odstranění vozidla v okolí',
     ['command_cardel_radius'] = 'Odstranění vozidla v určeném dosahu',
+    ['command_cardel_owned'] = "Include player-owned vehicles in delete process",
     ['command_clear'] = 'Vymazat text v chatu',
     ['command_clearall'] = 'Vymazat chet pro všechny hráče',
     ['command_refreshjobs'] = 'Refreshes/reloads all jobs from database',

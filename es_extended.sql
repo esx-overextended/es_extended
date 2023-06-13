@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS `users` (
     `inventory` LONGTEXT NULL DEFAULT NULL,
     `job` VARCHAR(20) NULL DEFAULT "unemployed",
     `job_grade` INT NULL DEFAULT 0,
-    `job_duty` tinyint(1) NULL DEFAULT 0,
+    `job_duty` TINYINT(1) NULL DEFAULT 0,
     `loadout` LONGTEXT NULL DEFAULT NULL,
     `metadata` LONGTEXT NULL DEFAULT NULL,
-    `position` longtext NULL DEFAULT NULL,
+    `position` LONGTEXT NULL DEFAULT NULL,
 
     PRIMARY KEY (`identifier`)
 ) ENGINE=InnoDB;
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 for anyone who is migrating from ESX Legacy and already have `users` table which causes "CREATE TABLE IF NOT EXISTS `users`" not to execute and apply the needed changes...
 */
 ALTER TABLE `users`
-ADD COLUMN IF NOT EXISTS `job_duty` tinyint(1) NULL DEFAULT 0 AFTER `job_grade`;
+    ADD COLUMN IF NOT EXISTS `job_duty` TINYINT(1) NULL DEFAULT 0 AFTER `job_grade`;
 
 
 /* ITEM */
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
     `name` VARCHAR(50) NOT NULL,
     `label` VARCHAR(50) NOT NULL,
     `type` VARCHAR(50) NOT NULL DEFAULT "CIV",
-    `default_duty` tinyint(1) NOT NULL DEFAULT 0,
+    `default_duty` TINYINT(1) NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`name`)
 ) ENGINE=InnoDB;
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS `jobs` (
 for anyone who is migrating from ESX Legacy and already have `jobs` table which causes "CREATE TABLE IF NOT EXISTS `jobs`" not to execute and apply the needed changes...
 */
 ALTER TABLE `jobs`
-ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT "CIV",
-ADD COLUMN IF NOT EXISTS `default_duty` tinyint(1) NOT NULL DEFAULT 0;
+    ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) NOT NULL DEFAULT "CIV",
+    ADD COLUMN IF NOT EXISTS `default_duty` TINYINT(1) NOT NULL DEFAULT 0;
 
 INSERT IGNORE INTO `jobs` (`name`, `label`, `type`, `default_duty`) VALUES ("unemployed", "Unemployed", "CIV", 0);
 
@@ -71,13 +71,14 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
     UNIQUE KEY `unique_job_name_grade` (`job_name`, `grade`)
 ) ENGINE=InnoDB;
 
-ALTER TABLE `job_grades` ADD UNIQUE KEY IF NOT EXISTS `unique_job_name_grade` (`job_name`, `grade`);
+ALTER TABLE `job_grades`
+    ADD UNIQUE KEY IF NOT EXISTS `unique_job_name_grade` (`job_name`, `grade`);
 
 /*
 for anyone who is migrating from ESX Legacy and already have `job_grades` table which causes "CREATE TABLE IF NOT EXISTS `job_grades`" not to execute and apply the needed changes...
 */
 ALTER TABLE `job_grades`
-ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
+    ADD COLUMN IF NOT EXISTS `offduty_salary` INT NOT NULL DEFAULT 0;
 
 INSERT IGNORE INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `offduty_salary`, `skin_male`, `skin_female`) VALUES (1, "unemployed", 0, "unemployed", "Unemployed", 0, 200, "{}", "{}");
 
@@ -95,13 +96,14 @@ CREATE TABLE IF NOT EXISTS `group_grades` (
     `group_name` VARCHAR(50) DEFAULT NULL,
     `grade` INT NOT NULL,
     `label` VARCHAR(50) NOT NULL,
-    `is_boss` tinyint(1) NOT NULL DEFAULT 0,
+    `is_boss` TINYINT(1) NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `unique_group_name_grade` (`group_name`, `grade`)
 ) ENGINE=InnoDB;
 
-ALTER TABLE `group_grades` ADD UNIQUE KEY IF NOT EXISTS `unique_group_name_grade` (`group_name`, `grade`);
+ALTER TABLE `group_grades`
+    ADD UNIQUE KEY IF NOT EXISTS `unique_group_name_grade` (`group_name`, `grade`);
 
 
 CREATE TABLE IF NOT EXISTS `user_groups` (
@@ -114,7 +116,8 @@ CREATE TABLE IF NOT EXISTS `user_groups` (
     CONSTRAINT `FK_user_groups_users` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-ALTER TABLE `user_groups` ADD UNIQUE KEY IF NOT EXISTS `unique_identifier_name` (`identifier`, `name`);
+ALTER TABLE `user_groups`
+    ADD UNIQUE KEY IF NOT EXISTS `unique_identifier_name` (`identifier`, `name`);
 
 
 DELIMITER //
@@ -301,3 +304,75 @@ INSERT INTO `groups` (`name`, `label`) SELECT `name`, `label` FROM `jobs` ON DUP
 -- insert data for existing rows from job_grades table into group_grades table
 INSERT INTO `group_grades` (`group_name`, `grade`, `label`, `is_boss`) SELECT `job_name`, `grade`, `label`, IF(`name` = "boss", 1, 0) AS `is_boss` FROM `job_grades` ON DUPLICATE KEY UPDATE `label` = VALUES(`label`), `is_boss` = VALUES(`is_boss`);
 */
+
+/* VEHICLE */
+CREATE TABLE IF NOT EXISTS `owned_vehicles` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `owner` VARCHAR(60) NULL DEFAULT NULL,
+    `plate` CHAR(8) NOT NULL DEFAULT "",
+    `vin` CHAR(17) NULL DEFAULT NULL,
+    `type` VARCHAR(20) NOT NULL DEFAULT "car",
+    `job` VARCHAR(50) NULL DEFAULT NULL,
+    `model` VARCHAR(20) NULL DEFAULT NULL,
+    `class` TINYINT NULL DEFAULT NULL,
+    `stored` TINYINT(1) NULL DEFAULT NULL,
+    `vehicle` LONGTEXT NULL DEFAULT NULL,
+    `metadata` LONGTEXT NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `plate` (`plate`),
+    UNIQUE INDEX `vin` (`vin`),
+    INDEX `FK_owned_vehicles_users` (`owner`),
+    CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `FK_owned_vehicles_groups` FOREIGN KEY (`job`) REFERENCES `groups` (`name`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+/*
+for anyone who is migrating from ESX Legacy and already have `owned_vehicles` table which causes "CREATE TABLE IF NOT EXISTS `owned_vehicles`" not to execute and apply the needed changes...
+*/
+ALTER TABLE `owned_vehicles`
+    MODIFY COLUMN IF EXISTS `id` INT NOT NULL AUTO_INCREMENT,
+    ADD COLUMN IF NOT EXISTS `id` INT NOT NULL AUTO_INCREMENT FIRST,
+
+    MODIFY COLUMN IF EXISTS `owner` VARCHAR(60) NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `owner` VARCHAR(60) NULL DEFAULT NULL AFTER `id`,
+
+    MODIFY COLUMN IF EXISTS `plate` CHAR(8) NOT NULL DEFAULT "",
+    ADD COLUMN IF NOT EXISTS `plate` CHAR(8) NOT NULL DEFAULT "" AFTER `owner`,
+
+    MODIFY COLUMN IF EXISTS `vin` CHAR(17) NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `vin` CHAR(17) NULL DEFAULT NULL AFTER `plate`,
+
+    MODIFY COLUMN IF EXISTS `type` VARCHAR(20) NOT NULL DEFAULT "car",
+    ADD COLUMN IF NOT EXISTS `type` VARCHAR(20) NOT NULL DEFAULT "car" AFTER `vin`,
+
+    MODIFY COLUMN IF EXISTS `job` VARCHAR(50) NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `job` VARCHAR(50) NULL DEFAULT NULL AFTER `type`,
+
+    MODIFY COLUMN IF EXISTS `model` VARCHAR(20) NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `model` VARCHAR(20) NULL DEFAULT NULL AFTER `job`,
+
+    MODIFY COLUMN IF EXISTS `class` TINYINT NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `class` TINYINT NULL DEFAULT NULL AFTER `model`,
+
+    MODIFY COLUMN IF EXISTS `stored` TINYINT(1) NULL DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `stored` TINYINT(1) NULL DEFAULT NULL AFTER `class`,
+
+    MODIFY COLUMN IF EXISTS `vehicle` LONGTEXT NULL DEFAULT "{}",
+    ADD COLUMN IF NOT EXISTS `vehicle` LONGTEXT NULL DEFAULT "{}" AFTER `stored`,
+
+    MODIFY COLUMN IF EXISTS `metadata` LONGTEXT NULL DEFAULT "{}",
+    ADD COLUMN IF NOT EXISTS `metadata` LONGTEXT NULL DEFAULT "{}" AFTER `metadata`,
+
+    DROP PRIMARY KEY,
+    DROP FOREIGN KEY IF EXISTS `FK_owned_vehicles_users`,
+    DROP FOREIGN KEY IF EXISTS `FK_owned_vehicles_groups`,
+
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE INDEX IF NOT EXISTS `plate` (`plate`),
+    ADD UNIQUE INDEX IF NOT EXISTS `vin` (`vin`);
+-- These two ALTERs *cannot* join with each other as it produces error    
+ALTER TABLE `owned_vehicles`
+    ADD INDEX IF NOT EXISTS `FK_owned_vehicles_users` (`owner`),
+    ADD CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE,
+    ADD CONSTRAINT `FK_owned_vehicles_groups` FOREIGN KEY (`job`) REFERENCES `groups` (`name`) ON UPDATE CASCADE ON DELETE CASCADE;
