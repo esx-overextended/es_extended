@@ -62,7 +62,7 @@ function ESX.Table.Filter(t, cb)
 
     for i = 1, #t, 1 do
         if cb(t[i]) then
-            newTable[#newTable+1] = t[i]
+            newTable[#newTable + 1] = t[i]
         end
     end
 
@@ -83,20 +83,20 @@ function ESX.Table.Reverse(t)
     local newTable = {}
 
     for i = #t, 1, -1 do
-        newTable[#newTable+1] = t[i]
+        newTable[#newTable + 1] = t[i]
     end
 
     return newTable
 end
 
 function ESX.Table.Clone(t)
-    if type(t) ~= 'table' then return t end
+    if type(t) ~= "table" then return t end
 
     local meta = getmetatable(t)
     local target = {}
 
     for k, v in pairs(t) do
-        if type(v) == 'table' then
+        if type(v) == "table" then
             target[k] = ESX.Table.Clone(v)
         else
             target[k] = v
@@ -112,15 +112,15 @@ function ESX.Table.Concat(t1, t2)
     local t3 = ESX.Table.Clone(t1)
 
     for i = 1, #t2, 1 do
-        t3[#t3+1] = t2[i]
+        t3[#t3 + 1] = t2[i]
     end
 
     return t3
 end
 
 function ESX.Table.Join(t, sep)
-    sep = sep or ','
-    local str = ''
+    sep = sep or ","
+    local str = ""
 
     for i = 1, #t, 1 do
         if i > 1 then

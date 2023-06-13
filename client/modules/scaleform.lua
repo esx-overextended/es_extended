@@ -1,7 +1,7 @@
 function ESX.Scaleform.ShowFreemodeMessage(title, msg, sec)
-    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('MP_BIG_MESSAGE_FREEMODE')
+    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie("MP_BIG_MESSAGE_FREEMODE")
 
-    BeginScaleformMovieMethod(scaleform, 'SHOW_SHARD_WASTED_MP_MESSAGE')
+    BeginScaleformMovieMethod(scaleform, "SHOW_SHARD_WASTED_MP_MESSAGE")
     ScaleformMovieMethodAddParamTextureNameString(title)
     ScaleformMovieMethodAddParamTextureNameString(msg)
     EndScaleformMovieMethod()
@@ -17,21 +17,21 @@ function ESX.Scaleform.ShowFreemodeMessage(title, msg, sec)
 end
 
 function ESX.Scaleform.ShowBreakingNews(title, msg, bottom, sec)
-    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('BREAKING_NEWS')
+    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie("BREAKING_NEWS")
 
-    BeginScaleformMovieMethod(scaleform, 'SET_TEXT')
+    BeginScaleformMovieMethod(scaleform, "SET_TEXT")
     ScaleformMovieMethodAddParamTextureNameString(msg)
     ScaleformMovieMethodAddParamTextureNameString(bottom)
     EndScaleformMovieMethod()
 
-    BeginScaleformMovieMethod(scaleform, 'SET_SCROLL_TEXT')
+    BeginScaleformMovieMethod(scaleform, "SET_SCROLL_TEXT")
     ScaleformMovieMethodAddParamInt(0) -- top ticker
     ScaleformMovieMethodAddParamInt(0) -- Since this is the first string, start at 0
     ScaleformMovieMethodAddParamTextureNameString(title)
 
     EndScaleformMovieMethod()
 
-    BeginScaleformMovieMethod(scaleform, 'DISPLAY_SCROLL_TEXT')
+    BeginScaleformMovieMethod(scaleform, "DISPLAY_SCROLL_TEXT")
     ScaleformMovieMethodAddParamInt(0) -- Top ticker
     ScaleformMovieMethodAddParamInt(0) -- Index of string
 
@@ -48,9 +48,9 @@ function ESX.Scaleform.ShowBreakingNews(title, msg, bottom, sec)
 end
 
 function ESX.Scaleform.ShowPopupWarning(title, msg, bottom, sec)
-    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('POPUP_WARNING')
+    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie("POPUP_WARNING")
 
-    BeginScaleformMovieMethod(scaleform, 'SHOW_POPUP_WARNING')
+    BeginScaleformMovieMethod(scaleform, "SHOW_POPUP_WARNING")
 
     ScaleformMovieMethodAddParamFloat(500.0) -- black background
     ScaleformMovieMethodAddParamTextureNameString(title)
@@ -71,9 +71,9 @@ function ESX.Scaleform.ShowPopupWarning(title, msg, bottom, sec)
 end
 
 function ESX.Scaleform.ShowTrafficMovie(sec)
-    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('TRAFFIC_CAM')
+    local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie("TRAFFIC_CAM")
 
-    BeginScaleformMovieMethod(scaleform, 'PLAY_CAM_MOVIE')
+    BeginScaleformMovieMethod(scaleform, "PLAY_CAM_MOVIE")
 
     EndScaleformMovieMethod()
 

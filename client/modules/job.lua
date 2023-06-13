@@ -2,13 +2,13 @@
 ---@param jobName string
 ---@return xJob?
 function ESX.GetJob(jobName) ---@diagnostic disable-line: duplicate-set-field
-    return GlobalState["ESX.Jobs"]?[jobName]
+    return GlobalState["Jobs"]?[jobName]
 end
 
 ---Gets all of the job objects
 ---@return table<string, xJob>
 function ESX.GetJobs() ---@diagnostic disable-line: duplicate-set-field
-    return GlobalState["ESX.Jobs"]
+    return GlobalState["Jobs"]
 end
 
 AddEventHandler("esx:setJob", function(job)

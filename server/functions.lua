@@ -1,11 +1,11 @@
 function ESX.Trace(msg)
     if Config.EnableDebug then
-        print(('[^2TRACE^7] %s^7'):format(msg))
+        print(("[^2TRACE^7] %s^7"):format(msg))
     end
 end
 
 function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
-    if type(name) == 'table' then
+    if type(name) == "table" then
         for _, v in ipairs(name) do
             ESX.RegisterCommand(v, group, cb, allowConsole, suggestion)
         end
@@ -14,10 +14,10 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end
 
     if Core.RegisteredCommands[name] then
-        print(('[^3WARNING^7] Command ^5"%s" ^7already registered, overriding command'):format(name))
+        print(("[^3WARNING^7] Command ^5'%s' ^7already registered, overriding command"):format(name))
 
         if Core.RegisteredCommands[name].suggestion then
-            TriggerClientEvent('chat:removeSuggestion', -1, ('/%s'):format(name))
+            TriggerClientEvent("chat:removeSuggestion", -1, ("/%s"):format(name))
         end
     end
 
@@ -26,10 +26,10 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
             suggestion.arguments = {}
         end
         if not suggestion.help then
-            suggestion.help = ''
+            suggestion.help = ""
         end
 
-        TriggerClientEvent('chat:addSuggestion', -1, ('/%s'):format(name), suggestion.help, suggestion.arguments)
+        TriggerClientEvent("chat:addSuggestion", -1, ("/%s"):format(name), suggestion.help, suggestion.arguments)
     end
 
     Core.RegisteredCommands[name] = { group = group, cb = cb, allowConsole = allowConsole, suggestion = suggestion }
@@ -38,14 +38,14 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
         local command = Core.RegisteredCommands[name]
 
         if not command.allowConsole and playerId == 0 then
-            print(('[^3WARNING^7] ^5%s'):format(_U('commanderror_console')))
+            print(("[^3WARNING^7] ^5%s"):format(_U("commanderror_console")))
         else
             local xPlayer, error = ESX.Players[playerId], nil
 
             if command.suggestion then
                 if command.suggestion.validate then
                     if #args ~= #command.suggestion.arguments then
-                        error = _U('commanderror_argumentmismatch', #args, #command.suggestion.arguments)
+                        error = _U("commanderror_argumentmismatch", #args, #command.suggestion.arguments)
                     end
                 end
 
@@ -54,18 +54,18 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 
                     for k, v in ipairs(command.suggestion.arguments) do
                         if v.type then
-                            if v.type == 'number' then
+                            if v.type == "number" then
                                 local newArg = tonumber(args[k])
 
                                 if newArg then
                                     newArgs[v.name] = newArg
                                 else
-                                    error = _U('commanderror_argumentmismatch_number', k)
+                                    error = _U("commanderror_argumentmismatch_number", k)
                                 end
-                            elseif v.type == 'player' or v.type == 'playerId' then
+                            elseif v.type == "player" or v.type == "playerId" then
                                 local targetPlayer = tonumber(args[k])
 
-                                if args[k] == 'me' then
+                                if args[k] == "me" then
                                     targetPlayer = playerId
                                 end
 
@@ -73,32 +73,32 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
                                     local xTargetPlayer = ESX.GetPlayerFromId(targetPlayer)
 
                                     if xTargetPlayer then
-                                        if v.type == 'player' then
+                                        if v.type == "player" then
                                             newArgs[v.name] = xTargetPlayer
                                         else
                                             newArgs[v.name] = targetPlayer
                                         end
                                     else
-                                        error = _U('commanderror_invalidplayerid')
+                                        error = _U("commanderror_invalidplayerid")
                                     end
                                 else
-                                    error = _U('commanderror_argumentmismatch_number', k)
+                                    error = _U("commanderror_argumentmismatch_number", k)
                                 end
-                            elseif v.type == 'string' then
+                            elseif v.type == "string" then
                                 newArgs[v.name] = args[k]
-                            elseif v.type == 'item' then
+                            elseif v.type == "item" then
                                 if ESX.Items[args[k]] then
                                     newArgs[v.name] = args[k]
                                 else
-                                    error = _U('commanderror_invaliditem')
+                                    error = _U("commanderror_invaliditem")
                                 end
-                            elseif v.type == 'weapon' then
+                            elseif v.type == "weapon" then
                                 if ESX.GetWeapon(args[k]) then
                                     newArgs[v.name] = string.upper(args[k])
                                 else
-                                    error = _U('commanderror_invalidweapon')
+                                    error = _U("commanderror_invalidweapon")
                                 end
-                            elseif v.type == 'any' then
+                            elseif v.type == "any" then
                                 newArgs[v.name] = args[k]
                             end
                         end
@@ -118,14 +118,14 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 
             if error then
                 if playerId == 0 then
-                    print(('[^3WARNING^7] %s^7'):format(error))
+                    print(("[^3WARNING^7] %s^7"):format(error))
                 else
                     xPlayer.showNotification(error)
                 end
             else
                 cb(xPlayer or false, args, function(msg)
                     if playerId == 0 then
-                        print(('[^3WARNING^7] %s^7'):format(msg))
+                        print(("[^3WARNING^7] %s^7"):format(msg))
                     else
                         xPlayer.showNotification(msg)
                     end
@@ -250,7 +250,7 @@ function Core.SaveVehicles(resource)
 
     for _, xVehicle in pairs(Core.Vehicles) do
         if not resource or resource == xVehicle.script then
-            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it's handled through xVehicle.delete()
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it"s handled through xVehicle.delete()
                 pSize += 1
                 parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
             end
@@ -303,7 +303,7 @@ function ESX.GetPlayerFromIdentifier(identifier)
     return Core.PlayersByIdentifier[identifier]
 end
 
----Gets a player id rockstar's license identifier without 'license:' prefix
+---Gets a player id rockstar"s license identifier without "license:" prefix
 ---@param playerId integer
 ---@return string | nil
 function ESX.GetIdentifier(playerId)
@@ -359,49 +359,49 @@ end
 function ESX.DiscordLog(name, title, color, message)
     local webHook = Config.DiscordLogs.Webhooks[name] or Config.DiscordLogs.Webhooks.default
     local embedData = { {
-        ['title'] = title,
-        ['color'] = Config.DiscordLogs.Colors[color] or Config.DiscordLogs.Colors.default,
-        ['footer'] = {
-            ['text'] = "| ESX Logs | " .. os.date(),
-            ['icon_url'] = "https://cdn.discordapp.com/attachments/944789399852417096/1020099828266586193/blanc-800x800.png"
+        ["title"] = title,
+        ["color"] = Config.DiscordLogs.Colors[color] or Config.DiscordLogs.Colors.default,
+        ["footer"] = {
+            ["text"] = "| ESX Logs | " .. os.date(),
+            ["icon_url"] = "https://cdn.discordapp.com/attachments/944789399852417096/1020099828266586193/blanc-800x800.png"
         },
-        ['description'] = message,
-        ['author'] = {
-            ['name'] = "ESX Framework",
-            ['icon_url'] = "https://cdn.discordapp.com/emojis/939245183621558362.webp?size=128&quality=lossless"
+        ["description"] = message,
+        ["author"] = {
+            ["name"] = "ESX Framework",
+            ["icon_url"] = "https://cdn.discordapp.com/emojis/939245183621558362.webp?size=128&quality=lossless"
         }
     } }
     ---@diagnostic disable-next-line: param-type-mismatch
-    PerformHttpRequest(webHook, nil, 'POST', json.encode({
-        username = 'Logs',
+    PerformHttpRequest(webHook, nil, "POST", json.encode({
+        username = "Logs",
         embeds = embedData
     }), {
-        ['Content-Type'] = 'application/json'
+        ["Content-Type"] = "application/json"
     })
 end
 
 function ESX.DiscordLogFields(name, title, color, fields)
     local webHook = Config.DiscordLogs.Webhooks[name] or Config.DiscordLogs.Webhooks.default
     local embedData = { {
-        ['title'] = title,
-        ['color'] = Config.DiscordLogs.Colors[color] or Config.DiscordLogs.Colors.default,
-        ['footer'] = {
-            ['text'] = "| ESX Logs | " .. os.date(),
-            ['icon_url'] = "https://cdn.discordapp.com/attachments/944789399852417096/1020099828266586193/blanc-800x800.png"
+        ["title"] = title,
+        ["color"] = Config.DiscordLogs.Colors[color] or Config.DiscordLogs.Colors.default,
+        ["footer"] = {
+            ["text"] = "| ESX Logs | " .. os.date(),
+            ["icon_url"] = "https://cdn.discordapp.com/attachments/944789399852417096/1020099828266586193/blanc-800x800.png"
         },
-        ['fields'] = fields,
-        ['description'] = "",
-        ['author'] = {
-            ['name'] = "ESX Framework",
-            ['icon_url'] = "https://cdn.discordapp.com/emojis/939245183621558362.webp?size=128&quality=lossless"
+        ["fields"] = fields,
+        ["description"] = "",
+        ["author"] = {
+            ["name"] = "ESX Framework",
+            ["icon_url"] = "https://cdn.discordapp.com/emojis/939245183621558362.webp?size=128&quality=lossless"
         }
     } }
     ---@diagnostic disable-next-line: param-type-mismatch
-    PerformHttpRequest(webHook, nil, 'POST', json.encode({
-        username = 'Logs',
+    PerformHttpRequest(webHook, nil, "POST", json.encode({
+        username = "Logs",
         embeds = embedData
     }), {
-        ['Content-Type'] = 'application/json'
+        ["Content-Type"] = "application/json"
     })
 end
 
@@ -418,11 +418,11 @@ function ESX.UseItem(source, item, ...)
 
             if not success then
                 return result and print(result) or
-                    print(('[^3WARNING^7] An error occured when using item ^5"%s"^7! This was not caused by ESX.'):format(item))
+                    print(("[^3WARNING^7] An error occured when using item ^5'%s'^7! This was not caused by ESX."):format(item))
             end
         end
     else
-        print(('[^3WARNING^7] Item ^5"%s"^7 was used but does not exist!'):format(item))
+        print(("[^3WARNING^7] Item ^5'%s'^7 was used but does not exist!"):format(item))
     end
 end
 
@@ -432,7 +432,7 @@ end
 
 function ESX.SetPlayerFunctionOverride(index)
     if not index or not Core.PlayerFunctionOverrides[index] then
-        return print('[^3WARNING^7] No valid index provided.')
+        return print("[^3WARNING^7] No valid index provided.")
     end
 
     Config.PlayerFunctionOverride = index
@@ -449,7 +449,7 @@ function ESX.GetItemLabel(item)
     if ESX.Items[item] then
         return ESX.Items[item].label
     else
-        print('[^3WARNING^7] Attemting to get invalid Item -> ^5' .. item .. "^7")
+        print("[^3WARNING^7] Attemting to get invalid Item -> ^5" .. item .. "^7")
     end
 end
 
@@ -469,7 +469,7 @@ if not Config.OxInventory then
 
         Core.Pickups[pickupId] = { type = type, name = name, count = count, label = label, coords = coords }
 
-        if type == 'item_weapon' then
+        if type == "item_weapon" then
             Core.Pickups[pickupId].components = components
             Core.Pickups[pickupId].tintIndex = tintIndex
         end
@@ -509,7 +509,7 @@ function Core.GetPlayerAdminGroup(playerId)
     for i = 1, #Config.AdminGroups do -- start from the highest perm admin group
         local groupName = Config.AdminGroups[i]
 
-        if IsPlayerAceAllowed(playerId, ESX.Groups[groupName].principal) then
+        if IsPlayerAceAllowed(playerId, Core.Groups[groupName].principal) then
             group = groupName
             break
         end

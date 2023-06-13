@@ -8,7 +8,7 @@
 ---@field principal string
 ---@field grades table<gradeKey, xGroupGrade>
 
-ESX.Groups = {} --[[@type table<string, xGroup>]]
+Core.Groups = {} --[[@type table<string, xGroup>]]
 Config.AdminGroupsByName = {} --[[@type table<string, integer | number>]]
 Core.DefaultGroup = "user"
 
@@ -43,7 +43,7 @@ function ESX.RefreshGroups()
         end
     end
 
-    for _, xGroup in pairs(ESX.Groups) do -- removes the old groups ace permissions...
+    for _, xGroup in pairs(Core.Groups) do -- removes the old groups ace permissions...
         -- TODO: might need to check for group.admin and user
         local grades = {}
         local parent = xGroup.principal
@@ -68,24 +68,24 @@ function ESX.RefreshGroups()
         end
     end
 
-    ESX.Groups = lib.table.merge(Groups, ESX.Jobs)
+    Core.Groups = lib.table.merge(Groups, ESX.Jobs)
 
     for i = 1, #Config.AdminGroups do
         local group = Config.AdminGroups[i]
-        ESX.Groups[group] = {
+        Core.Groups[group] = {
             name = group,
             label = group:gsub("^%l", string.upper),
             grades = { ["0"] = { group_name = group, grade = 0, label = group:gsub("^%l", string.upper) } }
         }
     end
 
-    ESX.Groups[Core.DefaultGroup] = {
+    Core.Groups[Core.DefaultGroup] = {
         name = Core.DefaultGroup,
         label = Core.DefaultGroup:gsub("^%l", string.upper),
         grades = { ["0"] = { group_name = Core.DefaultGroup, grade = 0, label = Core.DefaultGroup:gsub("^%l", string.upper) } }
     }
 
-    for key, xGroup in pairs(ESX.Groups) do
+    for key, xGroup in pairs(Core.Groups) do
         -- TODO: might need to check for group.admin and user
         local grades = {}
         local principal = ("group.%s"):format(xGroup.name)
@@ -114,7 +114,7 @@ function ESX.RefreshGroups()
             parent = child
         end
 
-        ESX.Groups[key].principal = principal
+        Core.Groups[key].principal = principal
     end
 
     local adminGroupsCount = #Config.AdminGroups
@@ -123,17 +123,17 @@ function ESX.RefreshGroups()
         local child = Config.AdminGroups[i]
         local parent = Config.AdminGroups[i + 1] or Core.DefaultGroup
 
-        lib.removePrincipal(ESX.Groups[child].principal, ESX.Groups[parent].principal) -- prevents duplication
-        lib.addPrincipal(ESX.Groups[child].principal, ESX.Groups[parent].principal)
+        lib.removePrincipal(Core.Groups[child].principal, Core.Groups[parent].principal) -- prevents duplication
+        lib.addPrincipal(Core.Groups[child].principal, Core.Groups[parent].principal)
     end
 
     if adminGroupsCount > 0 then
-        lib.removeAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command") -- prevents duplication
-        lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command")
-        lib.addAce(ESX.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command.quit", false)
+        lib.removeAce(Core.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command") -- prevents duplication
+        lib.addAce(Core.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command")
+        lib.addAce(Core.Groups[Config.AdminGroups[adminGroupsCount]].principal, "command.quit", false)
     end
 
-    GlobalState:set("ESX.Groups", ESX.Groups, true)
+    GlobalState:set("Groups", Core.Groups, true)
 
     Core.RefreshPlayersGroups()
 
@@ -148,13 +148,13 @@ end)
 ---@param groupName string
 ---@return xGroup?
 function ESX.GetGroup(groupName) ---@diagnostic disable-line: duplicate-set-field
-    return ESX.Groups[groupName]
+    return Core.Groups[groupName]
 end
 
 ---Gets all of the group objects
 ---@return table<string, xGroup>
 function ESX.GetGroups() ---@diagnostic disable-line: duplicate-set-field
-    return ESX.Groups
+    return Core.Groups
 end
 
 ---Checks if a group with the specified name and grade exist
@@ -165,7 +165,7 @@ function ESX.DoesGroupExist(groupName, groupGrade)
     groupGrade = tostring(groupGrade)
 
     if groupName and groupGrade then
-        if ESX.Groups[groupName] and ESX.Groups[groupName].grades[groupGrade] then
+        if Core.Groups[groupName] and Core.Groups[groupName].grades[groupGrade] then
             return true
         end
     end

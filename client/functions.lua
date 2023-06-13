@@ -22,7 +22,7 @@ function ESX.GetPlayerData()
 end
 
 function ESX.SearchInventory(items, count)
-    if type(items) == 'string' then
+    if type(items) == "string" then
         items = {items}
     end
 
@@ -52,9 +52,9 @@ end
 function ESX.SetPlayerData(key, val)
     local current = ESX.PlayerData[key]
     ESX.PlayerData[key] = val
-    if key ~= 'inventory' and key ~= 'loadout' then
-        if type(val) == 'table' or val ~= current then
-            TriggerEvent('esx:setPlayerData', key, val, current)
+    if key ~= "inventory" and key ~= "loadout" then
+        if type(val) == "table" or val ~= current then
+            TriggerEvent("esx:setPlayerData", key, val, current)
         end
     end
 end
@@ -63,8 +63,8 @@ function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconTyp
     if saveToBrief == nil then
         saveToBrief = true
     end
-    AddTextEntry('esxAdvancedNotification', msg)
-    BeginTextCommandThefeedPost('esxAdvancedNotification')
+    AddTextEntry("esxAdvancedNotification", msg)
+    BeginTextCommandThefeedPost("esxAdvancedNotification")
     if hudColorIndex then
         ThefeedSetNextPostBackgroundColor(hudColorIndex)
     end
@@ -73,24 +73,24 @@ function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconTyp
 end
 
 function ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
-    AddTextEntry('esxHelpNotification', msg)
+    AddTextEntry("esxHelpNotification", msg)
 
     if thisFrame then
-        DisplayHelpTextThisFrame('esxHelpNotification', false)
+        DisplayHelpTextThisFrame("esxHelpNotification", false)
     else
         if beep == nil then
             beep = true
         end
-        BeginTextCommandDisplayHelp('esxHelpNotification')
+        BeginTextCommandDisplayHelp("esxHelpNotification")
         EndTextCommandDisplayHelp(0, false, beep, duration or -1)
     end
 end
 
 function ESX.ShowFloatingHelpNotification(msg, coords)
-    AddTextEntry('esxFloatingHelpNotification', msg)
+    AddTextEntry("esxFloatingHelpNotification", msg)
     SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
     SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-    BeginTextCommandDisplayHelp('esxFloatingHelpNotification')
+    BeginTextCommandDisplayHelp("esxFloatingHelpNotification")
     EndTextCommandDisplayHelp(2, false, false, -1)
 end
 
@@ -116,7 +116,7 @@ end
 
 function ESX.UI.ShowInventoryItemNotification(add, item, count)
     SendNUIMessage({
-        action = 'inventoryNotification',
+        action = "inventoryNotification",
         add = add,
         item = item,
         count = count
@@ -155,7 +155,7 @@ end
 function ESX.Game.SpawnObject(object, coords, cb, networked)
     networked = networked == nil and true or networked
     if networked then
-        ESX.TriggerServerCallback('esx:Onesync:SpawnObject', function(NetworkID)
+        ESX.TriggerServerCallback("esx:Onesync:SpawnObject", function(NetworkID)
             if cb then
                 local obj = NetworkGetEntityFromNetworkId(NetworkID)
                 local Tries = 0
@@ -171,7 +171,7 @@ function ESX.Game.SpawnObject(object, coords, cb, networked)
             end
         end, object, coords, 0.0)
     else
-        local model = type(object) == 'number' and object or joaat(object)
+        local model = type(object) == "number" and object or joaat(object)
         local vector = type(coords) == "vector3" and coords or vec(coords.x, coords.y, coords.z)
         CreateThread(function()
             ESX.Streaming.RequestModel(model)
@@ -199,7 +199,7 @@ function ESX.Game.DeleteObject(object)
 end
 
 function ESX.Game.SpawnVehicle(vehicle, coords, heading, cb, networked)
-    local model = type(vehicle) == 'number' and vehicle or joaat(vehicle)
+    local model = type(vehicle) == "number" and vehicle or joaat(vehicle)
     local vector = type(coords) == "vector3" and coords or vec(coords.x, coords.y, coords.z)
     networked = networked == nil and true or networked
 
@@ -226,7 +226,7 @@ function ESX.Game.SpawnVehicle(vehicle, coords, heading, cb, networked)
         SetVehicleHasBeenOwnedByPlayer(vehicleEntity, true)
         SetVehicleNeedsToBeHotwired(vehicleEntity, false)
         SetModelAsNoLongerNeeded(model)
-        SetVehRadioStation(vehicleEntity, 'OFF')
+        SetVehRadioStation(vehicleEntity, "OFF")
 
         RequestCollisionAtCoord(vector.x, vector.y, vector.z)
         while not HasCollisionLoadedAroundEntity(vehicleEntity) do
@@ -251,11 +251,11 @@ function ESX.Game.IsVehicleEmpty(vehicle)
 end
 
 function ESX.Game.GetObjects() -- Leave the function for compatibility
-    return GetGamePool('CObject')
+    return GetGamePool("CObject")
 end
 
 function ESX.Game.GetPeds(onlyOtherPeds)
-    local myPed, pool = ESX.PlayerData.ped, GetGamePool('CPed')
+    local myPed, pool = ESX.PlayerData.ped, GetGamePool("CPed")
 
     if not onlyOtherPeds then
         return pool
@@ -272,7 +272,7 @@ function ESX.Game.GetPeds(onlyOtherPeds)
 end
 
 function ESX.Game.GetVehicles() -- Leave the function for compatibility
-    return GetGamePool('CVehicle')
+    return GetGamePool("CVehicle")
 end
 
 function ESX.Game.GetPlayers(onlyOtherPlayers, returnKeyValue, returnPeds)
@@ -429,10 +429,10 @@ function ESX.Game.GetVehicleProperties(vehicle)
     local numWheels = tostring(GetVehicleNumberOfWheels(vehicle))
 
     local TyresIndex = { -- Wheel index list according to the number of vehicle wheels.
-        ['2'] = {0, 4}, -- Bike and cycle.
-        ['3'] = {0, 1, 4, 5}, -- Vehicle with 3 wheels (get for wheels because some 3 wheels vehicles have 2 wheels on front and one rear or the reverse).
-        ['4'] = {0, 1, 4, 5}, -- Vehicle with 4 wheels.
-        ['6'] = {0, 1, 2, 3, 4, 5} -- Vehicle with 6 wheels.
+        ["2"] = {0, 4}, -- Bike and cycle.
+        ["3"] = {0, 1, 4, 5}, -- Vehicle with 3 wheels (get for wheels because some 3 wheels vehicles have 2 wheels on front and one rear or the reverse).
+        ["4"] = {0, 1, 4, 5}, -- Vehicle with 4 wheels.
+        ["6"] = {0, 1, 2, 3, 4, 5} -- Vehicle with 6 wheels.
     }
 
     if TyresIndex[numWheels] then
@@ -824,7 +824,7 @@ function ESX.Game.Utils.DrawText3D(coords, text, size, font)
     SetTextFont(font)
     SetTextProportional(true)
     SetTextColour(255, 255, 255, 215)
-    BeginTextCommandDisplayText('STRING')
+    BeginTextCommandDisplayText("STRING")
     SetTextCentre(true)
     AddTextComponentSubstringPlayerName(text)
     SetDrawOrigin(vector.x, vector.y, vector.z, 0)
@@ -839,20 +839,20 @@ function ESX.ShowInventory()
 
     local playerPed = ESX.PlayerData.ped
     local elements = {
-        {unselectable = true, icon = 'fas fa-box', title = 'Player Inventory'}
+        {unselectable = true, icon = "fas fa-box", title = "Player Inventory"}
     }
     local currentWeight = 0
 
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].money > 0 then
-            local formattedMoney = _U('locale_currency', ESX.Math.GroupDigits(ESX.PlayerData.accounts[i].money))
-            local canDrop = ESX.PlayerData.accounts[i].name ~= 'bank'
+            local formattedMoney = _U("locale_currency", ESX.Math.GroupDigits(ESX.PlayerData.accounts[i].money))
+            local canDrop = ESX.PlayerData.accounts[i].name ~= "bank"
 
             elements[#elements+1] = {
-                icon = 'fas fa-money-bill-wave',
-                title = ('%s: %s'):format(ESX.PlayerData.accounts[i].label, formattedMoney),
+                icon = "fas fa-money-bill-wave",
+                title = ("%s: %s"):format(ESX.PlayerData.accounts[i].label, formattedMoney),
                 count = ESX.PlayerData.accounts[i].money,
-                type = 'item_account',
+                type = "item_account",
                 value = ESX.PlayerData.accounts[i].name,
                 usable = false,
                 rare = false,
@@ -866,10 +866,10 @@ function ESX.ShowInventory()
             currentWeight = currentWeight + (v.weight * v.count)
 
             elements[#elements+1] = {
-                icon = 'fas fa-box',
-                title = ('%s x%s'):format(v.label, v.count),
+                icon = "fas fa-box",
+                title = ("%s x%s"):format(v.label, v.count),
                 count = v.count,
-                type = 'item_standard',
+                type = "item_standard",
                 value = v.name,
                 usable = v.usable,
                 rare = v.rare,
@@ -883,13 +883,13 @@ function ESX.ShowInventory()
 
         if HasPedGotWeapon(playerPed, weaponHash, false) then
             local ammo = GetAmmoInPedWeapon(playerPed, weaponHash)
-            local label = v.ammo and ('%s - %s %s'):format(v.label, ammo, v.ammo.label) or v.label
+            local label = v.ammo and ("%s - %s %s"):format(v.label, ammo, v.ammo.label) or v.label
 
             elements[#elements+1] = {
-                icon = 'fas fa-gun',
+                icon = "fas fa-gun",
                 title = label,
                 count = 1,
-                type = 'item_weapon',
+                type = "item_weapon",
                 value = v.name,
                 usable = false,
                 rare = false,
@@ -916,8 +916,8 @@ function ESX.ShowInventory()
         if element.usable then
             elements2[#elements2+1] = {
                 icon = "fas fa-utensils",
-                title = _U('use'),
-                action = 'use',
+                title = _U("use"),
+                action = "use",
                 type = element.type,
                 value = element.value
             }
@@ -927,8 +927,8 @@ function ESX.ShowInventory()
             if player ~= -1 and distance <= 3.0 then
                 elements2[#elements2+1] = {
                     icon = "fas fa-hands",
-                    title = _U('give'),
-                    action = 'give',
+                    title = _U("give"),
+                    action = "give",
                     type = element.type,
                     value = element.value
                 }
@@ -936,18 +936,18 @@ function ESX.ShowInventory()
 
             elements2[#elements2+1] = {
                 icon = "fas fa-trash",
-                title = _U('remove'),
-                action = 'remove',
+                title = _U("remove"),
+                action = "remove",
                 type = element.type,
                 value = element.value
             }
         end
 
-        if element.type == 'item_weapon' and element.canGiveAmmo and element.ammo > 0 and player ~= -1 and distance <= 3.0 then
+        if element.type == "item_weapon" and element.canGiveAmmo and element.ammo > 0 and player ~= -1 and distance <= 3.0 then
             elements2[#elements2+1] = {
                 icon = "fas fa-gun",
-                title = _U('giveammo'),
-                action = 'give_ammo',
+                title = _U("giveammo"),
+                action = "give_ammo",
                 type = element.type,
                 value = element.value
             }
@@ -955,8 +955,8 @@ function ESX.ShowInventory()
 
         elements2[#elements2+1] = {
             icon = "fas fa-arrow-left",
-            title = _U('return'),
-            action = 'return'
+            title = _U("return"),
+            action = "return"
         }
 
         ESX.OpenContext("right", elements2, function(_, element2)
@@ -975,7 +975,7 @@ function ESX.ShowInventory()
                         players[GetPlayerServerId(playerNearby)] = true
                     end
 
-                    ESX.TriggerServerCallback('esx:getPlayerNames', function(returnedPlayers)
+                    ESX.TriggerServerCallback("esx:getPlayerNames", function(returnedPlayers)
                         for playerId, playerName in pairs(returnedPlayers) do
                             elements3[#elements3+1] = {
                                 icon = "fas fa-user",
@@ -993,8 +993,8 @@ function ESX.ShowInventory()
                                 local selectedPlayerPed = GetPlayerPed(selectedPlayer)
 
                                 if IsPedOnFoot(selectedPlayerPed) and not IsPedFalling(selectedPlayerPed) then
-                                    if type == 'item_weapon' then
-                                        TriggerServerEvent('esx:giveInventoryItem', selectedPlayerId, type, item, nil)
+                                    if type == "item_weapon" then
+                                        TriggerServerEvent("esx:giveInventoryItem", selectedPlayerId, type, item, nil)
                                         ESX.CloseContext()
                                     else
                                         local elementsG = {
@@ -1007,18 +1007,18 @@ function ESX.ShowInventory()
                                             local quantity = tonumber(menuG.eles[2].inputValue)
 
                                             if quantity and quantity > 0 and element.count >= quantity then
-                                                TriggerServerEvent('esx:giveInventoryItem', selectedPlayerId, type, item, quantity)
+                                                TriggerServerEvent("esx:giveInventoryItem", selectedPlayerId, type, item, quantity)
                                                 ESX.CloseContext()
                                             else
-                                                ESX.ShowNotification(_U('amount_invalid'))
+                                                ESX.ShowNotification(_U("amount_invalid"))
                                             end
                                         end)
                                     end
                                 else
-                                    ESX.ShowNotification(_U('in_vehicle'))
+                                    ESX.ShowNotification(_U("in_vehicle"))
                                 end
                             else
-                                ESX.ShowNotification(_U('players_nearby'))
+                                ESX.ShowNotification(_U("players_nearby"))
                                 ESX.CloseContext()
                             end
                         end)
@@ -1026,15 +1026,15 @@ function ESX.ShowInventory()
                 end
             elseif element2.action == "remove" then
                 if IsPedOnFoot(playerPed) and not IsPedFalling(playerPed) then
-                    local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
+                    local dict, anim = "weapons@first_person@aim_rng@generic@projectile@sticky_bomb@", "plant_floor"
                     ESX.Streaming.RequestAnimDict(dict)
 
-                    if type == 'item_weapon' then
+                    if type == "item_weapon" then
                         ESX.CloseContext()
                         TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
                         RemoveAnimDict(dict)
                         Wait(1000)
-                        TriggerServerEvent('esx:removeInventoryItem', type, item)
+                        TriggerServerEvent("esx:removeInventoryItem", type, item)
                     else
                         local elementsR = {
                             {unselectable = true, icon = "fas fa-trash", title = element.title},
@@ -1050,16 +1050,16 @@ function ESX.ShowInventory()
                                 TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
                                 RemoveAnimDict(dict)
                                 Wait(1000)
-                                TriggerServerEvent('esx:removeInventoryItem', type, item, quantity)
+                                TriggerServerEvent("esx:removeInventoryItem", type, item, quantity)
                             else
-                                ESX.ShowNotification(_U('amount_invalid'))
+                                ESX.ShowNotification(_U("amount_invalid"))
                             end
                         end)
                     end
                 end
             elseif element2.action == "use" then
                 ESX.CloseContext()
-                TriggerServerEvent('esx:useItem', item)
+                TriggerServerEvent("esx:useItem", item)
             elseif element2.action == "return" then
                 ESX.CloseContext()
                 ESX.ShowInventory()
@@ -1082,23 +1082,23 @@ function ESX.ShowInventory()
 
                                 if quantity and quantity > 0 then
                                     if pedAmmo >= quantity then
-                                        TriggerServerEvent('esx:giveInventoryItem', GetPlayerServerId(closestPlayer), 'item_ammo', item, quantity)
+                                        TriggerServerEvent("esx:giveInventoryItem", GetPlayerServerId(closestPlayer), "item_ammo", item, quantity)
                                         ESX.CloseContext()
                                     else
-                                        ESX.ShowNotification(_U('noammo'))
+                                        ESX.ShowNotification(_U("noammo"))
                                     end
                                 else
-                                    ESX.ShowNotification(_U('amount_invalid'))
+                                    ESX.ShowNotification(_U("amount_invalid"))
                                 end
                             end)
                         else
-                            ESX.ShowNotification(_U('noammo'))
+                            ESX.ShowNotification(_U("noammo"))
                         end
                     else
-                        ESX.ShowNotification(_U('players_nearby'))
+                        ESX.ShowNotification(_U("players_nearby"))
                     end
                 else
-                    ESX.ShowNotification(_U('in_vehicle'))
+                    ESX.ShowNotification(_U("in_vehicle"))
                 end
             end
         end)

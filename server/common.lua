@@ -15,16 +15,16 @@ AddEventHandler("esx:getSharedObject", function(cb)
     return cb and cb(ESX)
 end)
 
-exports('getSharedObject', function()
+exports("getSharedObject", function()
     return ESX
 end)
 
-if GetResourceState('ox_inventory') ~= 'missing' then
+if GetResourceState("ox_inventory") ~= "missing" then
     Config.OxInventory = true
-    Config.PlayerFunctionOverride = 'OxInventory'
-    SetConvarReplicated('inventory:framework', 'esx')
+    Config.PlayerFunctionOverride = "OxInventory"
+    SetConvarReplicated("inventory:framework", "esx")
     ---@diagnostic disable-next-line: param-type-mismatch
-    SetConvarReplicated('inventory:weight', Config.MaxWeight * 1000)
+    SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000)
 end
 
 local function StartDBSync()
@@ -70,14 +70,14 @@ MySQL.ready(function()
         StartPayCheck()
     end
 
-    MySQL.query('UPDATE `owned_vehicles` SET `stored` = ? WHERE `stored` = 0', { nil })
+    MySQL.query("UPDATE `owned_vehicles` SET `stored` = ? WHERE `stored` = 0", { nil })
 
     Core.DatabaseConnected = true
 end)
 
-RegisterServerEvent('esx:clientLog', function(msg)
+RegisterServerEvent("esx:clientLog", function(msg)
     if Config.EnableDebug then
-        print(('[^2TRACE^7] %s^7'):format(msg))
+        print(("[^2TRACE^7] %s^7"):format(msg))
     end
 end)
 

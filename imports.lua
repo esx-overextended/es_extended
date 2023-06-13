@@ -22,6 +22,20 @@ if not IsDuplicityVersion() then -- Only register these for the client
 else -- Only register these for the server
     local _GetPlayerFromId = ESX.GetPlayerFromId
 
+    ESX.Jobs = setmetatable({}, {
+        __index = function(self, index)
+            self = ESX.GetJobs()
+            return self[index]
+        end
+    })
+
+    ESX.Groups = setmetatable({}, {
+        __index = function(self, index)
+            self = ESX.GetGroups()
+            return self[index]
+        end
+    })
+
     function ESX.GetPlayerFromId(playerId) ---@diagnostic disable-line: duplicate-set-field
         local xPlayer = _GetPlayerFromId(playerId)
 
@@ -35,10 +49,14 @@ else -- Only register these for the server
     end
 
     AddEventHandler("esx:onJobsRefreshed", function()
-        ESX.Jobs = ESX.GetJobs()
+        if ESX?.Jobs then
+            ESX.Jobs = ESX.GetJobs()
+        end
     end)
 
     AddEventHandler("esx:onGroupsRefreshed", function()
-        ESX.Groups = ESX.GetGroups()
+        if ESX?.Groups then
+            ESX.Groups = ESX.GetGroups()
+        end
     end)
 end

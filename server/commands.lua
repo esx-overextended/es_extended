@@ -1,20 +1,20 @@
-ESX.RegisterCommand('setcoords', 'admin', function(xPlayer, args, _)
+ESX.RegisterCommand("setcoords", "admin", function(xPlayer, args, _)
     xPlayer.setCoords({ x = args.x, y = args.y, z = args.z })
 end, false, {
-    help = _U('command_setcoords'),
+    help = _U("command_setcoords"),
     validate = true,
     arguments = {
-        { name = 'x', help = _U('command_setcoords_x'), type = 'number' },
-        { name = 'y', help = _U('command_setcoords_y'), type = 'number' },
-        { name = 'z', help = _U('command_setcoords_z'), type = 'number' }
+        { name = "x", help = _U("command_setcoords_x"), type = "number" },
+        { name = "y", help = _U("command_setcoords_y"), type = "number" },
+        { name = "z", help = _U("command_setcoords_z"), type = "number" }
     }
 })
 
-ESX.RegisterCommand('setjob', 'admin', function(xPlayer, args, showError)
+ESX.RegisterCommand("setjob", "admin", function(xPlayer, args, showError)
     if ESX.DoesJobExist(args.job, args.grade) then
         args.playerId.setJob(args.job, args.grade)
     else
-        showError(_U('command_setjob_invalid'))
+        showError(_U("command_setjob_invalid"))
     end
     ESX.DiscordLogFields("UserActions", "/setjob Triggered", "pink", {
         { name = "Player", value = xPlayer.name, inline = true },
@@ -22,12 +22,12 @@ ESX.RegisterCommand('setjob', 'admin', function(xPlayer, args, showError)
         { name = "Grade",  value = args.grade,   inline = true }
     })
 end, true, {
-    help = _U('command_setjob'),
+    help = _U("command_setjob"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' },
-        { name = 'job',      help = _U('command_setjob_job'),      type = 'string' },
-        { name = 'grade',    help = _U('command_setjob_grade'),    type = 'number' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
+        { name = "job",      help = _U("command_setjob_job"),      type = "string" },
+        { name = "grade",    help = _U("command_setjob_grade"),    type = "number" }
     }
 })
 
@@ -63,7 +63,7 @@ for modelName in pairs(ESX.GetVehicleData()) do
     arrayOfVehiclesName[count] = modelName
 end
 
-local function getRandomVehicleName() -- TODO: generating random must be achieved way better. Maybe should be implemented manually inside the esx's math module
+local function getRandomVehicleName() -- TODO: generating random must be achieved way better. Maybe should be implemented manually inside the esx"s math module
     Wait(10)
     math.randomseed(os.time())
     math.random(count) math.random(count) -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
@@ -150,117 +150,117 @@ end, false, {
     }
 })
 
-ESX.RegisterCommand('setaccountmoney', 'admin', function(_, args, showError)
+ESX.RegisterCommand("setaccountmoney", "admin", function(_, args, showError)
     if args.playerId.getAccount(args.account) then
         args.playerId.setAccountMoney(args.account, args.amount, "Government Grant")
     else
-        showError(_U('command_giveaccountmoney_invalid'))
+        showError(_U("command_giveaccountmoney_invalid"))
     end
 end, true, {
-    help = _U('command_setaccountmoney'),
+    help = _U("command_setaccountmoney"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'),          type = 'player' },
-        { name = 'account',  help = _U('command_giveaccountmoney_account'), type = 'string' },
-        { name = 'amount',   help = _U('command_setaccountmoney_amount'),   type = 'number' }
+        { name = "playerId", help = _U("commandgeneric_playerid"),          type = "player" },
+        { name = "account",  help = _U("command_giveaccountmoney_account"), type = "string" },
+        { name = "amount",   help = _U("command_setaccountmoney_amount"),   type = "number" }
     }
 })
 
-ESX.RegisterCommand('giveaccountmoney', 'admin', function(_, args, showError)
+ESX.RegisterCommand("giveaccountmoney", "admin", function(_, args, showError)
     if args.playerId.getAccount(args.account) then
         args.playerId.addAccountMoney(args.account, args.amount, "Government Grant")
     else
-        showError(_U('command_giveaccountmoney_invalid'))
+        showError(_U("command_giveaccountmoney_invalid"))
     end
 end, true, {
-    help = _U('command_giveaccountmoney'),
+    help = _U("command_giveaccountmoney"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'),          type = 'player' },
-        { name = 'account',  help = _U('command_giveaccountmoney_account'), type = 'string' },
-        { name = 'amount',   help = _U('command_giveaccountmoney_amount'),  type = 'number' }
+        { name = "playerId", help = _U("commandgeneric_playerid"),          type = "player" },
+        { name = "account",  help = _U("command_giveaccountmoney_account"), type = "string" },
+        { name = "amount",   help = _U("command_giveaccountmoney_amount"),  type = "number" }
     }
 })
 
 if not Config.OxInventory then
-    ESX.RegisterCommand('giveitem', 'admin', function(_, args, _)
+    ESX.RegisterCommand("giveitem", "admin", function(_, args, _)
         args.playerId.addInventoryItem(args.item, args.count)
     end, true, {
-        help = _U('command_giveitem'),
+        help = _U("command_giveitem"),
         validate = true,
         arguments = {
-            { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' },
-            { name = 'item',     help = _U('command_giveitem_item'),   type = 'item' },
-            { name = 'count',    help = _U('command_giveitem_count'),  type = 'number' }
+            { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
+            { name = "item",     help = _U("command_giveitem_item"),   type = "item" },
+            { name = "count",    help = _U("command_giveitem_count"),  type = "number" }
         }
     })
 
-    ESX.RegisterCommand('giveweapon', 'admin', function(_, args, showError)
+    ESX.RegisterCommand("giveweapon", "admin", function(_, args, showError)
         if args.playerId.hasWeapon(args.weapon) then
-            showError(_U('command_giveweapon_hasalready'))
+            showError(_U("command_giveweapon_hasalready"))
         else
             args.playerId.addWeapon(args.weapon, args.ammo)
         end
     end, true, {
-        help = _U('command_giveweapon'),
+        help = _U("command_giveweapon"),
         validate = true,
         arguments = {
-            { name = 'playerId', help = _U('commandgeneric_playerid'),   type = 'player' },
-            { name = 'weapon',   help = _U('command_giveweapon_weapon'), type = 'weapon' },
-            { name = 'ammo',     help = _U('command_giveweapon_ammo'),   type = 'number' }
+            { name = "playerId", help = _U("commandgeneric_playerid"),   type = "player" },
+            { name = "weapon",   help = _U("command_giveweapon_weapon"), type = "weapon" },
+            { name = "ammo",     help = _U("command_giveweapon_ammo"),   type = "number" }
         }
     })
 
-    ESX.RegisterCommand('giveammo', 'admin', function(_, args, showError)
+    ESX.RegisterCommand("giveammo", "admin", function(_, args, showError)
         if args.playerId.hasWeapon(args.weapon) then
             args.playerId.addWeaponAmmo(args.weapon, args.ammo)
         else
             showError(_U("command_giveammo_noweapon_found"))
         end
     end, true, {
-        help = _U('command_giveweapon'),
+        help = _U("command_giveweapon"),
         validate = false,
         arguments = {
-            { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' },
-            { name = 'weapon',   help = _U('command_giveammo_weapon'), type = 'weapon' },
-            { name = 'ammo',     help = _U('command_giveammo_ammo'),   type = 'number' }
+            { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" },
+            { name = "weapon",   help = _U("command_giveammo_weapon"), type = "weapon" },
+            { name = "ammo",     help = _U("command_giveammo_ammo"),   type = "number" }
         }
     })
 
-    ESX.RegisterCommand('giveweaponcomponent', 'admin', function(_, args, showError)
+    ESX.RegisterCommand("giveweaponcomponent", "admin", function(_, args, showError)
         if args.playerId.hasWeapon(args.weaponName) then
             local component = ESX.GetWeaponComponent(args.weaponName, args.componentName)
 
             if component then
                 if args.playerId.hasWeaponComponent(args.weaponName, args.componentName) then
-                    showError(_U('command_giveweaponcomponent_hasalready'))
+                    showError(_U("command_giveweaponcomponent_hasalready"))
                 else
                     args.playerId.addWeaponComponent(args.weaponName, args.componentName)
                 end
             else
-                showError(_U('command_giveweaponcomponent_invalid'))
+                showError(_U("command_giveweaponcomponent_invalid"))
             end
         else
-            showError(_U('command_giveweaponcomponent_missingweapon'))
+            showError(_U("command_giveweaponcomponent_missingweapon"))
         end
     end, true, {
-        help = _U('command_giveweaponcomponent'),
+        help = _U("command_giveweaponcomponent"),
         validate = true,
         arguments = {
-            { name = 'playerId',      help = _U('commandgeneric_playerid'),               type = 'player' },
-            { name = 'weaponName',    help = _U('command_giveweapon_weapon'),             type = 'weapon' },
-            { name = 'componentName', help = _U('command_giveweaponcomponent_component'), type = 'string' }
+            { name = "playerId",      help = _U("commandgeneric_playerid"),               type = "player" },
+            { name = "weaponName",    help = _U("command_giveweapon_weapon"),             type = "weapon" },
+            { name = "componentName", help = _U("command_giveweaponcomponent_component"), type = "string" }
         }
     })
 end
 
-ESX.RegisterCommand({ 'clear', 'cls' }, 'user', function(xPlayer, _, _)
-    xPlayer.triggerEvent('chat:clear')
-end, false, { help = _U('command_clear') })
+ESX.RegisterCommand({ "clear", "cls" }, "user", function(xPlayer, _, _)
+    xPlayer.triggerEvent("chat:clear")
+end, false, { help = _U("command_clear") })
 
-ESX.RegisterCommand({ 'clearall', 'clsall' }, 'admin', function(_, _, _)
-    TriggerClientEvent('chat:clear', -1)
-end, true, { help = _U('command_clearall') })
+ESX.RegisterCommand({ "clearall", "clsall" }, "admin", function(_, _, _)
+    TriggerClientEvent("chat:clear", -1)
+end, true, { help = _U("command_clearall") })
 
 ESX.RegisterCommand("refreshjobs", "admin", function(_, _, _)
     ESX.RefreshJobs()
@@ -271,31 +271,31 @@ ESX.RegisterCommand("refreshgroups", "admin", function(_, _, _)
 end, true, { help = _U("command_refreshgroups") })
 
 if not Config.OxInventory then
-    ESX.RegisterCommand('clearinventory', 'admin', function(_, args, _)
+    ESX.RegisterCommand("clearinventory", "admin", function(_, args, _)
         for _, v in ipairs(args.playerId.inventory) do
             if v.count > 0 then
                 args.playerId.setInventoryItem(v.name, 0)
             end
         end
-        TriggerEvent('esx:playerInventoryCleared', args.playerId)
+        TriggerEvent("esx:playerInventoryCleared", args.playerId)
     end, true, {
-        help = _U('command_clearinventory'),
+        help = _U("command_clearinventory"),
         validate = true,
         arguments = {
-            { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+            { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
         }
     })
 
-    ESX.RegisterCommand('clearloadout', 'admin', function(_, args, _)
+    ESX.RegisterCommand("clearloadout", "admin", function(_, args, _)
         for i = #args.playerId.loadout, 1, -1 do
             args.playerId.removeWeapon(args.playerId.loadout[i].name)
         end
-        TriggerEvent('esx:playerLoadoutCleared', args.playerId)
+        TriggerEvent("esx:playerLoadoutCleared", args.playerId)
     end, true, {
-        help = _U('command_clearloadout'),
+        help = _U("command_clearloadout"),
         validate = true,
         arguments = {
-            { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+            { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
         }
     })
 end
@@ -340,37 +340,37 @@ end, true, {
     }
 })
 
-ESX.RegisterCommand('save', 'admin', function(_, args, _)
+ESX.RegisterCommand("save", "admin", function(_, args, _)
     Core.SavePlayer(args.playerId)
     print("[^2Info^0] Saved Player - ^5" .. args.playerId.source .. "^0")
 end, true, {
-    help = _U('command_save'),
+    help = _U("command_save"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand('saveall', 'admin', function(_, _, _)
+ESX.RegisterCommand("saveall", "admin", function(_, _, _)
     Core.SavePlayers()
-end, true, { help = _U('command_saveall') })
+end, true, { help = _U("command_saveall") })
 
-ESX.RegisterCommand('group', { "user", "admin" }, function(xPlayer, _, _)
+ESX.RegisterCommand("group", { "user", "admin" }, function(xPlayer, _, _)
     print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getGroup() .. "^0")
 end, true)
 
-ESX.RegisterCommand('job', { "user", "admin" }, function(xPlayer, _, _)
+ESX.RegisterCommand("job", { "user", "admin" }, function(xPlayer, _, _)
     local data = ("%s, You are currently: ^5%s^0 - ^5%s^0 (^5%s-Duty^0)"):format(xPlayer.getName(), xPlayer.getJob().name, xPlayer.getJob().grade_label, xPlayer.getDuty() and "On" or "Off")
     print(data)
 end, true)
 
-ESX.RegisterCommand('info', { "user", "admin" }, function(xPlayer, _, _)
+ESX.RegisterCommand("info", { "user", "admin" }, function(xPlayer, _, _)
     local job = xPlayer.getJob().name
     print("^2ID : ^5" .. xPlayer.source .. " ^0| ^2Name:^5" .. xPlayer.getName() .. " ^0 | ^2Group:^5" ..
         xPlayer.getGroup() .. "^0 | ^2Job:^5" .. job .. "^0")
 end, true)
 
-ESX.RegisterCommand('coords', "admin", function(xPlayer, _, _)
+ESX.RegisterCommand("coords", "admin", function(xPlayer, _, _)
     local ped = GetPlayerPed(xPlayer.source)
     local coords = GetEntityCoords(ped, false)
     local heading = GetEntityHeading(ped)
@@ -378,67 +378,67 @@ ESX.RegisterCommand('coords', "admin", function(xPlayer, _, _)
     print("Coords - Vector4: ^5" .. vector4(coords.x, coords.y, coords.z, heading) .. "^0")
 end, true)
 
-ESX.RegisterCommand('tpm', "admin", function(xPlayer, _, _)
+ESX.RegisterCommand("tpm", "admin", function(xPlayer, _, _)
     xPlayer.triggerEvent("esx:tpm")
 end, true)
 
-ESX.RegisterCommand('goto', "admin", function(xPlayer, args, _)
+ESX.RegisterCommand("goto", "admin", function(xPlayer, args, _)
     local targetCoords = args.playerId.getCoords()
     xPlayer.setCoords(targetCoords)
 end, true, {
-    help = _U('command_goto'),
+    help = _U("command_goto"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand('bring', "admin", function(xPlayer, args, _)
+ESX.RegisterCommand("bring", "admin", function(xPlayer, args, _)
     local playerCoords = xPlayer.getCoords()
     args.playerId.setCoords(playerCoords)
 end, true, {
-    help = _U('command_bring'),
+    help = _U("command_bring"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand('kill', "admin", function(_, args, _)
+ESX.RegisterCommand("kill", "admin", function(_, args, _)
     args.playerId.triggerSafeEvent("esx:killPlayer")
 end, true, {
-    help = _U('command_kill'),
+    help = _U("command_kill"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand('freeze', "admin", function(_, args, _)
+ESX.RegisterCommand("freeze", "admin", function(_, args, _)
     args.playerId.triggerSafeEvent("esx:freezePlayer", { state = "freeze" })
 end, true, {
-    help = _U('command_freeze'),
+    help = _U("command_freeze"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand('unfreeze', "admin", function(_, args, _)
+ESX.RegisterCommand("unfreeze", "admin", function(_, args, _)
     args.playerId.triggerSafeEvent("esx:freezePlayer", { state = "unfreeze" })
 end, true, {
-    help = _U('command_unfreeze'),
+    help = _U("command_unfreeze"),
     validate = true,
     arguments = {
-        { name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player' }
+        { name = "playerId", help = _U("commandgeneric_playerid"), type = "player" }
     }
 })
 
-ESX.RegisterCommand("noclip", 'admin', function(xPlayer, _, _)
-    xPlayer.triggerEvent('esx:noclip')
+ESX.RegisterCommand("noclip", "admin", function(xPlayer, _, _)
+    xPlayer.triggerEvent("esx:noclip")
 end, false)
 
-ESX.RegisterCommand('players', "admin", function(_, _, _)
+ESX.RegisterCommand("players", "admin", function(_, _, _)
     local xPlayers = ESX.GetExtendedPlayers() -- Returns all xPlayers
     print("^5" .. #xPlayers .. " ^2online player(s)^0")
     for i = 1, #(xPlayers) do
