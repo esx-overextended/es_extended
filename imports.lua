@@ -24,15 +24,39 @@ else -- Only register these for the server
 
     ESX.Jobs = setmetatable({}, {
         __index = function(self, index)
-            self = ESX.GetJobs()
+            if not next(self) then
+                self()
+            end
             return self[index]
+        end,
+        __call = function(self)
+            self = ESX.GetJobs()
+            return self
+        end,
+        __pairs = function(self)
+            if not next(self) then
+                self()
+            end
+            return next, self, nil
         end
     })
 
     ESX.Groups = setmetatable({}, {
         __index = function(self, index)
-            self = ESX.GetGroups()
+            if not next(self) then
+                self()
+            end
             return self[index]
+        end,
+        __call = function(self)
+            self = ESX.GetGroups()
+            return self
+        end,
+        __pairs = function(self)
+            if not next(self) then
+                self()
+            end
+            return next, self, nil
         end
     })
 
