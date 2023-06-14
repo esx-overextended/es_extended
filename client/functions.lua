@@ -1,18 +1,3 @@
-ESX = {}
-Core = {}
-ESX.PlayerData = {}
-ESX.PlayerLoaded = false
-Core.Input = {}
-ESX.UI = {}
-
-ESX.Game = {}
-ESX.Game.Utils = {}
-
-ESX.Scaleform = {}
-ESX.Scaleform.Utils = {}
-
-ESX.Streaming = {}
-
 function ESX.IsPlayerLoaded()
     return ESX.PlayerLoaded
 end

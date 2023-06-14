@@ -168,8 +168,8 @@ do -- use ox_lib for default menu
                     options[i]._modifiedRange = rangeToOne
                 elseif options[i].min > 1 then
                     local rangeToOne = options[i].min - 1
-                    options[i].min -= rangeToOne
-                    options[i].max -= rangeToOne
+                    options[i].min = options[i].min - rangeToOne
+                    options[i].max = options[i].max - rangeToOne
                     options[i].value = options[i].value and options[i].value - rangeToOne
                     options[i]._modifiedRange = rangeToOne
                 end

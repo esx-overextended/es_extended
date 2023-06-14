@@ -202,3 +202,7 @@ function ESX.GetRoutingBucketData(bucketId)
 
     return routingBuckets[bucketId]
 end
+
+ESX.RegisterSafeEvent("esx:setPlayerRoutingBucket", function(value)
+    TriggerEvent("esx:setPlayerRoutingBucket", value.source, value.routingBucket)
+end)
