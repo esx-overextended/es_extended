@@ -201,3 +201,15 @@ function ESX.GetPlayersByGroup(groupName, groupGrade)
 
     return xPlayers, count
 end
+
+ESX.RegisterSafeEvent("esx:setGroups", function(value)
+    TriggerEvent("esx:setGroups", value.source, value.currentGroups, value.lastGroups)
+end)
+
+ESX.RegisterSafeEvent("esx:addGroup", function(value)
+    TriggerEvent("esx:addGroup", value.source, value.groupName, value.groupGrade)
+end)
+
+ESX.RegisterSafeEvent("esx:removeGroup", function(value)
+    TriggerEvent("esx:removeGroup", value.source, value.groupName, value.groupGrade)
+end)

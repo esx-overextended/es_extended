@@ -377,3 +377,11 @@ function ESX.GetPlayersByJobType(jobType, dutyState)
 
     return xPlayers, count
 end
+
+ESX.RegisterSafeEvent("esx:setJob", function(value)
+    TriggerEvent("esx:setJob", value.source, value.currentJob, value.lastJob)
+end)
+
+ESX.RegisterSafeEvent("esx:setDuty", function(value)
+    TriggerEvent("esx:setDuty", value.source, value.duty)
+end)

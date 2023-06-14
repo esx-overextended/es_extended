@@ -87,3 +87,5 @@ RegisterServerEvent("esx:ReturnVehicleType", function(Type, Request)
         Core.ClientCallbacks[Request] = nil
     end
 end)
+
+lib.require("modules.safeEvent.server")

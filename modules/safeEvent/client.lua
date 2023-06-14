@@ -1,10 +1,11 @@
----@diagnostic disable: duplicate-set-field
+if ESX.RegisterSafeEvent then return end
+
 local currentResourceName = GetCurrentResourceName()
 local registeredEvents = {}
 
 ---@param eventName string
 ---@param cb function
-function ESX.RegisterSafeEvent(eventName, cb)
+function ESX.RegisterSafeEvent(eventName, cb) ---@diagnostic disable-line: duplicate-set-field
     if type(eventName) ~= "string" then
         return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
     end

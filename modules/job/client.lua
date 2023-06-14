@@ -11,10 +11,14 @@ function ESX.GetJobs() ---@diagnostic disable-line: duplicate-set-field
     return GlobalState["Jobs"]
 end
 
-AddEventHandler("esx:setJob", function(job)
-    ESX.SetPlayerData("job", job)
+ESX.RegisterSafeEvent("esx:setJob", function(value)
+    TriggerEvent("esx:setJob", value.currentJob, value.lastJob)
 end)
 
-AddEventHandler("esx:setDuty", function(duty)
-    ESX.SetPlayerData("duty", duty)
+ESX.RegisterSafeEvent("esx:setDuty", function(value)
+    TriggerEvent("esx:setDuty", value.duty)
+end)
+
+AddEventHandler("esx:setJob", function(job)
+    ESX.SetPlayerData("job", job)
 end)
