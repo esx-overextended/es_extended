@@ -178,6 +178,8 @@ local function loadESXPlayer(identifier, playerId, isNew)
     xPlayer.set("sex", userData.sex)
     xPlayer.set("height", userData.height)
 
+    xPlayer.set("routingBucket", ESX.GetPlayerRoutingBucket(playerId))
+
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
         xPlayerServer = xPlayer,
@@ -188,7 +190,6 @@ local function loadESXPlayer(identifier, playerId, isNew)
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),
-            duty = xPlayer.getDuty(),
             loadout = xPlayer.getLoadout(),
             maxWeight = xPlayer.getMaxWeight(),
             money = xPlayer.getMoney(),
@@ -198,7 +199,8 @@ local function loadESXPlayer(identifier, playerId, isNew)
             dateofbirth = xPlayer.get("dateofbirth") or "01/01/2000",
             height = xPlayer.get("height") or 120,
             dead = false,
-            metadata = xPlayer.getMetadata()
+            metadata = xPlayer.getMetadata(),
+            routingBucket = xPlayer.get("routingBucket")
         },
         isNew = isNew,
         skin = userData.skin
