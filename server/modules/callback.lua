@@ -1,43 +1,28 @@
 local serverCallbacks = {}
-
-local clientRequests = {}
-local RequestId = 0
+local cbEvent = ("__ox_cb_%s")
 
 ---@param eventName string
----@param callback function
-ESX.RegisterServerCallback = function(eventName, callback)
-    serverCallbacks[eventName] = callback
+---@param cb function
+ESX.RegisterServerCallback = function(eventName, cb)
+    serverCallbacks[eventName] = cb
+
+    RegisterNetEvent(cbEvent:format(eventName), function(resource, key, ...)
+        if not serverCallbacks[eventName] then
+            return print(("[^1ERROR^7] Server Callback not registered, name: ^5%s^7, invoker resource: ^5%s^7"):format(eventName, resource))
+        end
+
+        local source = source
+
+        serverCallbacks[eventName](source, function(...)
+            TriggerClientEvent(cbEvent:format(resource), source, key, ...)
+        end, ...)
+    end)
 end
 
-RegisterServerEvent("esx:triggerServerCallback", function(eventName, requestId, invoker, ...)
-    if not serverCallbacks[eventName] then
-        return print(("[^1ERROR^7] Server Callback not registered, name: ^5%s^7, invoker resource: ^5%s^7"):format(eventName, invoker))
-    end
-
-    local source = source
-
-    serverCallbacks[eventName](source, function(...)
-        TriggerClientEvent("esx:serverCallback", source, requestId, invoker, ...)
-    end, ...)
-end)
-
----@param player number playerId
+---@param source playerId
 ---@param eventName string
----@param callback function
+---@param cb function
 ---@param ... any
-ESX.TriggerClientCallback = function(player, eventName, callback, ...)
-    clientRequests[RequestId] = callback
-
-    TriggerClientEvent("esx:triggerClientCallback", player, eventName, RequestId, GetInvokingResource() or "unknown", ...)
-
-    RequestId = RequestId + 1
+ESX.TriggerClientCallback = function(source, eventName, cb, ...)
+    return lib.callback(eventName, source, cb, ...)
 end
-
-RegisterServerEvent("esx:clientCallback", function(requestId, invoker, ...)
-    if not clientRequests[requestId] then
-        return print(("[^1ERROR^7] Client Callback with requestId ^5%s^7 Was Called by ^5%s^7 but does not exist."):format(requestId, invoker))
-    end
-
-    clientRequests[requestId](...)
-    clientRequests[requestId] = nil
-end)
