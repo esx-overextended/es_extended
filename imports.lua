@@ -25,7 +25,7 @@ else -- Only register these for the server
     ESX.Jobs = setmetatable({}, {
         __index = function(self, index)
             if not next(self) then
-                self()
+                self = self()
             end
             return self[index]
         end,
@@ -35,7 +35,7 @@ else -- Only register these for the server
         end,
         __pairs = function(self)
             if not next(self) then
-                self()
+                self = self()
             end
             return next, self, nil
         end
@@ -44,7 +44,7 @@ else -- Only register these for the server
     ESX.Groups = setmetatable({}, {
         __index = function(self, index)
             if not next(self) then
-                self()
+                self = self()
             end
             return self[index]
         end,
@@ -54,7 +54,7 @@ else -- Only register these for the server
         end,
         __pairs = function(self)
             if not next(self) then
-                self()
+                self = self()
             end
             return next, self, nil
         end
