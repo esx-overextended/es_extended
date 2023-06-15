@@ -135,9 +135,9 @@ ESX.RegisterCommand({"cardel", "dv"}, "admin", function(xPlayer, args, _)
         local vehicleEntity = vehicleEntities[i]
         local vehicle = ESX.GetVehicle(vehicleEntity)
 
-        if not vehicle or (not vehicle?.owner and not vehicle?.group) then
+        if not vehicle then
             DeleteEntity(vehicleEntity)
-        elseif vehicle and args.owned then
+        elseif args.owned or (not args.owned and not vehicle?.owner and not vehicle?.group) then
             vehicle.delete()
         end
     end
