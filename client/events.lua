@@ -102,3 +102,59 @@ end)
 ESX.RegisterSafeEvent("esx:killPlayer", function(_)
     TriggerEvent("esx:killPlayer")
 end)
+
+AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
+    if not value then return end
+
+    local netId = tonumber(bagName:gsub("entity:", ""), 10)
+    local doesNetIdExist, timeout = false, 0
+
+    while not doesNetIdExist and timeout < 1000 do
+        doesNetIdExist = NetworkDoesEntityExistWithNetworkId(netId)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+
+    Wait(500)
+
+    local entity = NetworkDoesEntityExistWithNetworkId(netId) and NetworkGetEntityFromNetworkId(netId)
+
+    if not entity or entity == 0 then return end
+
+    if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
+
+    SetVehicleOnGroundProperly(entity)
+    SetVehicleNeedsToBeHotwired(entity, false)
+    SetVehRadioStation(entity, "OFF")
+
+    Entity(entity).state:set(key, nil, true)
+end)
+
+AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, _, _)
+    if not value then return end
+
+    local netId = tonumber(bagName:gsub("entity:", ""), 10)
+    local doesNetIdExist, timeout = false, 0
+
+    while not doesNetIdExist and timeout < 1000 do
+        doesNetIdExist = NetworkDoesEntityExistWithNetworkId(netId)
+        timeout += 1
+        Wait(0)
+    end
+
+    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+
+    Wait(500)
+
+    local entity = NetworkDoesEntityExistWithNetworkId(netId) and NetworkGetEntityFromNetworkId(netId)
+
+    if not entity or entity == 0 then return end
+
+    if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
+
+    if not ESX.Game.SetVehicleProperties(entity, value) then return end
+
+    Entity(entity).state:set(key, nil, true)
+end)
