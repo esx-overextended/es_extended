@@ -71,9 +71,9 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     end
 
     if Config.DisableVehicleSeatShuff then
-        AddEventHandler("esx:enteredVehicle", function(vehicle, _, seat)
-            if seat == 0 then
-                SetPedIntoVehicle(ESX.PlayerData.ped, vehicle, 0)
+        lib.onCache('seat', function(seat)
+            if (seat == 0) then
+                SetPedIntoVehicle(cache.ped, vehicle, 0)
                 SetPedConfigFlag(ESX.PlayerData.ped, 184, true)
             end
         end)
