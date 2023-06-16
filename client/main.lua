@@ -16,6 +16,7 @@ end)
 
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
+    ESX.PlayerData.ped = cache.ped
 
     if Config.Multichar then
         Wait(3000)
@@ -46,135 +47,8 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
 
     ESX.PlayerLoaded = true
 
-    while ESX.PlayerData.ped == nil do Wait(20) end
-
-    if Config.EnablePVP then
-        SetCanAttackFriendly(ESX.PlayerData.ped, true, false)
-        NetworkSetFriendlyFireOption(true)
-    end
-
-    local playerId = PlayerId()
-
-    -- RemoveHudCommonents
-    for i = 1, #(Config.RemoveHudCommonents) do
-        if Config.RemoveHudCommonents[i] then
-            SetHudComponentPosition(i, 999999.0, 999999.0)
-        end
-    end
-
-    -- DisableNPCDrops
-    if Config.DisableNPCDrops then
-        local weaponPickups = { `PICKUP_WEAPON_CARBINERIFLE`, `PICKUP_WEAPON_PISTOL`, `PICKUP_WEAPON_PUMPSHOTGUN` }
-        for i = 1, #weaponPickups do
-            ToggleUsePickupsForPlayer(playerId, weaponPickups[i], false)
-        end
-    end
-
-    if Config.DisableVehicleSeatShuff then
-        AddEventHandler("esx:enteredVehicle", function(vehicle, _, seat)
-            if seat == 0 then
-                SetPedIntoVehicle(ESX.PlayerData.ped, vehicle, 0)
-                SetPedConfigFlag(ESX.PlayerData.ped, 184, true)
-            end
-        end)
-    end
-
-    if Config.DisableHealthRegeneration or Config.DisableWeaponWheel or Config.DisableAimAssist or Config.DisableVehicleRewards then
-        CreateThread(function()
-            while true do
-                if Config.DisableHealthRegeneration then
-                    SetPlayerHealthRechargeMultiplier(playerId, 0.0)
-                end
-
-                if Config.DisableWeaponWheel then
-                    HudWeaponWheelIgnoreSelection()
-                    DisableControlAction(0, 37, true)
-                end
-
-                if Config.DisableAimAssist then
-                    if IsPedArmed(ESX.PlayerData.ped, 4) then
-                        SetPlayerLockonRangeOverride(playerId, 2.0)
-                    end
-                end
-
-                if Config.DisableVehicleRewards then
-                    DisablePlayerVehicleRewards(playerId)
-                end
-
-                Wait(0)
-            end
-        end)
-    end
-
-    -- Disable Dispatch services
-    if Config.DisableDispatchServices then
-        for i = 1, 15 do
-            EnableDispatchService(i, false)
-        end
-    end
-
-    -- Disable Scenarios
-    if Config.DisableScenarios then
-        local scenarios = {
-            "WORLD_VEHICLE_ATTRACTOR",
-            "WORLD_VEHICLE_AMBULANCE",
-            "WORLD_VEHICLE_BICYCLE_BMX",
-            "WORLD_VEHICLE_BICYCLE_BMX_BALLAS",
-            "WORLD_VEHICLE_BICYCLE_BMX_FAMILY",
-            "WORLD_VEHICLE_BICYCLE_BMX_HARMONY",
-            "WORLD_VEHICLE_BICYCLE_BMX_VAGOS",
-            "WORLD_VEHICLE_BICYCLE_MOUNTAIN",
-            "WORLD_VEHICLE_BICYCLE_ROAD",
-            "WORLD_VEHICLE_BIKE_OFF_ROAD_RACE",
-            "WORLD_VEHICLE_BIKER",
-            "WORLD_VEHICLE_BOAT_IDLE",
-            "WORLD_VEHICLE_BOAT_IDLE_ALAMO",
-            "WORLD_VEHICLE_BOAT_IDLE_MARQUIS",
-            "WORLD_VEHICLE_BOAT_IDLE_MARQUIS",
-            "WORLD_VEHICLE_BROKEN_DOWN",
-            "WORLD_VEHICLE_BUSINESSMEN",
-            "WORLD_VEHICLE_HELI_LIFEGUARD",
-            "WORLD_VEHICLE_CLUCKIN_BELL_TRAILER",
-            "WORLD_VEHICLE_CONSTRUCTION_SOLO",
-            "WORLD_VEHICLE_CONSTRUCTION_PASSENGERS",
-            "WORLD_VEHICLE_DRIVE_PASSENGERS",
-            "WORLD_VEHICLE_DRIVE_PASSENGERS_LIMITED",
-            "WORLD_VEHICLE_DRIVE_SOLO",
-            "WORLD_VEHICLE_FIRE_TRUCK",
-            "WORLD_VEHICLE_EMPTY",
-            "WORLD_VEHICLE_MARIACHI",
-            "WORLD_VEHICLE_MECHANIC",
-            "WORLD_VEHICLE_MILITARY_PLANES_BIG",
-            "WORLD_VEHICLE_MILITARY_PLANES_SMALL",
-            "WORLD_VEHICLE_PARK_PARALLEL",
-            "WORLD_VEHICLE_PARK_PERPENDICULAR_NOSE_IN",
-            "WORLD_VEHICLE_PASSENGER_EXIT",
-            "WORLD_VEHICLE_POLICE_BIKE",
-            "WORLD_VEHICLE_POLICE_CAR",
-            "WORLD_VEHICLE_POLICE",
-            "WORLD_VEHICLE_POLICE_NEXT_TO_CAR",
-            "WORLD_VEHICLE_QUARRY",
-            "WORLD_VEHICLE_SALTON",
-            "WORLD_VEHICLE_SALTON_DIRT_BIKE",
-            "WORLD_VEHICLE_SECURITY_CAR",
-            "WORLD_VEHICLE_STREETRACE",
-            "WORLD_VEHICLE_TOURBUS",
-            "WORLD_VEHICLE_TOURIST",
-            "WORLD_VEHICLE_TANDL",
-            "WORLD_VEHICLE_TRACTOR",
-            "WORLD_VEHICLE_TRACTOR_BEACH",
-            "WORLD_VEHICLE_TRUCK_LOGS",
-            "WORLD_VEHICLE_TRUCKS_TRAILERS",
-            "WORLD_VEHICLE_DISTANT_EMPTY_GROUND",
-            "WORLD_HUMAN_PAPARAZZI"
-        }
-
-        for _, v in pairs(scenarios) do
-            SetScenarioTypeEnabled(v, false)
-        end
-    end
-
     SetDefaultVehicleNumberPlateTextPattern(-1, Config.CustomAIPlates)
+
     StartServerSyncLoops()
 end)
 
@@ -420,12 +294,6 @@ if not Config.OxInventory and Config.EnableDefaultInventory then
     end, false)
 
     RegisterKeyMapping("showinv", _U("keymap_showinventory"), "keyboard", "F2")
-end
-
--- disable wanted level
-if not Config.EnableWantedLevel then
-    ClearPlayerWantedLevel(PlayerId())
-    SetMaxWantedLevel(0)
 end
 
 if not Config.OxInventory then
