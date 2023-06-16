@@ -74,7 +74,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
         lib.onCache('seat', function(seat)
             if (seat == 0) then
                 SetPedIntoVehicle(cache.ped, vehicle, 0)
-                SetPedConfigFlag(ESX.PlayerData.ped, 184, true)
+                SetPedConfigFlag(cache.ped, 184, true)
             end
         end)
     end
