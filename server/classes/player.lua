@@ -62,7 +62,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
     end
 
-    ---Sets the current player coords
+    ---Sets the current player coordinates
     ---@param coords table | vector3 | vector4
     function self.setCoords(coords)
         local ped = GetPlayerPed(self.source)
@@ -75,7 +75,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
     end
 
     ---Gets the current player coordinates
-    ---@param vector? boolean whether to return the the player coords as vector4 or as table
+    ---@param vector? boolean whether to return the player coords as vector4 or as table
     ---@return vector4 | table
     function self.getCoords(vector)
         local playerPed = GetPlayerPed(self.source)

@@ -1,3 +1,15 @@
+-- Copyright (c) 2022-2023 Overextended - Modified to fit ESX system in 2023 by ESX-Overextended
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in all
+-- copies or substantial portions of the Software.
+
 ---@type table<entityId, table<number, table>>
 local vehiclesPropertiesQueue = {}
 
@@ -39,6 +51,27 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     stateBag:set("plate", self.plate, true)
     stateBag:set("vin", self.vin, true)
     stateBag:set("metadata", self.metadata, true)
+
+    ---Sets the current vehicle coordinates
+    ---@param coords table | vector3 | vector4
+    function self.setCoords(coords)
+        local vector = vector4(coords?.x, coords?.y, coords?.z, coords?.w or coords?.heading or 0.0)
+
+        if not vector then return end
+
+        SetEntityCoords(self.entity, vector.x, vector.y, vector.z, false, false, false, false)
+        SetEntityHeading(self.entity, vector.w)
+    end
+
+    ---Gets the current vehicle coordinates
+    ---@param vector? boolean whether to return the vehicle coords as vector4 or as table
+    ---@return vector4 | table
+    function self.getCoords(vector)
+        local coords = GetEntityCoords(self.entity)
+        local heading = GetEntityHeading(self.entity)
+
+        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, heading = heading}
+    end
 
     ---Sets the specified value to the key variable for the current vehicle
     ---@param key string
@@ -302,7 +335,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             if not vehicleData then print(("[^1ERROR^7] Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model)) return end
 
             MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
-                vehicle.vin or ESX.GenerateVin(vehicleData.model),
+                vehicle.vin or Core.GenerateVin(vehicleData.model),
                 vehicle.model or vehicleData.model,
                 vehicle.class or vehicleData.data?.class,
                 vehicle.metadata and json.encode(vehicle.metadata) or "{}",
@@ -349,8 +382,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local owner = type(data.owner) == "string" and data.owner or false
     local group = type(data.group) == "string" and data.group or false
     local stored = data.stored
-    local plate = ESX.GeneratePlate()
-    local vin = ESX.GenerateVin(model)
+    local plate = Core.GeneratePlate()
+    local vin = Core.GenerateVin(model)
     local metadata = {}
     local vehicleProperties = data.properties or {}
 
@@ -407,7 +440,7 @@ local formatLen = #plateFormat
 
 ---Creates a unique vehicle plate.
 ---@return string
-function ESX.GeneratePlate()
+function Core.GeneratePlate()
     local plate = table.create(8, 0)
 
     while true do
@@ -452,7 +485,7 @@ end
 ---Creates a unique vehicle vin number.
 ---@param model string
 ---@return string
-function ESX.GenerateVin(model)
+function Core.GenerateVin(model)
     local vehicle = ESX.GetVehicleData(model:lower())
     local arr = {
         math_random(1, 9),
@@ -530,7 +563,7 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
 end
 
 AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
-    if value ~= nil then return end -- TODO: check if peds are still appearing in vehicles and are not being deleted, changing this to "value ~= nil" might fix it...
+    if value ~= nil then return end
 
     local entity = GetEntityFromStateBagName(bagName)
 
