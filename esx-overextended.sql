@@ -6,11 +6,12 @@ CREATE TABLE IF NOT EXISTS `users` (
     `identifier` VARCHAR(60) NOT NULL,
     `accounts` LONGTEXT NULL DEFAULT NULL,
     `group` VARCHAR(50) NULL DEFAULT "user",
-    `inventory` LONGTEXT NULL DEFAULT NULL,
     `job` VARCHAR(20) NULL DEFAULT "unemployed",
     `job_grade` INT NULL DEFAULT 0,
     `job_duty` TINYINT(1) NULL DEFAULT 0,
+    `inventory` LONGTEXT NULL DEFAULT NULL,
     `loadout` LONGTEXT NULL DEFAULT NULL,
+    `skin` LONGTEXT NULL DEFAULT NULL,
     `metadata` LONGTEXT NULL DEFAULT NULL,
     `position` LONGTEXT NULL DEFAULT NULL,
 
@@ -21,7 +22,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 for anyone who is migrating from ESX Legacy and already have `users` table which causes "CREATE TABLE IF NOT EXISTS `users`" not to execute and apply the needed changes...
 */
 ALTER TABLE `users`
-    ADD COLUMN IF NOT EXISTS `job_duty` TINYINT(1) NULL DEFAULT 0 AFTER `job_grade`;
+    ADD COLUMN IF NOT EXISTS `job_duty` TINYINT(1) NULL DEFAULT 0 AFTER `job_grade`,
+    ADD COLUMN IF NOT EXISTS `skin` LONGTEXT NULL DEFAULT NULL;
 
 
 /* ITEM */
