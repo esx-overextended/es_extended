@@ -1,5 +1,5 @@
 <h1 align='center'>ESX Overextended</a></h1>
-<p align='center'><a href='https://documentation.esx-framework.org/legacy/installation'>Documentation</a></b></h5>
+<p align='center'><a href='https://esx-overextended.github.io/es_extended/installation'>Documentation</a></b></h5>
 
 <hr>
 
@@ -23,6 +23,8 @@
 * Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
 
 * Multiple Group Support: Implemented a comprehensive multiple group support system that remains fully backward compatibile with ESX Legacy. This enhancement enables player objects to seamlessly associate with multiple groups such as administrators, gangs, VIPs, and more, expanding the flexibility and functionality of the system.
+
+* Server-Side Vehicle Class: Spawned vehicles now possess their own class, providing a plethora of methods to efficiently utilize and manipulate vehicle data. This represents a significant advancement, surpassing the limitations of the previous server-side vehicle spawning system found in esx_legacy.
 
 ### ℹ Information
 
