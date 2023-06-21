@@ -65,6 +65,5 @@ files {
 
 dependencies {
     "/native:0x6AE51D4B",
-    "oxmysql",
-    "spawnmanager",
+    "oxmysql"
 }

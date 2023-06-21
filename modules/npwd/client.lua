@@ -33,9 +33,7 @@ AddEventHandler("esx:onPlayerLogout", function()
 end)
 
 AddEventHandler("esx:removeInventoryItem", function(item, count)
-    if not npwd then
-        return
-    end
+    if not npwd then return end
 
     if item == "phone" and count == 0 then
         npwd:setPhoneDisabled(true)
@@ -43,9 +41,7 @@ AddEventHandler("esx:removeInventoryItem", function(item, count)
 end)
 
 AddEventHandler("esx:addInventoryItem", function(item)
-    if not npwd or item ~= "phone" then
-        return
-    end
+    if not npwd or item ~= "phone" then return end
 
     npwd:setPhoneDisabled(false)
 end)

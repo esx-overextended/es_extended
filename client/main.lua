@@ -5,7 +5,6 @@ CreateThread(function()
         Wait(100)
 
         if NetworkIsPlayerActive(PlayerId()) then
-            exports.spawnmanager:setAutoSpawn(false)
             DoScreenFadeOut(0)
             Wait(500)
             TriggerServerEvent("esx:onPlayerJoined")
@@ -18,10 +17,8 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
     ESX.PlayerData.ped = cache.ped
 
-    if Config.Multichar then
-        Wait(3000)
-    else
-        exports.spawnmanager:spawnPlayer({
+    if not Config.Multichar then
+        exports[cache.resource]:spawnPlayer({
             x = ESX.PlayerData.coords.x,
             y = ESX.PlayerData.coords.y,
             z = ESX.PlayerData.coords.z + 0.25,
@@ -30,6 +27,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
             skipFade = false
         }, function()
             TriggerServerEvent("esx:onPlayerSpawn")
+
             TriggerEvent("esx:onPlayerSpawn")
             TriggerEvent("esx:restoreLoadout")
 
@@ -40,6 +38,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
             end
 
             TriggerEvent("esx:loadingScreenOff")
+
             ShutdownLoadingScreen()
             ShutdownLoadingScreenNui()
         end)
