@@ -37,6 +37,8 @@ local function StartDBSync()
 end
 
 MySQL.ready(function()
+    MySQL.transaction.await(lib.require("esx-sql-triggers"))
+
     if not Config.OxInventory then
         local items = MySQL.query.await("SELECT * FROM items")
         for _, v in ipairs(items) do
