@@ -602,6 +602,7 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
     table.remove(vehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue
 
     if next(vehiclesPropertiesQueue[entity]) then
+        Wait(10) -- needed. if we don't have a wait here, the server's change handler will not be triggerred all the time, therefore the queue will not empty, causing the future ESX.SetVehicleProperties calls not to take in place
         return Entity(entity).state:set(key, vehiclesPropertiesQueue[entity][1], true) -- applying the next properties from the queue
         --[[
         local bagName = ("entity:%d"):format(NetworkGetNetworkIdFromEntity(entity))
