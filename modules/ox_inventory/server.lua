@@ -231,3 +231,11 @@ Core.PlayerFunctionOverrides.OxInventory = {
         end
     end
 }
+
+AddEventHandler("esx:playerLoaded", function(_, xPlayer, isNew)
+    if not isNew or not Config.StartingAccountMoney.money then return end
+
+    Wait(1000) -- wait until the client initializes
+
+    xPlayer.setMoney(Config.StartingAccountMoney.money)
+end)
