@@ -18,16 +18,16 @@ local function freeze(state)
     ClearPedTasksImmediately(playerPed)
 end
 
----Spawns/Revives the player with the specified data such as coords, health, model and ...
+---Spawns the player with the specified data such as coords, health, model and ...
 ---@param spawnData table
 ---@param cb function
----@return function | boolean (returns boolean indicating whether the action was successful or not if cb is omitted)
+---@return boolean (whether the action was successful or not)
 local function spawnPlayer(spawnData, cb)
     if isSpawning then return false end
 
     isSpawning = true
 
-    if not spawnData or type(spawnData) ~= "table" then
+    if type(spawnData) ~= "table" then
         isSpawning = false
 
         print("[^1ERROR^7] The first paramater of spawnPlayer function is invalid!")
@@ -35,9 +35,9 @@ local function spawnPlayer(spawnData, cb)
         return false
     end
 
-    spawnData.x = (spawnData.x and spawnData.x + 0.0) or -1
-    spawnData.y = (spawnData.x and spawnData.x + 0.0) or -1
-    spawnData.z = (spawnData.x and spawnData.x + 0.0) or -1
+    spawnData.x = (type(spawnData.y) == "number" and spawnData.x + 0.0) or -1
+    spawnData.y = (type(spawnData.y) == "number" and spawnData.y + 0.0) or -1
+    spawnData.z = (type(spawnData.z) == "number" and spawnData.z + 0.0) or -1
     spawnData.heading = (spawnData.heading and spawnData.heading + 0.0) or 0.0
 
     for key, value in pairs(spawnData) do
@@ -102,7 +102,9 @@ local function spawnPlayer(spawnData, cb)
 
     isSpawning = false
 
-    return cb and cb(spawnData) or true
+    if cb then CreateThread(function() cb(spawnData) end) end
+
+    return true
 end
 
 exports("spawnPlayer", spawnPlayer)
