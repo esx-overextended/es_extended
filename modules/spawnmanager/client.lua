@@ -1,101 +1,108 @@
--- This file is a slightly modified version of FiveM's official spawnmanager (https://github.com/citizenfx/cfx-server-data/blob/master/resources/%5Bmanagers%5D/spawnmanager/spawnmanager.lua)
--- This has be re-done inside es_extended to reduce the dependency resources...
+-- The idea of this file comes from cfx-server-data's spawnmanager
+-- This has be implemented inside es_extended to reduce the dependency resources...
 
-local spawnLock = false
+local isSpawning = false
 
-local function freezePlayer(playerId, freeze)
-    SetPlayerControl(playerId, not freeze, false) ---@diagnostic disable-line: param-type-mismatch
+---Freeze/Unfreezes the player
+---@param state boolean
+local function freeze(state)
+    SetPlayerControl(cache.playerId, not state, false) ---@diagnostic disable-line: param-type-mismatch
 
-    local playerPed = GetPlayerPed(playerId)
+    local playerPed = GetPlayerPed(cache.playerId)
 
-    SetEntityVisible(playerPed, not freeze, false)
-    SetEntityCollision(playerPed, not freeze, true)
-    FreezeEntityPosition(playerPed, freeze)
-    SetPlayerInvincible(playerId, freeze)
+    SetEntityVisible(playerPed, not state, false)
+    SetEntityCollision(playerPed, not state, true)
+    FreezeEntityPosition(playerPed, state)
+    SetPlayerInvincible(cache.playerId, state)
 
     ClearPedTasksImmediately(playerPed)
 end
 
-local function spawnPlayer(spawnIdx, cb)
-    if spawnLock then return end
+---Spawns/Revives the player with the specified data such as coords, health, model and ...
+---@param spawnData table
+---@param cb function
+---@return function | boolean (returns boolean indicating whether the action was successful or not if cb is omitted)
+local function spawnPlayer(spawnData, cb)
+    if isSpawning then return false end
 
-    spawnLock = true
+    isSpawning = true
 
-    CreateThread(function()
-        if not spawnIdx or type(spawnIdx) ~= "table" then
-            spawnLock = false
+    if not spawnData or type(spawnData) ~= "table" then
+        isSpawning = false
 
-            Citizen.Trace("first paramater of spawnPlayer function is invalid\n")
+        print("[^1ERROR^7] The first paramater of spawnPlayer function is invalid!")
+
+        return false
+    end
+
+    spawnData.x = (spawnData.x and spawnData.x + 0.0) or -1
+    spawnData.y = (spawnData.x and spawnData.x + 0.0) or -1
+    spawnData.z = (spawnData.x and spawnData.x + 0.0) or -1
+    spawnData.heading = (spawnData.heading and spawnData.heading + 0.0) or 0.0
+
+    for key, value in pairs(spawnData) do
+        if type(value) == "number" and value == -1 then
+            print(("[^1ERROR^7] The key '%s' from first parameter of spawnPlayer function is invalid!"):format(key))
 
             return false
         end
+    end
 
-        local spawn = spawnIdx
+    if not spawnData.skipFade then
+        DoScreenFadeOut(500)
 
-        spawn.x = spawn.x + 0.0
-        spawn.y = spawn.y + 0.0
-        spawn.z = spawn.z + 0.0
-
-        spawn.heading = spawn.heading and (spawn.heading + 0.0) or 0.0
-
-        if not spawn.skipFade then
-            DoScreenFadeOut(500)
-
-            while not IsScreenFadedOut() do
-                Wait(0)
-            end
-        end
-
-        freezePlayer(cache.playerId, true)
-
-        if spawn.model then
-            lib.requestModel(spawn.model)
-
-            SetPlayerModel(cache.playerId, spawn.model)
-            SetModelAsNoLongerNeeded(spawn.model)
-        end
-
-        RequestCollisionAtCoord(spawn.x, spawn.y, spawn.z)
-
-        local ped = PlayerPedId()
-
-        SetEntityCoordsNoOffset(ped, spawn.x, spawn.y, spawn.z, false, false, false)
-
-        NetworkResurrectLocalPlayer(spawn.x, spawn.y, spawn.z, spawn.heading, true, true)
-
-        ClearPedTasksImmediately(ped)
-        SetEntityHealth(ped, spawn.health or 300)
-        RemoveAllPedWeapons(ped, true)
-        ClearPlayerWantedLevel(cache.playerId)
-
-        local time = GetGameTimer()
-
-        while not HasCollisionLoadedAroundEntity(ped) and (GetGameTimer() - time) < 5000 do
+        while not IsScreenFadedOut() do
             Wait(0)
         end
+    end
 
-        ShutdownLoadingScreen()
+    freeze(true)
 
-        if IsScreenFadedOut() then
-            DoScreenFadeIn(500)
+    if spawnData.model then
+        lib.requestModel(spawnData.model)
 
-            while not IsScreenFadedIn() do
-                Wait(0)
-            end
+        SetPlayerModel(cache.playerId, spawnData.model)
+        SetModelAsNoLongerNeeded(spawnData.model)
+    end
+
+    RequestCollisionAtCoord(spawnData.x, spawnData.y, spawnData.z)
+
+    local ped = PlayerPedId()
+
+    SetEntityCoordsNoOffset(ped, spawnData.x, spawnData.y, spawnData.z, false, false, false)
+    NetworkResurrectLocalPlayer(spawnData.x, spawnData.y, spawnData.z, spawnData.heading, true, true)
+
+    spawnData.health = spawnData.health or 200
+
+    ClearPedTasksImmediately(ped)
+    SetPedMaxHealth(ped, spawnData.health)
+    SetEntityHealth(ped, spawnData.health)
+    RemoveAllPedWeapons(ped, true)
+    ClearPlayerWantedLevel(cache.playerId)
+
+    local time = GetGameTimer()
+
+    while not HasCollisionLoadedAroundEntity(ped) and (GetGameTimer() - time) < 5000 do
+        Wait(0)
+    end
+
+    ShutdownLoadingScreen()
+
+    if IsScreenFadedOut() then
+        DoScreenFadeIn(500)
+
+        while not IsScreenFadedIn() do
+            Wait(0)
         end
+    end
 
-        freezePlayer(cache.playerId, false)
+    freeze(false)
 
-        TriggerEvent("esx:onPlayerSpawn", spawn)
+    TriggerEvent("esx:onPlayerSpawn", spawnData)
 
-        if cb then
-            cb(spawn)
-        end
+    isSpawning = false
 
-        spawnLock = false
-
-        return true
-    end)
+    return cb and cb(spawnData) or true
 end
 
 exports("spawnPlayer", spawnPlayer)
