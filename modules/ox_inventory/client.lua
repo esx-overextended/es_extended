@@ -1,3 +1,3 @@
-if not GetResourceState("ox_inventory"):find("start") then return end
+if GetResourceState("ox_inventory"):find("miss") then return end
 
 Config.OxInventory = true
