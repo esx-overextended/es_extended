@@ -230,6 +230,8 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
     ---@param newGroup string
     ---@return boolean
     function self.setGroup(newGroup)
+        if not Config.AdminGroupsByName[newGroup] and Core.DefaultGroup ~= newGroup then print(("[^3WARNING^7] Ignoring invalid ^5.setGroup(%s)^7 usage for Player ^5%s^7"):format(newGroup, self.source)) return false end
+
         return self.addGroup(newGroup, 0)
     end
 
