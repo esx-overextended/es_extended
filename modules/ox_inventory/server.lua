@@ -1,3 +1,11 @@
+if not GetResourceState("ox_inventory"):find("start") then return end
+
+Config.OxInventory = true
+Config.PlayerFunctionOverride = "OxInventory"
+
+SetConvarReplicated("inventory:framework", "esx")
+SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000) ---@diagnostic disable-line: param-type-mismatch
+
 local Inventory
 
 AddEventHandler("ox_inventory:loadInventory", function(module)

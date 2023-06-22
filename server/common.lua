@@ -19,18 +19,11 @@ exports("getSharedObject", function()
     return ESX
 end)
 
-if GetResourceState("ox_inventory") ~= "missing" then
-    Config.OxInventory = true
-    Config.PlayerFunctionOverride = "OxInventory"
-    SetConvarReplicated("inventory:framework", "esx")
-    ---@diagnostic disable-next-line: param-type-mismatch
-    SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000)
-end
-
-local function StartDBSync()
+local function startDBSync()
     CreateThread(function()
         while true do
             Wait(10 * 60 * 1000)
+
             Core.SavePlayers()
         end
     end)
@@ -66,7 +59,7 @@ MySQL.ready(function()
 
     print(("[^2INFO^7] ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
 
-    StartDBSync()
+    startDBSync()
 
     if Config.EnablePaycheck then
         StartPayCheck()
@@ -80,13 +73,6 @@ end)
 RegisterServerEvent("esx:clientLog", function(msg)
     if Config.EnableDebug then
         print(("[^2TRACE^7] %s^7"):format(msg))
-    end
-end)
-
-RegisterServerEvent("esx:ReturnVehicleType", function(Type, Request)
-    if Core.ClientCallbacks[Request] then
-        Core.ClientCallbacks[Request](Type)
-        Core.ClientCallbacks[Request] = nil
     end
 end)
 

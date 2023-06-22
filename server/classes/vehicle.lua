@@ -1,4 +1,5 @@
--- Copyright (c) 2022-2023 Overextended - Modified to fit ESX system in 2023 by ESX-Overextended
+-- Copyright (c) 2022-2023 Overextended
+-- Modified to fit ESX system in 2023 by ESX-Overextended
 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
