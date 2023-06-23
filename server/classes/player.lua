@@ -12,8 +12,6 @@
 ---@param playerMetadata table
 ---@return xPlayer
 function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
-    local targetOverrides = Config.PlayerFunctionOverride and Core.PlayerFunctionOverrides[Config.PlayerFunctionOverride] or {}
-
     ---@type xPlayer
     local self = {}
 
@@ -1021,7 +1019,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         return ESX.SetPlayerRoutingBucket(self.source, bucketId)
     end
 
-    for fnName, fn in pairs(targetOverrides) do
+    for fnName, fn in pairs(Core.PlayerMethodOverrides) do
         self[fnName] = fn(self)
     end
 

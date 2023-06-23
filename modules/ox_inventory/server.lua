@@ -1,7 +1,6 @@
 if GetResourceState("ox_inventory"):find("miss") then return end
 
 Config.OxInventory = true
-Config.PlayerFunctionOverride = "OxInventory"
 
 SetConvarReplicated("inventory:framework", "esx")
 SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000) ---@diagnostic disable-line: param-type-mismatch
@@ -12,7 +11,7 @@ AddEventHandler("ox_inventory:loadInventory", function(module)
     Inventory = module
 end)
 
-Core.PlayerFunctionOverrides.OxInventory = {
+ESX.RegisterPlayerMethodOverrides({
     getInventory = function(self)
         return function(minimal)
             if minimal then
@@ -26,7 +25,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                             metadata = nil
                         end
 
-                        minimalInventory[#minimalInventory+1] = {
+                        minimalInventory[#minimalInventory + 1] = {
                             name = v.name,
                             count = v.count,
                             slot = k,
@@ -230,7 +229,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
             end
         end
     end
-}
+})
 
 AddEventHandler("esx:playerLoaded", function(_, xPlayer, isNew)
     if not isNew or not Config.StartingAccountMoney.money then return end

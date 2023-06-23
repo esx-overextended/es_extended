@@ -6,7 +6,6 @@ Core.UsableItemsCallbacks = {}
 Core.RegisteredCommands = {}
 Core.Pickups = {}
 Core.PickupId = 0
-Core.PlayerFunctionOverrides = {}
 Core.DatabaseConnected = false
 Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
 Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
@@ -77,3 +76,4 @@ RegisterServerEvent("esx:clientLog", function(msg)
 end)
 
 lib.require("modules.safeEvent.server")
+lib.require("modules.override.server")

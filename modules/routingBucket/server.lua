@@ -25,7 +25,9 @@ local function configureBucket(bucketId)
 
                 if value then
                     SetPlayerRoutingBucket(index, bucketId)
+
                     ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
+
                     if ESX.Players[index] then ESX.Players[index].set("routingBucket", bucketId)
                     else Player(index).state:set("routingBucket", bucketId, true) end
                 end
@@ -44,7 +46,9 @@ local function configureBucket(bucketId)
 
                 if value then
                     SetEntityRoutingBucket(index, bucketId)
+
                     TriggerEvent("esx:setEntityRoutingBucket", index, bucketId)
+
                     if Core.Vehicles[index] then Core.Vehicles[index].set("routingBucket", bucketId)
                     else Entity(index).state:set("routingBucket", bucketId, true) end
                 end

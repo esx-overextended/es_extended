@@ -14,7 +14,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end
 
     if Core.RegisteredCommands[name] then
-        print(("[^3WARNING^7] Command ^5'%s' ^7already registered, overriding command"):format(name))
+        print(("[^3WARNING^7] Command ^5'%s'^7 already registered, overriding command"):format(name))
 
         if Core.RegisteredCommands[name].suggestion then
             TriggerClientEvent("chat:removeSuggestion", -1, ("/%s"):format(name))
@@ -276,8 +276,7 @@ ESX.GetPlayers = GetPlayers
 ---@param value? any
 ---@return xPlayer[], integer | number
 function ESX.GetExtendedPlayers(key, value)
-    local xPlayers = {}
-    local count = 0
+    local xPlayers, count = {}, 0
 
     for _, xPlayer in pairs(ESX.Players) do
         if key then
@@ -424,18 +423,6 @@ function ESX.UseItem(source, item, ...)
     else
         print(("[^3WARNING^7] Item ^5'%s'^7 was used but does not exist!"):format(item))
     end
-end
-
-function ESX.RegisterPlayerFunctionOverrides(index, overrides)
-    Core.PlayerFunctionOverrides[index] = overrides
-end
-
-function ESX.SetPlayerFunctionOverride(index)
-    if not index or not Core.PlayerFunctionOverrides[index] then
-        return print("[^3WARNING^7] No valid index provided.")
-    end
-
-    Config.PlayerFunctionOverride = index
 end
 
 function ESX.GetItemLabel(item)
