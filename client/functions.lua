@@ -7,9 +7,7 @@ function ESX.GetPlayerData()
 end
 
 function ESX.SearchInventory(items, count)
-    if type(items) == "string" then
-        items = {items}
-    end
+    if type(items) == "string" then items = { items } end
 
     local returnData = {}
     local itemCount = #items
@@ -37,6 +35,7 @@ end
 function ESX.SetPlayerData(key, val)
     local current = ESX.PlayerData[key]
     ESX.PlayerData[key] = val
+
     if key ~= "inventory" and key ~= "loadout" then
         if type(val) == "table" or val ~= current then
             TriggerEvent("esx:setPlayerData", key, val, current)
@@ -45,14 +44,13 @@ function ESX.SetPlayerData(key, val)
 end
 
 function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-    if saveToBrief == nil then
-        saveToBrief = true
-    end
+    if saveToBrief == nil then saveToBrief = true end
+
     AddTextEntry("esxAdvancedNotification", msg)
     BeginTextCommandThefeedPost("esxAdvancedNotification")
-    if hudColorIndex then
-        ThefeedSetNextPostBackgroundColor(hudColorIndex)
-    end
+
+    if hudColorIndex then ThefeedSetNextPostBackgroundColor(hudColorIndex) end
+
     EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
     EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
@@ -63,9 +61,8 @@ function ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
     if thisFrame then
         DisplayHelpTextThisFrame("esxHelpNotification", false)
     else
-        if beep == nil then
-            beep = true
-        end
+        if beep == nil then beep = true end
+
         BeginTextCommandDisplayHelp("esxHelpNotification")
         EndTextCommandDisplayHelp(0, false, beep, duration or -1)
     end
@@ -80,22 +77,20 @@ function ESX.ShowFloatingHelpNotification(msg, coords)
 end
 
 ESX.HashString = function(str)
-    local format = string.format
-    local upper = string.upper
-    local gsub = string.gsub
     local hash = joaat(str)
-    local input_map = format("~INPUT_%s~", upper(format("%x", hash)))
-    input_map = gsub(input_map, "FFFFFFFF", "")
+    local input_map = string.format("~INPUT_%s~", string.upper(string.format("%x", hash)))
+    input_map = string.gsub(input_map, "FFFFFFFF", "")
 
     return input_map
 end
 
 ESX.RegisterInput = function(command_name, label, input_group, key, on_press, on_release)
     RegisterCommand(on_release ~= nil and "+" .. command_name or command_name, on_press, false)
+
     Core.Input[command_name] = on_release ~= nil and ESX.HashString("+" .. command_name) or ESX.HashString(command_name)
-    if on_release then
-        RegisterCommand("-" .. command_name, on_release, false)
-    end
+
+    if on_release then RegisterCommand("-" .. command_name, on_release, false) end
+
     RegisterKeyMapping(on_release ~= nil and "+" .. command_name or command_name, label, input_group, key)
 end
 
@@ -110,11 +105,10 @@ end
 
 function ESX.Game.GetPedMugshot(ped, transparent)
     if not DoesEntityExist(ped) then return end
+
     local mugshot = transparent and RegisterPedheadshotTransparent(ped) or RegisterPedheadshot(ped)
 
-    while not IsPedheadshotReady(mugshot) do
-        Wait(0)
-    end
+    while not IsPedheadshotReady(mugshot) do Wait(0) end
 
     return mugshot, GetPedheadshotTxdString(mugshot)
 end
@@ -124,63 +118,65 @@ function ESX.Game.Teleport(entity, coords, cb)
 
     if DoesEntityExist(entity) then
         RequestCollisionAtCoord(vector.x, vector.y, vector.z)
-        while not HasCollisionLoadedAroundEntity(entity) do
-            Wait(0)
-        end
+
+        while not HasCollisionLoadedAroundEntity(entity) do Wait(0) end
 
         SetEntityCoords(entity, vector.x, vector.y, vector.z, false, false, false, false)
         SetEntityHeading(entity, vector.w)
     end
 
-    if cb then
-        cb()
-    end
+    if cb then cb() end
 end
 
-function ESX.Game.SpawnObject(object, coords, cb, networked)
-    networked = networked == nil and true or networked
+function ESX.Game.SpawnObject(model, coords, cb, networked)
+    networked = (networked == nil and true) or networked
+    model = type(model) == "number" and model or joaat(model)
+    local typeCoords = type(coords)
+    coords = (typeCoords == "vector3" or typeCoords == "vector4") and coords or vector4(coords.x, coords.y, coords.z, coords.w or coords.heading or 0.0)
+
     if networked then
-        ESX.TriggerServerCallback("esx:Onesync:SpawnObject", function(NetworkID)
+        ESX.TriggerServerCallback("esx:Onesync:SpawnObject", function(netId)
             if cb then
-                local obj = NetworkGetEntityFromNetworkId(NetworkID)
-                local Tries = 0
-                while not DoesEntityExist(obj) do
-                    obj = NetworkGetEntityFromNetworkId(NetworkID)
+                local entity = NetworkGetEntityFromNetworkId(netId)
+                local attempt = 0
+
+                while not DoesEntityExist(entity) do
+                    entity = NetworkGetEntityFromNetworkId(netId)
+                    attempt += 1
+                    if attempt > 250 then break end
                     Wait(0)
-                    Tries += 1
-                    if Tries > 250 then
-                        break
-                    end
                 end
-                cb(obj)
+
+                cb(entity)
             end
-        end, object, coords, 0.0)
+        end, model, coords, coords.w)
     else
-        local model = type(object) == "number" and object or joaat(object)
-        local vector = type(coords) == "vector3" and coords or vec(coords.x, coords.y, coords.z)
         CreateThread(function()
             ESX.Streaming.RequestModel(model)
 
-            local obj = CreateObject(model, vector.x, vector.y, vector.z, networked, false, true)
-            if cb then
-                cb(obj)
-            end
+            local entity = CreateObject(model, coords.x, coords.y, coords.z, networked, false, true)
+
+            if cb then cb(entity) end
         end)
     end
 end
 
-function ESX.Game.SpawnLocalObject(object, coords, cb)
-    ESX.Game.SpawnObject(object, coords, cb, false)
+function ESX.Game.SpawnLocalObject(model, coords, cb)
+    ESX.Game.SpawnObject(model, coords, cb, false)
 end
 
-function ESX.Game.DeleteVehicle(vehicle)
-    SetEntityAsMissionEntity(vehicle, true, true)
-    DeleteVehicle(vehicle)
+function ESX.Game.DeleteVehicle(vehicleEntity)
+    SetEntityAsMissionEntity(vehicleEntity, true, true)
+    DeleteVehicle(vehicleEntity)
+
+    return DoesEntityExist(vehicleEntity)
 end
 
-function ESX.Game.DeleteObject(object)
-    SetEntityAsMissionEntity(object, false, true)
-    DeleteObject(object)
+function ESX.Game.DeleteObject(objectEntity)
+    SetEntityAsMissionEntity(objectEntity, false, true)
+    DeleteObject(objectEntity)
+
+    return DoesEntityExist(objectEntity)
 end
 
 function ESX.Game.SpawnVehicle(vehicle, coords, heading, cb, networked)
@@ -818,9 +814,7 @@ function ESX.Game.Utils.DrawText3D(coords, text, size, font)
 end
 
 function ESX.ShowInventory()
-    if not Config.EnableDefaultInventory then
-        return
-    end
+    if not Config.EnableDefaultInventory then return end
 
     local playerPed = ESX.PlayerData.ped
     local elements = {
