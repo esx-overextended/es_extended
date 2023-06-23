@@ -2,6 +2,12 @@
 -- This has be implemented inside es_extended to reduce the dependency resources...
 
 local isSpawning = false
+local api = setmetatable({}, {
+    __newindex = function(self, index, value)
+        exports(index, value)
+        rawset(self, index, value)
+    end
+})
 
 ---Freeze/Unfreezes the player
 ---@param state boolean
@@ -22,7 +28,7 @@ end
 ---@param spawnData table
 ---@param cb function
 ---@return boolean (whether the action was successful or not)
-local function spawnPlayer(spawnData, cb)
+function api.spawnPlayer(spawnData, cb)
     if isSpawning then return false end
 
     isSpawning = true
@@ -107,4 +113,8 @@ local function spawnPlayer(spawnData, cb)
     return true
 end
 
-exports("spawnPlayer", spawnPlayer)
+---Checks if another spawn is not already in the progress
+---@return boolean
+function api.canSpawnPlayer()
+    return isSpawning == false
+end
