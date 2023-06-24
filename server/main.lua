@@ -178,7 +178,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     xPlayer.set("sex", userData.sex)
     xPlayer.set("height", userData.height)
 
-    xPlayer.set("routingBucket", ESX.GetPlayerRoutingBucket(playerId))
+    Core.TriggerEventHooks("onPlayerLoad", { xPlayer = xPlayer, isNew = isNew })
 
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
