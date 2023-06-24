@@ -77,3 +77,4 @@ end)
 
 lib.require("modules.safeEvent.server")
 lib.require("modules.override.server")
+lib.require("modules.hooks.server")
