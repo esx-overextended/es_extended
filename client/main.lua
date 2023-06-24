@@ -15,7 +15,7 @@ end)
 
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
-    ESX.PlayerData.ped = cache.ped
+    ESX.SetPlayerData("ped", PlayerPedId())
 
     if not Config.Multichar then
         exports[cache.resource]:spawnPlayer({
@@ -73,9 +73,8 @@ AddEventHandler("esx:onPlayerDeath", function()
 end)
 
 AddEventHandler("skinchanger:modelLoaded", function()
-    while not ESX.PlayerLoaded do
-        Wait(100)
-    end
+    while not ESX.PlayerLoaded do Wait(100) end
+
     TriggerEvent("esx:restoreLoadout")
 end)
 

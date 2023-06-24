@@ -1,4 +1,5 @@
--- Copyright (c) 2022-2023 Overextended
+-- Copyright (c) 2022-2023 Overextended (https://github.com/overextended/ox_core/blob/main/shared/vehicles.lua)
+-- Modified to fit ESX system in 2023 by ESX-Overextended
 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +33,6 @@ local function filterData(model, data, filter)
     if filter.class and filter.class ~= data.class then return end
     if filter.doors and filter.doors == data.doors then return end
     if filter.make and filter.make ~= data.make then return end
-    if filter.minprice and filter.minprice > data.price then return end
-    if filter.maxprice and data.price > filter.maxprice then return end
     if filter.seats and filter.seats ~= data.seats then return end
     if filter.type and filter.type ~= data.type then return end
 

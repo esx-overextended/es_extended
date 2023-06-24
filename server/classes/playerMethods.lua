@@ -1169,8 +1169,8 @@ local xPlayerMethods = {
     end,
 }
 
-xPlayerMethods.getMeta   = xPlayerMethods.getMetadata -- backward compatibility with esx-legacy
-xPlayerMethods.setMeta   = xPlayerMethods.setMetadata -- backward compatibility with esx-legacy
+xPlayerMethods.getMeta   = xPlayerMethods.getMetadata   -- backward compatibility with esx-legacy
+xPlayerMethods.setMeta   = xPlayerMethods.setMetadata   -- backward compatibility with esx-legacy
 xPlayerMethods.clearMeta = xPlayerMethods.clearMetadata -- backward compatibility with esx-legacy
 
 return xPlayerMethods

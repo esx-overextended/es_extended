@@ -1,4 +1,4 @@
--- Copyright (c) 2022-2023 Overextended
+-- Copyright (c) 2022-2023 Overextended (https://github.com/overextended/ox_core/tree/main/server/vehicle)
 -- Modified to fit ESX system in 2023 by ESX-Overextended
 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
