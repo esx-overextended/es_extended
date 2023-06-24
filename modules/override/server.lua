@@ -14,7 +14,7 @@ Core.PlayerMethodOverrides = {}
 function ESX.RegisterPlayerMethodOverrides(newMethods)
     local newMethodsType = type(newMethods)
     if newMethodsType ~= "table" then
-        return print(("[^1ERROR^7] Expected a parameter with type of ^3table^7 in ^4ESX.RegisterPlayerMethodOverrides^7 function. Received (^3%s^7)"):format(overridesType))
+        return print(("[^1ERROR^7] Expected a parameter with type of ^3table^7 in ^4ESX.RegisterPlayerMethodOverrides^7 function. Received (^3%s^7)"):format(newMethodsType))
     end
 
     local invokingResource = GetInvokingResource() or cache.resource
