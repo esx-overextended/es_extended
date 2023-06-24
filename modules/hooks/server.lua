@@ -13,7 +13,7 @@
 
 if Core.TriggerEventHooks then return end
 
-local eventHooks, hookId = {}, 0
+local eventHooks, hookId, microtime = {}, 0, os.microtime
 local api = setmetatable({}, {
     __newindex = function(self, index, value)
         exports(index, value)
@@ -72,7 +72,7 @@ end
 ---@param payload? table
 function Core.TriggerEventHooks(event, payload)
     local hooks = eventHooks[event]
-    
+
     if hooks then
         for i = 1, #hooks do
             local hook = hooks[i]
