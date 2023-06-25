@@ -28,11 +28,11 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
 
             if not xPlayer then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/override/server.lua") end
 
-            xPlayer.registerMethod(fnName, fn) -- registering the new method(s) to apply to the future players right after their xPlayer creation
+            xPlayer.setMethod(fnName, fn) -- registering the new method(s) to apply to the future players right after their xPlayer creation
         end)
 
         for _, xPlayer in pairs(ESX.Players) do
-            xPlayer.registerMethod(fnName, fn) -- registering the new method(s) for the online players
+            xPlayer.setMethod(fnName, fn) -- registering the new method(s) for the online players
         end
     end
 
@@ -46,7 +46,7 @@ local function onResourceStop(resource)
 
             for _, xPlayer in pairs(ESX.Players) do
                 if originalMethods[fnName] then
-                    xPlayer.registerMethod(fnName, originalMethods[fnName]) -- overriding online players methods to the original one(s) if any exist...
+                    xPlayer.setMethod(fnName, originalMethods[fnName]) -- overriding online players methods to the original one(s) if any exist...
                 else
                     xPlayer[fnName] = nil
                 end

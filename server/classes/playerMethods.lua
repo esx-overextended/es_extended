@@ -1182,7 +1182,7 @@ local xPlayerMethods = {
             if fieldNameType ~= "string" then print(("[^1ERROR^7] The field name (^3%s^7) passed in ^5player(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.source)) return false
             elseif not isValueValid then print(("[^1ERROR^7] The value passed in ^5player(%s)'s setField()^7 does not have a valid type!"):format(self.source)) return false end
 
-            if fieldName == "setField" or fieldName == "registerMethod" then print(("[^1ERROR^7] Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName)) return false end
+            if fieldName == "setField" or fieldName == "setMethod" then print(("[^1ERROR^7] Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName)) return false end
 
             self[fieldName] = value
 
@@ -1196,7 +1196,7 @@ local xPlayerMethods = {
 
     ---Adds a new method/function to the current xPlayer object. If a method with the same name already exist, it will be overrided.
     ---@param self xPlayer
-    registerMethod = function(self)
+    setMethod = function(self)
         ---@param fnName string
         ---@param fn function
         ---@return boolean (whether the registration action was successful or not)
@@ -1205,15 +1205,15 @@ local xPlayerMethods = {
             local fnType = type(fn)
             local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-            if fnNameType ~= "string" then print(("[^1ERROR^7] The method name (^3%s^7) passed in ^5player(%s)'s registerMethod()^7 is not a valid string!"):format(fnName, self.source)) return false
-            elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5player(%s)'s registerMethod()^7 is not a valid function!"):format(self.source)) return false end
+            if fnNameType ~= "string" then print(("[^1ERROR^7] The method name (^3%s^7) passed in ^5player(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.source)) return false
+            elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5player(%s)'s setMethod()^7 is not a valid function!"):format(self.source)) return false end
 
-            if fnName == "registerMethod" or fnName == "setField" then print(("[^1ERROR^7] Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName)) return false end
+            if fnName == "setMethod" or fnName == "setField" then print(("[^1ERROR^7] Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName)) return false end
 
             self[fnName] = fn(self)
 
             if Config.EnableDebug then
-                print(("[^5INFO^7] Setting method (^2%s^7) for player(%s) through ^5xPlayer.registerMethod()^7."):format(fnName, self.source))
+                print(("[^5INFO^7] Setting method (^2%s^7) for player(%s) through ^5xPlayer.setMethod()^7."):format(fnName, self.source))
             end
 
             return true
