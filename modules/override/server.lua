@@ -18,6 +18,7 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
 
     ---@type table<string, number>
     local registeredHooks = {}
+    local invokingResource = GetInvokingResource() or cache.resource
 
     for fnName, fn in pairs(newMethods) do
         invokedResources[fnName] = invokingResource
