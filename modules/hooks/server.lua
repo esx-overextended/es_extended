@@ -13,7 +13,7 @@
 
 if Core.TriggerEventHooks then return end
 
-local eventHooks, hookId, microtime = {}, 0, os.microtime
+local eventHooks, hookId, clock = {}, 0, os.clock -- instead of microtime which is used by ox, we gotta use clock since os.microtime is not recognized in our lua lint workflow
 local api = setmetatable({}, {
     __newindex = function(self, index, value)
         exports(index, value)
@@ -28,10 +28,9 @@ function api.registerHook(event, cb, options)
     if not eventHooks[event] then eventHooks[event] = {} end
 
     local mt = getmetatable(cb)
-    mt.__index = nil
-    mt.__newindex = nil
+    mt.__index, mt.__newindex = nil, nil
     cb.resource = GetInvokingResource() or cache.resource
-    hookId += 1
+    hookId = hookId + 1 -- very strange but if we use compound operator of += here, the lint crashes although we are using this operator in other part of the code!
     cb.hookId = hookId
 
     if type(options) == "table" then
@@ -81,12 +80,12 @@ function Core.TriggerEventHooks(event, payload)
                 print(("Triggering event hook '%s:%s:%s'"):format(hook.resource, event, i))
             end
 
-            local start = microtime()
-            local _, response = pcall(hooks[i], payload)
-            local executionTime = microtime() - start
+            local start = clock()
+            local _, response = xpcall(hooks[i], function() print(("[^1ERROR^7] There was an error in trigerring event hook '%s:%s:%s'"):format(hook.resource, event, i)) end, payload)
+            local executionTime = (clock() - start) * 1000 -- convert execution time to milliseconds
 
-            if executionTime >= 100000 then
-                warn(("[^3WARNING^7] Execution of event hook '%s:%s:%s' took %.2fms"):format(hook.resource, event, i, executionTime / 1e3))
+            if executionTime >= 100 then
+                warn(("[^3WARNING^7] Execution of event hook '%s:%s:%s' took %.2fms"):format(hook.resource, event, i, executionTime))
             end
 
             if response == false then
@@ -97,4 +96,3 @@ function Core.TriggerEventHooks(event, payload)
 
     return true
 end
-
