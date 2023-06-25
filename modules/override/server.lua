@@ -6,6 +6,9 @@ local invokedResources = {}
 ---@type table<string, function>
 local originalMethods = lib.require("server.classes.playerMethods")
 
+---@type table<string, function>
+Core.ExtendedPlayerMethods = {}
+
 ---Overrides player methods if they exist. If those method don't exist, it will add the new received methods to the all of the player objects(basically extends xPlayer objects methods)
 ---@param newMethods table<string, function>
 ---@return table<string, number>?
@@ -18,9 +21,19 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
 
     ---@type table<string, number>
     local registeredHooks = {}
-    local invokingResource = GetInvokingResource() or cache.resource
+    local invokingResource = GetInvokingResource()
 
     for fnName, fn in pairs(newMethods) do
+        -- This check means the method registration is coming from es_extended itself onResourceStart (such as from modules/ox_inventory)
+        -- Why do we do this exclusively and not through hook and xPlayer.setMethod? Because that way they add function reference to xPlayer objects
+        -- Which is almost 3 times more expensive to call than a normal function which will be applied through Core.ExtendedPlayerMethods!
+        -- Conclusion: throw your extended/custom player methods as a module inside the framework to load up, which will be more performant than registering them from external resources...
+        if not invokingResource then
+            Core.ExtendedPlayerMethods[fnName] = fn
+
+            goto skipLoop
+        end
+
         invokedResources[fnName] = invokingResource
 
         registeredHooks[fnName] = Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
@@ -34,6 +47,8 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
         for _, xPlayer in pairs(ESX.Players) do
             xPlayer.setMethod(fnName, fn) -- registering the new method(s) for the online players
         end
+
+        ::skipLoop::
     end
 
     return registeredHooks
