@@ -1167,6 +1167,29 @@ local xPlayerMethods = {
             return ESX.SetPlayerRoutingBucket(self.source, bucketId)
         end
     end,
+
+    ---Adds a new method/function to the current xPlayer object. If a method with the same name already exist, it will be overrided.
+    ---@param self xPlayer
+    registerMethod = function(self)
+        return function(fnName, fn)
+            local fnNameType = type(fnName)
+            local fnType = type(fn)
+            local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
+
+            if fnNameType ~= "string" then print(("[^1ERROR^7] The method name (^3%s^7) passed in ^5player(%s)'s registerMethod()^7 is not a valid string!"):format(fnName, self.source)) return false
+            elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5player(%s)'s registerMethod()^7 is not a valid function!"):format(self.source)) return false end
+
+            if fnName == "registerMethod" then print("[^1ERROR^7] Method ^2registerMethod^7 of xPlayer ^1cannot^7 be overrided!") return false end
+
+            self[fnName] = fn(self)
+
+            if Config.EnableDebug then
+                print(("[^5INFO^7] Overriding method (^2%s^7) for player(%s) through ^5xPlayer.registerMethod()^7."):format(fnName, self.source))
+            end
+
+            return true
+        end
+    end
 }
 
 xPlayerMethods.getMeta   = xPlayerMethods.getMetadata   -- backward compatibility with esx-legacy
