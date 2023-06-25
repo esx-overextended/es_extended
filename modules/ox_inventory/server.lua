@@ -17,7 +17,7 @@ ESX.RegisterPlayerMethodOverrides({
             if minimal then
                 local minimalInventory = {}
 
-                for k, v in pairs(self.inventory) do
+                for k, v in pairs(self.getInventory()) do
                     if v.count and v.count > 0 then
                         local metadata = v.metadata
 
@@ -57,7 +57,9 @@ ESX.RegisterPlayerMethodOverrides({
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money = money
 
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason}, {server = true, client = true})
+                    self.setField("accounts", self.accounts)
+
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = self.accounts[account.index], accountName = accountName, money = self.accounts[account.index].money, reason = reason }, { server = true, client = true })
 
                     if Inventory.accounts[accountName] then
                         Inventory.SetItem(self.source, accountName, money)
@@ -77,8 +79,10 @@ ESX.RegisterPlayerMethodOverrides({
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money += money
 
+                    self.setField("accounts", self.accounts)
+
                     TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = self.accounts[account.index], accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
                     if Inventory.accounts[accountName] then
                         Inventory.AddItem(self.source, accountName, money)
@@ -98,8 +102,10 @@ ESX.RegisterPlayerMethodOverrides({
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money = self.accounts[account.index].money - money
 
+                    self.setField("accounts", self.accounts)
+
                     TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = self.accounts[account.index], accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
                     if Inventory.accounts[accountName] then
                         Inventory.RemoveItem(self.source, accountName, money)
@@ -148,7 +154,11 @@ ESX.RegisterPlayerMethodOverrides({
     setMaxWeight = function(self)
         return function(newWeight)
             self.maxWeight = newWeight
-            self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
+
+            self.setField("maxWeight", self.maxWeight)
+
+            self.triggerSafeEvent("esx:setMaxWeight", { maxWeight = newWeight }, { server = true, client = true })
+
             return Inventory.Set(self.source, "maxWeight", newWeight)
         end
     end,
@@ -216,14 +226,20 @@ ESX.RegisterPlayerMethodOverrides({
             self.weight, self.maxWeight = weight, maxWeight
             self.inventory = items
 
+            self.setField("weight", self.weight)
+            self.setField("maxWeight", self.maxWeight)
+            self.setField("inventory", self.inventory)
+
             if money then
                 for accountName, amount in pairs(money) do
                     local account = self.getAccount(accountName)
 
                     if account and ESX.Math.Round(account.money) ~= amount then
-                        account.money = amount
+                        self.accounts[account.index].money = amount
 
-                        self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = amount, reason = "Sync account with item"}, {server = true, client = true})
+                        self.setField("accounts", self.accounts)
+
+                        self.triggerSafeEvent("esx:setAccountMoney", { account = self.accounts[account.index], accountName = accountName, money = self.accounts[account.index].money, reason = "Sync account with item" }, { server = true, client = true })
                     end
                 end
             end
