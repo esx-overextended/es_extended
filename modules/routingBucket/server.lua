@@ -214,7 +214,7 @@ ESX.RegisterSafeEvent("esx:setPlayerRoutingBucket", function(value)
 end)
 
 do
-    exports[cache.resource]:registerHook("onPlayerLoad", function(payload)
+    Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
         local xPlayer = payload?.xPlayer
 
         if not xPlayer then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/routingBucket/server.lua") end

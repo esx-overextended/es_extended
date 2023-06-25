@@ -1171,6 +1171,9 @@ local xPlayerMethods = {
     ---Adds a new method/function to the current xPlayer object. If a method with the same name already exist, it will be overrided.
     ---@param self xPlayer
     registerMethod = function(self)
+        ---@param fnName string
+        ---@param fn function
+        ---@return boolean (whether the registration action was successful or not)
         return function(fnName, fn)
             local fnNameType = type(fnName)
             local fnType = type(fn)

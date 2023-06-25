@@ -52,9 +52,5 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
         self[fnName] = fn(self)
     end
 
-    for fnName, fn in pairs(Core.PlayerMethodOverrides) do
-        self[fnName] = fn(self)
-    end
-
     return self
 end

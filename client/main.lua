@@ -18,7 +18,7 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.SetPlayerData("ped", PlayerPedId())
 
     if not Config.Multichar then
-        exports[cache.resource]:spawnPlayer({
+        Core.ResourceExport:spawnPlayer({
             x = ESX.PlayerData.coords.x,
             y = ESX.PlayerData.coords.y,
             z = ESX.PlayerData.coords.z + 0.25,

@@ -9,6 +9,7 @@ Core.PickupId = 0
 Core.DatabaseConnected = false
 Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
 Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
+Core.ResourceExport = exports[cache.resource]
 
 AddEventHandler("esx:getSharedObject", function(cb)
     return cb and cb(ESX)
