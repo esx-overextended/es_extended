@@ -68,13 +68,13 @@ else -- Only register these for the server
         })
     end
 
-    AddEventHandler("esx:onJobsRefreshed", function()
+    AddEventHandler("esx:jobsObjectRefreshed", function()
         if ESX?.Jobs then
             ESX.Jobs = ESX.GetJobs()
         end
     end)
 
-    AddEventHandler("esx:onGroupsRefreshed", function()
+    AddEventHandler("esx:groupsObjectRefreshed", function()
         if ESX?.Groups then
             ESX.Groups = ESX.GetGroups()
         end
