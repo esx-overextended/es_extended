@@ -12,8 +12,8 @@ function ESX.SetFunction(fnName, fn)
     local fnType = type(fn)
     local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-    if fnNameType ~= "string" then print(("[^1ERROR^7] The function name (^3%s^7) passed in ^5ESX.SetFunction^7 in ^3%s^7 is not a valid string!"):format(fnName, cache.context, self.source)) return false
-    elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5ESX.SetFunction^7 in ^3%s^7 is not a valid function!"):format(self.source, cache.context)) return false end
+    if fnNameType ~= "string" then print(("[^1ERROR^7] The function name (^3%s^7) passed in ^5ESX.SetFunction^7 in ^3%s^7 is not a valid string!"):format(fnName, cache.context)) return false
+    elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5ESX.SetFunction^7 in ^3%s^7 is not a valid function!"):format(cache.context)) return false end
 
     if fnName == "SetFunction" then print(("[^1ERROR^7] Function ^2%s^7 of ESX ^1cannot^7 be overrided!"):format(fnName)) return false end
 
@@ -26,7 +26,7 @@ function ESX.SetFunction(fnName, fn)
     ESX[fnName] = fn
 
     if Config.EnableDebug then
-        print(("[^5INFO^7] Setting function (^2%s^7) for ^2ESX^7 through ^5ESX.SetFunction^7 in ^3%s^7."):format(fnName, self.source))
+        print(("[^5INFO^7] Setting function (^2%s^7) for ^2ESX^7 through ^5ESX.SetFunction^7 in ^3%s^7."):format(fnName, cache.context))
     end
 
     TriggerEvent("esx:sharedObjectUpdated")
