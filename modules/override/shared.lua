@@ -43,6 +43,7 @@ local function onResourceStop(resource)
             if originalFunctions[fnName] then
                 ESX.SetFunction(fnName, originalFunctions[fnName])
             else
+                ESX[fnName] = nil
                 TriggerEvent("esx:sharedObjectUpdated")
             end
         end
