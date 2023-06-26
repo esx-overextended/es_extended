@@ -77,7 +77,7 @@ function ESX.GetVehicleData(filter)
     return vehicleList
 end
 
-if not Config.EnableDebug or cache.context == "server" then return end
+if not Config.EnableDebug or lib.context == "server" then return end
 
 lib.callback.register("esx:generateVehicleData", function(processAll)
     local models = GetAllVehicleModels()
