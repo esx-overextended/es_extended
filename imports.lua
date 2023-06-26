@@ -35,7 +35,7 @@ else -- Only register these for the server
         end,
         __pairs = function(self)
             if not next(self) then self() end
-            return next, self, nil
+            return next, self, nil ---@diagnostic disable-line: redundant-return-value
         end
     })
 
@@ -52,7 +52,7 @@ else -- Only register these for the server
         end,
         __pairs = function(self)
             if not next(self) then self() end
-            return next, self, nil
+            return next, self, nil ---@diagnostic disable-line: redundant-return-value
         end
     })
 
