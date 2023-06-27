@@ -1,4 +1,4 @@
-local xPlayerMethods = lib.require("server.classes.playerMethods")
+local xPlayerMethods = lib.require("server.classes.player.playerMethods")
 
 ---Creates an xPlayer object
 ---@param playerId number
