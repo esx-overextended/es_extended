@@ -4,34 +4,36 @@
 <hr>
 
 ### 📝 Significant changes in compare to ESX Legacy v1.9.4 (WIP)
-* Resolved Lua Lint CI Pipeline Issues: Fixed the problems with the Lua Lint CI pipeline to ensure smooth code analysis and validation.
 
-* Updated Interface Functions: Modified various interface-related functions to utilize ox_lib's modern UIs, such as Notification, TextUI, and ProgressBar. This enhances the user experience and gives a more contemporary look and feel.
+- Resolved Lua Lint CI Pipeline Issues: Fixed the problems with the Lua Lint CI pipeline to ensure smooth code analysis and validation.
 
-* Improved Client-side Event Security: Implemented enhanced security measures for client-side events responsible for receiving players' object data from the server. This focuses on strengthening the events to reduce potential vulnerabilities and abuses.
+- Updated Interface Functions: Modified various interface-related functions to utilize ox_lib's modern UIs, such as Notification, TextUI, and ProgressBar. This enhances the user experience and gives a more contemporary look and feel.
 
-* Streamlined Player Coordinates Tracking: Overhauled the tracking of player object's coordinates by removing the recursive thread creation approach. The new method maintains backward compatibility while improving efficiency and performance. *(This change becomes more impactful as the number of players increases)*
+- Improved Client-side Event Security: Implemented enhanced security measures for client-side events responsible for receiving players' object data from the server. This focuses on strengthening the events to reduce potential vulnerabilities and abuses.
 
-* Enhanced Menu Functionality: Adapted context menu, default menu, and dialog menu related functions to utilize ox_lib's UI while ensuring full backward compatibility. This update allows users to continue using the previous esx_context, esx_menu_default, and esx_menu_dialog if desired, while benefiting from ox_lib's modern UI look.
+- Streamlined Player Coordinates Tracking: Overhauled the tracking of player object's coordinates by removing the recursive thread creation approach. The new method maintains backward compatibility while improving efficiency and performance. _(This change becomes more impactful as the number of players increases)_
 
-* Added Some Modules and Functions: Included some modules such as safe event, onesync scope, and routing bucket for better management and consistency across all external resources that utilize ESX object.
+- Enhanced Menu Functionality: Adapted context menu, default menu, and dialog menu related functions to utilize ox_lib's UI while ensuring full backward compatibility. This update allows users to continue using the previous esx_context, esx_menu_default, and esx_menu_dialog if desired, while benefiting from ox_lib's modern UI look.
 
-* Reduced Framework Dependency Resources: This aims to streamline resource allocation by minimizing the framework's dependency resources. **(WIP)**
+- Added Some Modules and Functions: Included some modules such as safe event, onesync scope, and routing bucket for better management and consistency across all external resources that utilize ESX object.
 
-* Enhanced Job Module: Integrated pre-defined job duties and job types
+- Reduced Framework Dependency Resources: This aims to streamline resource allocation by minimizing the framework's dependency resources.
 
-* Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
+- Enhanced Job Module: Integrated pre-defined job duties and job types
 
-* Multiple Group Support: Implemented a comprehensive multiple group support system that remains fully backward compatibile with ESX Legacy. This enhancement enables player objects to seamlessly associate with multiple groups such as administrators, gangs, VIPs, and more, expanding the flexibility and functionality of the system.
+- Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
 
-* Server-Side Vehicle Class: Spawned vehicles now possess their own class, providing a plethora of methods to efficiently utilize and manipulate vehicle data. This represents a significant advancement, surpassing the limitations of the previous server-side vehicle spawning system found in esx_legacy.
+- Multiple Group Support: Implemented a comprehensive multiple group support system that remains fully backward compatibile with ESX Legacy. This enhancement enables player objects to seamlessly associate with multiple groups such as administrators, gangs, VIPs, and more, expanding the flexibility and functionality of the system.
+
+- Server-Side Vehicle Class: Spawned vehicles now possess their own class, providing a plethora of methods to efficiently utilize and manipulate vehicle data. This represents a significant advancement, surpassing the limitations of the previous server-side vehicle spawning system found in esx-legacy.
+
+- Enhanced Extendability: Unlike esx-legacy, where only limited overrides were possible for player objects, the new and improved version introduces extensive extendability. With this enhanced functionality, developers have the freedom to override existing methods, functions, and fields or even add new ones within the player class, the vehicle class, and of course the ESX object! This flexibility extends to both internal modifications, as simple as adding a new module/file within the framework, as well as external resources through cross-platform `exports`. This breakthrough allows for seamless expansion of customization options without the need to modify core code and functions, providing a more efficient and highly versatile system.
 
 ### ℹ Information
 
-ESX is the leading framework, trusted By thousands of commmunitys for the heighest quality roleplay servers on FiveM, a GTA V (Grand Theft Auto) modification platform.
+ESX is the leading framework, trusted By thousands of commmunities for the highest quality roleplay servers on FiveM, a GTA V (Grand Theft Auto) modification platform.
 
-ESX was initially developed by Gizz back in 2017 for his friend as the were creating an FiveM server and there wasn't any economy roleplaying frameworks available. The original code was written within a week or two and later open sourced. Since then, ESX has undergone continuous enhancements and improvements, with some parts being entirely rewritten to enhance its functionality.
-
+ESX was initially developed by Gizz back in 2017 for his friend as they were creating a FiveM server and there wasn't any economy roleplaying frameworks available. The original code was written within a week or two and later open sourced. Since then, ESX has undergone continuous enhancements and improvements, with some parts being entirely rewritten to enhance its functionality.
 
 ### 📌Legal Notices
 
