@@ -186,7 +186,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
         xPlayerClient = {
             accounts = xPlayer.getAccounts(),
             groups = xPlayer.getGroups(),
-            coords = userData.coords,
+            coords = isNew and Config.DefaultSpawn or userData.coords,
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),

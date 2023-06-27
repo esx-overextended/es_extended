@@ -54,17 +54,11 @@ function api.spawnPlayer(spawnData, cb)
         end
     end
 
-    if not spawnData.skipFade then
-        DoScreenFadeOut(500)
-
-        while not IsScreenFadedOut() do
-            Wait(0)
-        end
-    end
-
     freeze(true)
 
     if spawnData.model then
+        spawnData.model = type(spawnData.model) == "string" and joaat(spawnData.model) or spawnData.model
+
         lib.requestModel(spawnData.model)
 
         SetPlayerModel(cache.playerId, spawnData.model)
@@ -78,6 +72,13 @@ function api.spawnPlayer(spawnData, cb)
     SetEntityCoordsNoOffset(ped, spawnData.x, spawnData.y, spawnData.z, false, false, false)
     NetworkResurrectLocalPlayer(spawnData.x, spawnData.y, spawnData.z, spawnData.heading, true, true)
 
+    ped = PlayerPedId()
+    local time = GetGameTimer()
+
+    while not HasCollisionLoadedAroundEntity(ped) and (GetGameTimer() - time) < 5000 do
+        Wait(0)
+    end
+
     spawnData.health = spawnData.health or 200
 
     ClearPedTasksImmediately(ped)
@@ -85,13 +86,6 @@ function api.spawnPlayer(spawnData, cb)
     SetEntityHealth(ped, spawnData.health)
     RemoveAllPedWeapons(ped, true)
     ClearPlayerWantedLevel(cache.playerId)
-
-    local time = GetGameTimer()
-
-    while not HasCollisionLoadedAroundEntity(ped) and (GetGameTimer() - time) < 5000 do
-        Wait(0)
-    end
-
     ShutdownLoadingScreen()
 
     if IsScreenFadedOut() then

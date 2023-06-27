@@ -23,25 +23,24 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
             y = ESX.PlayerData.coords.y,
             z = ESX.PlayerData.coords.z + 0.25,
             heading = ESX.PlayerData.coords.heading,
-            model = `mp_m_freemode_01`,
-            skipFade = false
-        }, function()
-            TriggerServerEvent("esx:onPlayerSpawn")
+            model = `mp_m_freemode_01`
+        })
 
-            TriggerEvent("esx:onPlayerSpawn")
-            TriggerEvent("esx:restoreLoadout")
+        TriggerServerEvent("esx:onPlayerSpawn")
 
-            if isNew then
-                TriggerEvent("skinchanger:loadDefaultModel", skin.sex == 0)
-            elseif skin then
-                TriggerEvent("skinchanger:loadSkin", skin)
-            end
+        TriggerEvent("esx:onPlayerSpawn")
+        TriggerEvent("esx:restoreLoadout")
 
-            TriggerEvent("esx:loadingScreenOff")
+        if isNew then
+            TriggerEvent("skinchanger:loadDefaultModel", skin.sex == 0)
+        elseif skin then
+            TriggerEvent("skinchanger:loadSkin", skin)
+        end
 
-            ShutdownLoadingScreen()
-            ShutdownLoadingScreenNui()
-        end)
+        TriggerEvent("esx:loadingScreenOff")
+
+        ShutdownLoadingScreen()
+        ShutdownLoadingScreenNui()
     end
 
     ESX.PlayerLoaded = true
