@@ -178,7 +178,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     xPlayer.set("sex", userData.sex)
     xPlayer.set("height", userData.height)
 
-    xPlayer.set("routingBucket", ESX.GetPlayerRoutingBucket(playerId))
+    Core.TriggerEventHooks("onPlayerLoad", { xPlayer = xPlayer, isNew = isNew })
 
     xPlayer.triggerSafeEvent("esx:playerLoaded", {
         playerId = playerId,
@@ -186,7 +186,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
         xPlayerClient = {
             accounts = xPlayer.getAccounts(),
             groups = xPlayer.getGroups(),
-            coords = userData.coords,
+            coords = isNew and Config.DefaultSpawn or userData.coords,
             identifier = xPlayer.getIdentifier(),
             inventory = xPlayer.getInventory(),
             job = xPlayer.getJob(),

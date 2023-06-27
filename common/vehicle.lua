@@ -1,3 +1,16 @@
+-- Copyright (c) 2022-2023 Overextended (https://github.com/overextended/ox_core/blob/main/shared/vehicles.lua)
+-- Modified to fit ESX system in 2023 by ESX-Overextended
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in all
+-- copies or substantial portions of the Software.
+
 local function loadJson(file)
     local t = json.decode(LoadResourceFile(cache.resource, file) or "{}")
 
@@ -20,8 +33,6 @@ local function filterData(model, data, filter)
     if filter.class and filter.class ~= data.class then return end
     if filter.doors and filter.doors == data.doors then return end
     if filter.make and filter.make ~= data.make then return end
-    if filter.minprice and filter.minprice > data.price then return end
-    if filter.maxprice and data.price > filter.maxprice then return end
     if filter.seats and filter.seats ~= data.seats then return end
     if filter.type and filter.type ~= data.type then return end
 
@@ -66,7 +77,7 @@ function ESX.GetVehicleData(filter)
     return vehicleList
 end
 
-if not Config.EnableDebug or cache.context == "server" then return end
+if not Config.EnableDebug or lib.context == "server" then return end
 
 lib.callback.register("esx:generateVehicleData", function(processAll)
     local models = GetAllVehicleModels()

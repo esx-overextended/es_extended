@@ -137,10 +137,10 @@ function ESX.RefreshGroups()
 
     Core.RefreshPlayersGroups()
 
-    TriggerEvent("esx:onGroupsRefreshed")
+    TriggerEvent("esx:groupsObjectRefreshed")
 end
 
-AddEventHandler("esx:onJobsRefreshed", function()
+AddEventHandler("esx:jobsObjectRefreshed", function()
     ESX.RefreshGroups()
 end)
 

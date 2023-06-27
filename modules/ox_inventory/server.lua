@@ -1,10 +1,17 @@
+if GetResourceState("ox_inventory"):find("miss") then return end
+
+Config.OxInventory = true
+
+SetConvarReplicated("inventory:framework", "esx")
+SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000) ---@diagnostic disable-line: param-type-mismatch
+
 local Inventory
 
 AddEventHandler("ox_inventory:loadInventory", function(module)
     Inventory = module
 end)
 
-Core.PlayerFunctionOverrides.OxInventory = {
+ESX.RegisterPlayerMethodOverrides({
     getInventory = function(self)
         return function(minimal)
             if minimal then
@@ -18,7 +25,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                             metadata = nil
                         end
 
-                        minimalInventory[#minimalInventory+1] = {
+                        minimalInventory[#minimalInventory + 1] = {
                             name = v.name,
                             count = v.count,
                             slot = k,
@@ -50,7 +57,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     money = account.round and ESX.Math.Round(money) or money
                     self.accounts[account.index].money = money
 
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason}, {server = true, client = true})
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = money, reason = reason }, { server = true, client = true })
 
                     if Inventory.accounts[accountName] then
                         Inventory.SetItem(self.source, accountName, money)
@@ -71,7 +78,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money += money
 
                     TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
                     if Inventory.accounts[accountName] then
                         Inventory.AddItem(self.source, accountName, money)
@@ -92,7 +99,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     self.accounts[account.index].money = self.accounts[account.index].money - money
 
                     TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
                     if Inventory.accounts[accountName] then
                         Inventory.RemoveItem(self.source, accountName, money)
@@ -141,7 +148,7 @@ Core.PlayerFunctionOverrides.OxInventory = {
     setMaxWeight = function(self)
         return function(newWeight)
             self.maxWeight = newWeight
-            self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setMaxWeight", { maxWeight = newWeight }, { server = true, client = true })
             return Inventory.Set(self.source, "maxWeight", newWeight)
         end
     end,
@@ -216,10 +223,20 @@ Core.PlayerFunctionOverrides.OxInventory = {
                     if account and ESX.Math.Round(account.money) ~= amount then
                         account.money = amount
 
-                        self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = amount, reason = "Sync account with item"}, {server = true, client = true})
+                        self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = amount, reason = "Sync account with item" }, { server = true, client = true })
                     end
                 end
             end
         end
     end
-}
+})
+
+AddEventHandler("esx:playerLoaded", function(source, xPlayer, isNew)
+    if not isNew or not Config.StartingAccountMoney.money then return end
+
+    Wait(1000) -- wait until the client initializes
+
+    if not ESX.Players[source] then return end
+
+    xPlayer.setMoney(Config.StartingAccountMoney.money)
+end)

@@ -30,21 +30,21 @@ Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
 
 Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading = 205.8 }
 
-Config.EnablePaycheck              = true       -- enable paycheck
-Config.EnableSocietyPayouts        = false      -- pay from the society account that the player is employed at? Requirement: esx_society
-Config.EnableHud                   = true       -- enable the default hud? Display current job and accounts (black, bank & cash)
-Config.HudButton                   = "GRAVE"    -- button to show/hide hud. Only works if Config.EnableHud is true (https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard)
-Config.MaxWeight                   = 30         -- the max inventory weight without backpack
-Config.PaycheckInterval            = 7 * 60000  -- how often to recieve pay checks in milliseconds
-Config.EnableDefaultInventory      = true       -- Display the default Inventory ( F2 )
+Config.EnablePaycheck              = true                                                -- enable paycheck
+Config.EnableSocietyPayouts        = false                                               -- pay from the society account that the player is employed at? Requirement: esx_society
+Config.EnableHud                   = true                                                -- enable the default hud? Display current job and accounts (black, bank & cash)
+Config.HudButton                   = "GRAVE"                                             -- button to show/hide hud. Only works if Config.EnableHud is true (https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard)
+Config.MaxWeight                   = 30                                                  -- the max inventory weight without backpack
+Config.PaycheckInterval            = 7 * 60000                                           -- how often to recieve pay checks in milliseconds
+Config.EnableDefaultInventory      = true                                                -- Display the default Inventory ( F2 )
 
-Config.Multichar                   = true       -- true when using multicharacter, false when not
-Config.Identity                    = true       -- Select a characters identity data before they have loaded in (this happens by default with multichar)
-Config.DistanceGive                = 4.0        -- Max distance when giving items, weapons etc.
+Config.Multichar                   = GetResourceState("esx_multicharacter") ~= "missing" -- Automatically detects if multicharacter is available to use or not
+Config.Identity                    = true                                                -- Select a characters identity data before they have loaded in (this happens by default with multichar)
+Config.DistanceGive                = 4.0                                                 -- Max distance when giving items, weapons etc.
 
-Config.SpawnVehMaxUpgrades         = true       -- admin vehicles spawn with max vehicle settings
-Config.CustomAIPlates              = "ESX1OX1." -- Custom plates for AI vehicles
-Config.PlatePattern                = "........" -- Plate pattern for manually spawned vehicles
+Config.SpawnVehMaxUpgrades         = true                                                -- admin vehicles spawn with max vehicle settings
+Config.CustomAIPlates              = "ESX1OX1."                                          -- Custom plates for AI vehicles
+Config.PlatePattern                = "........"                                          -- Plate pattern for manually spawned vehicles
 -- Pattern string format
 --1 will lead to a random number from 0-9.
 --A will lead to a random letter from A-Z.

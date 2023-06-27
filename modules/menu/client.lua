@@ -160,18 +160,20 @@ do -- use ox_lib for default menu
             if options[i].type == "slider" then
                 options[i].values = {}
 
-                if options[i].min <= 0 then
-                    local rangeToOne = 1 - options[i].min
-                    options[i].min += rangeToOne
-                    options[i].max += rangeToOne
-                    options[i].value = options[i].value and options[i].value + rangeToOne
-                    options[i]._modifiedRange = rangeToOne
-                elseif options[i].min > 1 then
-                    local rangeToOne = options[i].min - 1
-                    options[i].min = options[i].min - rangeToOne
-                    options[i].max = options[i].max - rangeToOne
-                    options[i].value = options[i].value and options[i].value - rangeToOne
-                    options[i]._modifiedRange = rangeToOne
+                if options[i].min then
+                    if options[i].min <= 0 then
+                        local rangeToOne = 1 - options[i].min
+                        options[i].min += rangeToOne
+                        options[i].max += rangeToOne
+                        options[i].value = options[i].value and options[i].value + rangeToOne
+                        options[i]._modifiedRange = rangeToOne
+                    elseif options[i].min > 1 then
+                        local rangeToOne = options[i].min - 1
+                        options[i].min = options[i].min - rangeToOne
+                        options[i].max = options[i].max - rangeToOne
+                        options[i].value = options[i].value and options[i].value - rangeToOne
+                        options[i]._modifiedRange = rangeToOne
+                    end
                 end
 
                 local value
@@ -251,7 +253,7 @@ do -- use ox_lib for default menu
 
                 if not menu then return end
 
-                data.elements[selected].value = options[selected].values?[scrollIndex] or data.elements[selected].value
+                data.elements[selected].value = (not data.elements[selected].min and scrollIndex and scrollIndex - 1) or options[selected].values?[scrollIndex] or data.elements[selected].value
 
                 for i = 1, #data.elements, 1 do
                     menu.setElement(i, "value", data.elements[i].value)
@@ -270,7 +272,7 @@ do -- use ox_lib for default menu
 
                 if not menu then return end
 
-                data.elements[selected].value = options[selected].values?[scrollIndex] or data.elements[selected].value
+                data.elements[selected].value = (not data.elements[selected].min and scrollIndex and scrollIndex - 1) or options[selected].values?[scrollIndex] or data.elements[selected].value
 
                 menu.setElement(selected, "value", data.elements[selected].value)
 

@@ -93,6 +93,8 @@
 ---@field triggerSafeScopedEvent fun(eventName: string, includeSelf?: boolean, eventData?: table<string, any>, eventOptions?: CEventOptions)
 ---@field getRoutingBucket fun(): routingBucket | nil
 ---@field setRoutingBucket fun(bucketId: routingBucket): boolean
+---@field setField fun(fieldName: string, value: number | string | boolean | table): boolean
+---@field setMethod fun(fnName: string, fn: function): boolean
 
 
 ---@class xVehicle

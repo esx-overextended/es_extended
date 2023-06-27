@@ -317,7 +317,7 @@ function ESX.RefreshJobs()
 
     Core.RefreshPlayersJob()
 
-    TriggerEvent("esx:onJobsRefreshed")
+    TriggerEvent("esx:jobsObjectRefreshed")
 end
 
 ---Gets the specified job object data
