@@ -1,53 +1,3 @@
-local useEsxContext = false
-
-if useEsxContext then
-    ---@param position? string left | center | right
-    ---@param elements table
-    ---@param onSelect? function
-    ---@param onClose? function
-    ---@param canClose? boolean defaults to true
-    function ESX.OpenContext(position, elements, onSelect, onClose, canClose)
-        if not GetResourceState("esx_context"):find("start") then
-            return print("[^1ERROR^7] Tried to ^5open^7 context menu, but ^5esx_context^7 is not started!")
-        end
-
-        exports["esx_context"]:Open(position, elements, onSelect, onClose, canClose)
-    end
-
-    ---@param position string left | center | right
-    ---@param elements table
-    ---@param onSelect? function
-    ---@param onClose? function
-    ---@param canClose? boolean defaults to true
-    function ESX.PreviewContext(position, elements, onSelect, onClose, canClose)
-        if not GetResourceState("esx_context"):find("start") then
-            return print("[^1ERROR^7] Tried to ^5preview^7 context menu, but ^5esx_context^7 is not started!")
-        end
-
-        exports["esx_context"]:Preview(position, elements, onSelect, onClose, canClose)
-    end
-
-    function ESX.CloseContext(_)
-        if not GetResourceState("esx_context"):find("start") then
-            return print("[^1ERROR^7] Tried to ^5close^7 context menu, but ^5esx_context^7 is not started!")
-        end
-
-        exports["esx_context"]:Close()
-    end
-
-    ---@param position? string left | center | right
-    ---@param elements? table
-    function ESX.RefreshContext(elements, position)
-        if not GetResourceState("esx_context"):find("start") then
-            return print("[^1ERROR^7] Tried to ^5Refresh^7 context menu, but ^5esx_context^7 is not started!")
-        end
-
-        exports["esx_context"]:Refresh(elements, position)
-    end
-
-    return
-end
-
 local contextData
 
 ---converts esx_context elements to ox_lib options type
@@ -118,7 +68,7 @@ local function generateOptions(elements, onSelect)
                 }
             end
 
-            local input = lib.inputDialog(optionData.title, inputDialogData, {allowCancel = true})
+            local input = lib.inputDialog(optionData.title, inputDialogData, { allowCancel = true })
 
             elements[index].inputValue = input?[1] or elements[index].inputValue
 
@@ -129,11 +79,16 @@ local function generateOptions(elements, onSelect)
     return options
 end
 
+---@param position? "left" | "center" | "right" (only applies if esx_context is being used)
 ---@param elements table
 ---@param onSelect? function
 ---@param onClose? function
 ---@param canClose? boolean defaults to true
-function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
+function ESX.OpenContext(position, elements, onSelect, onClose, canClose)
+    if GetResourceState("esx_context"):find("start") then
+        return exports["esx_context"]:Open(position, elements, onSelect, onClose, canClose)
+    end
+
     local options = generateOptions(elements, onSelect)
     contextData = {
         id = "esx:contextMenu",
@@ -157,17 +112,35 @@ function ESX.OpenContext(_, elements, onSelect, onClose, canClose)
     lib.showContext(contextData.id)
 end
 
-function ESX.PreviewContext(_, _, _, _, _)
+---@param position? "left" | "center" | "right" (only applies if esx_context is being used)
+---@param elements? table (only applies if esx_context is being used)
+---@param onSelect? function (only applies if esx_context is being used)
+---@param onClose? function (only applies if esx_context is being used)
+---@param canClose? boolean defaults to true (only applies if esx_context is being used)
+function ESX.PreviewContext(position, elements, onSelect, onClose, canClose)
+    if GetResourceState("esx_context"):find("start") then
+        return exports["esx_context"]:Preview(position, elements, onSelect, onClose, canClose)
+    end
+
     print("[^1ERROR^7] Tried to ^5preview^7 context menu, but ^5ox_lib does not offer such functionality^7 at the moment!")
 end
 
 ---@param onExit? boolean defaults to true
 function ESX.CloseContext(onExit)
+    if GetResourceState("esx_context"):find("start") then
+        return exports["esx_context"]:Close()
+    end
+
     lib.hideContext(onExit == nil and true or onExit)
 end
 
 ---@param elements? table
-function ESX.RefreshContext(elements, _)
+---@param position? "left" | "center" | "right" (only applies if esx_context is being used)
+function ESX.RefreshContext(elements, position)
+    if GetResourceState("esx_context"):find("start") then
+        return exports["esx_context"]:Refresh(elements, position)
+    end
+
     local currentContextId = lib.getOpenContextMenu()
 
     if not currentContextId then return end
