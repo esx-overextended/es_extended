@@ -59,6 +59,10 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
         self[fnName] = fn(self)
     end
 
+    for fnName, fn in pairs(Core.ExtendedVehicleMethods) do
+        self[fnName] = fn(self)
+    end
+
     return self
 end
 
@@ -91,19 +95,21 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     TriggerEvent("entityCreated", entity)
 
-    local vehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
+    local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
 
-    Core.Vehicles[vehicle.entity] = vehicle
+    Core.Vehicles[xVehicle.entity] = xVehicle
+
+    Core.TriggerEventHooks("onVehicleCreate", { xVehicle = xVehicle })
 
     Entity(entity).state:set("initVehicle", true, true)
 
     ESX.SetVehicleProperties(entity, properties)
 
-    if owner or group then vehicle.setStored(false) end
+    if owner or group then xVehicle.setStored(false) end
 
-    TriggerEvent("esx:vehicleCreated", vehicle.entity, vehicle.netId, vehicle)
+    TriggerEvent("esx:vehicleCreated", xVehicle.entity, xVehicle.netId, xVehicle)
 
-    return vehicle
+    return xVehicle
 end
 
 ---Loads a vehicle from the database by id, or creates a new vehicle using provided data.
