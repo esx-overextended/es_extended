@@ -11,8 +11,10 @@
 -- The above copyright notice and this permission notice shall be included in all
 -- copies or substantial portions of the Software.
 
+local xVehicleMethods = lib.require("server.classes.vehicleMethods")
+
 ---@type table<entityId, table<number, table>>
-local vehiclesPropertiesQueue = {}
+Core.VehiclesPropertiesQueue = {}
 
 ---Creates an xVehicle object
 ---@param vehicleId? integer | number
@@ -53,177 +55,8 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     stateBag:set("vin", self.vin, true)
     stateBag:set("metadata", self.metadata, true)
 
-    ---Sets the current vehicle coordinates
-    ---@param coords table | vector3 | vector4
-    function self.setCoords(coords)
-        local vector = vector4(coords?.x, coords?.y, coords?.z, coords?.w or coords?.heading or 0.0)
-
-        if not vector then return end
-
-        SetEntityCoords(self.entity, vector.x, vector.y, vector.z, false, false, false, false)
-        SetEntityHeading(self.entity, vector.w)
-    end
-
-    ---Gets the current vehicle coordinates
-    ---@param vector? boolean whether to return the vehicle coords as vector4 or as table
-    ---@return vector4 | table
-    function self.getCoords(vector)
-        local coords = GetEntityCoords(self.entity)
-        local heading = GetEntityHeading(self.entity)
-
-        return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, heading = heading}
-    end
-
-    ---Sets the specified value to the key variable for the current vehicle
-    ---@param key string
-    ---@param value any
-    function self.set(key, value)
-        self.variables[key] = value
-        Entity(self.entity).state:set(key, value, true)
-    end
-
-     ---Gets the value of the specified key variable from the current vehicle, returning the entire table if key is omitted.
-    ---@param key? string
-    ---@return any
-    function self.get(key)
-        return key and self.variables[key] or self.variables
-    end
-
-    ---Removes the current vehicle entity
-    ---@param removeFromDb? boolean delete the entry from database as well or no (defaults to false if not provided and nil)
-    function self.delete(removeFromDb)
-        local id = self.id
-        local entity = self.entity
-        local netId = self.netId
-        local vin = self.vin
-        local plate = self.plate
-
-        if self.owner or self.group then
-            if removeFromDb then
-                MySQL.prepare("DELETE FROM `owned_vehicles` WHERE `id` = ?", { self.id })
-            else
-                MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", { self.stored, json.encode(self.metadata), self.id })
-            end
-        end
-
-        Core.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
-        vehiclesPropertiesQueue[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
-
-        if DoesEntityExist(entity) then DeleteEntity(entity) end
-
-        TriggerEvent("esx:vehicleDeleted", id, entity, netId, vin, plate)
-    end
-
-    ---Sets the stored property for the current vehicle in database
-    ---@param value? boolean
-    ---@param despawn? boolean remove the vehicle entity from the game world as well or not (defaults to false if not provided and nil)
-    function self.setStored(value, despawn)
-        self.stored = value
-
-        MySQL.prepare.await("UPDATE `owned_vehicles` SET `stored` = ? WHERE `id` = ?", { self.stored, self.id })
-
-        if despawn then
-            self.delete()
-        end
-    end
-
-    ---Updates the current vehicle owner
-    ---@param newOwner? string
-    function self.setOwner(newOwner)
-        self.owner = newOwner
-
-        MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id })
-
-        Entity(self.entity).state:set("owner", self.owner, true)
-    end
-
-    ---Updates the current vehicle group
-    ---@param newGroup? string
-    function self.setGroup(newGroup)
-        self.group = newGroup
-
-        MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { self.group or nil --[[to make sure "false" is not being sent]], self.id })
-
-        Entity(self.entity).state:set("group", self.group, true)
-    end
-
-    ---May mismatch with properties due to "fake plates". Used to prevent duplicate "persistent plates".
-    ---@param newPlate string
-    function self.setPlate(newPlate)
-        self.plate = ("%-8s"):format(newPlate)
-
-        MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
-
-        Entity(self.entity).state:set("plate", self.plate, true)
-    end
-
-    ---Gets the current vehicle specified metadata
-    ---@param index? string
-    ---@param subIndex? string | table
-    ---@return nil | string | table
-    function self.getMetadata(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.getMetadata)...
-        if not index then return self.metadata end
-
-        if type(index) ~= "string" then  print("[^1ERROR^7] xVehicle.getMetadata ^5index^7 should be ^5string^7!") end
-
-        if self.metadata[index] then
-            if subIndex and type(self.metadata[index]) == "table" then
-                local _type = type(subIndex)
-
-                if _type == "string" then return self.metadata[index][subIndex] end
-
-                if _type == "table" then
-                    local returnValues = {}
-
-                    for i = 1, #subIndex do
-                        if self.metadata[index][subIndex[i]] then
-                            returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
-                        end
-                    end
-
-                    return returnValues
-                end
-
-                return nil
-            end
-
-            return self.metadata[index]
-        end
-
-        return nil
-    end
-
-    ---Sets the specified metadata to the current player
-    ---@param index string
-    ---@param value? string | number | table
-    ---@param subValue? any
-    ---@return boolean
-    function self.setMetadata(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.setMetadata)...
-        if not index then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 is Missing!") return false end
-
-        if type(index) ~= "string" then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 should be ^5string^7!") return false end
-
-        local _type = type(value)
-
-        if not subValue then
-            if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                print(("[^1ERROR^7] xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
-                return false
-            end
-
-            self.metadata[index] = value
-        else
-            if _type ~= "string" then
-                print(("[^1ERROR^7] xVehicle.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
-                return false
-            end
-
-            self.metadata[index][value] = subValue
-        end
-
-        Entity(self.entity).state:set("metadata", self.metadata, true)
-
-        return true
+    for fnName, fn in pairs(xVehicleMethods) do
+        self[fnName] = fn(self)
     end
 
     return self
@@ -529,7 +362,7 @@ function ESX.DeleteVehicle(vehicleEntity)
         vehicle.delete()
     else
         DeleteEntity(vehicleEntity)
-        vehiclesPropertiesQueue[vehicleEntity] = nil
+        Core.VehiclesPropertiesQueue[vehicleEntity] = nil
     end
 end
 
@@ -554,12 +387,12 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
         return
     end
 
-    if not vehiclesPropertiesQueue[vehicleEntity] then
-        vehiclesPropertiesQueue[vehicleEntity] = { properties }
+    if not Core.VehiclesPropertiesQueue[vehicleEntity] then
+        Core.VehiclesPropertiesQueue[vehicleEntity] = { properties }
 
         Entity(vehicleEntity).state:set("vehicleProperties", properties, true)
-    elseif vehiclesPropertiesQueue[vehicleEntity] then
-        table.insert(vehiclesPropertiesQueue[vehicleEntity], properties) -- adding the properties to the queue
+    elseif Core.VehiclesPropertiesQueue[vehicleEntity] then
+        table.insert(Core.VehiclesPropertiesQueue[vehicleEntity], properties) -- adding the properties to the queue
     end
 end
 
@@ -598,20 +431,20 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
 
     local entity = GetEntityFromStateBagName(bagName)
 
-    if not entity or entity == 0 or not vehiclesPropertiesQueue[entity] then return end
+    if not entity or entity == 0 or not Core.VehiclesPropertiesQueue[entity] then return end
 
-    table.remove(vehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue
+    table.remove(Core.VehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue
 
-    if next(vehiclesPropertiesQueue[entity]) then
+    if next(Core.VehiclesPropertiesQueue[entity]) then
         Wait(10) -- needed. if we don't have a wait here, the server's change handler will not be triggerred all the time, therefore the queue will not empty, causing the future ESX.SetVehicleProperties calls not to take in place
-        return vehiclesPropertiesQueue[entity]?[1] and Entity(entity).state:set(key, vehiclesPropertiesQueue[entity][1], true) -- applying the next properties from the queue
+        return Core.VehiclesPropertiesQueue[entity]?[1] and Entity(entity).state:set(key, Core.VehiclesPropertiesQueue[entity][1], true) -- applying the next properties from the queue
         --[[
         local bagName = ("entity:%d"):format(NetworkGetNetworkIdFromEntity(entity))
-        local payload = msgpack_pack(vehiclesPropertiesQueue[entity][1])
+        local payload = msgpack_pack(Core.VehiclesPropertiesQueue[entity][1])
 
         return SetStateBagValue(bagName, key, payload, payload:len(), true)
         ]]
     end
 
-    vehiclesPropertiesQueue[entity] = nil
+    Core.VehiclesPropertiesQueue[entity] = nil
 end)
