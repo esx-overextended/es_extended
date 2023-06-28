@@ -79,21 +79,9 @@ end
 ---@param properties table
 ---@return xVehicle?
 local function spawnVehicle(id, owner, group, plate, vin, model, script, metadata, coords, heading, vType, properties)
-    -- New native seems to be missing some types, for now we will convert to known types
-    -- https://github.com/citizenfx/fivem/commit/1e266a2ca5c04eb96c090de67508a3475d35d6da
-    if vType == "bicycle" or vType == "quadbike" or vType == "amphibious_quadbike" then
-        vType = "bike"
-    elseif vType == "amphibious_automobile" or vType == "submarinecar" then
-        vType = "automobile"
-    elseif vType == "blimp" then
-        vType = "heli"
-    end
+    local entity = Core.SpawnVehicle(model, vType, coords, heading)
 
-    local entity = CreateVehicleServerSetter(joaat(model), vType, coords.x, coords.y, coords.z, heading)
-
-    if not DoesEntityExist(entity) then print(("[^1ERROR^7] Failed to spawn vehicle (^4%s^7)"):format(model)) end
-
-    TriggerEvent("entityCreated", entity)
+    if not entity then return end
 
     local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
 
@@ -110,6 +98,30 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     TriggerEvent("esx:vehicleCreated", xVehicle.entity, xVehicle.netId, xVehicle)
 
     return xVehicle
+end
+
+---@param modelName string
+---@param modelType string
+---@param coordinates vector3
+---@param heading number
+function Core.SpawnVehicle(modelName, modelType, coordinates, heading)
+    -- New native seems to be missing some types, for now we will convert to known types
+    -- https://github.com/citizenfx/fivem/commit/1e266a2ca5c04eb96c090de67508a3475d35d6da
+    if modelType == "bicycle" or modelType == "quadbike" or modelType == "amphibious_quadbike" then
+        modelType = "bike"
+    elseif modelType == "amphibious_automobile" or modelType == "submarinecar" then
+        modelType = "automobile"
+    elseif modelType == "blimp" then
+        modelType = "heli"
+    end
+
+    local entity = CreateVehicleServerSetter(joaat(modelName), modelType, coordinates.x, coordinates.y, coordinates.z, heading)
+
+    if not DoesEntityExist(entity) then return print(("[^1ERROR^7] Failed to spawn vehicle (^4%s^7)"):format(modelName)) end
+
+    TriggerEvent("entityCreated", entity)
+
+    return entity
 end
 
 ---Loads a vehicle from the database by id, or creates a new vehicle using provided data.

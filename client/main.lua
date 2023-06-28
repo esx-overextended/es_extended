@@ -104,28 +104,6 @@ AddEventHandler("esx:restoreLoadout", function()
     end
 end)
 
--- Credit: https://github.com/LukeWasTakenn, https://github.com/LukeWasTakenn/luke_garages/blob/master/client/client.lua#L331-L352
----@diagnostic disable-next-line: param-type-mismatch
-AddStateBagChangeHandler("VehicleProperties", nil, function(bagName, _, value)
-    if not value then return end
-
-    local netId = bagName:gsub("entity:", "")
-    local timer = GetGameTimer()
-    while not NetworkDoesEntityExistWithNetworkId(tonumber(netId) --[[@as number]]) do
-        Wait(0)
-        if GetGameTimer() - timer > 10000 then return end
-    end
-
-    local vehicle = NetToVeh(tonumber(netId) --[[@as number]])
-    timer = GetGameTimer()
-    while NetworkGetEntityOwner(vehicle) ~= PlayerId() do
-        Wait(0)
-        if GetGameTimer() - timer > 10000 then return end
-    end
-
-    ESX.Game.SetVehicleProperties(vehicle, value)
-end)
-
 AddEventHandler("esx:setAccountMoney", function(account)
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then
