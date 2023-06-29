@@ -35,6 +35,7 @@ local function filterData(model, data, filter)
     if filter.make and filter.make ~= data.make then return end
     if filter.seats and filter.seats ~= data.seats then return end
     if filter.type and filter.type ~= data.type then return end
+    if filter.hash and filter.hash ~= data.hash then return end
 
     return true
 end
