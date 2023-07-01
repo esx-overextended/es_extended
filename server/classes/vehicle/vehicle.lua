@@ -203,7 +203,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model)) return
         end
 
-        return spawnVehicle(data, vehicle.owner, vehicle.group, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type, vehicle.vehicle)
+        return spawnVehicle(data, vehicle.owner, vehicle.job, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type, vehicle.vehicle)
     end
 
     local typeModel = type(data.model)
