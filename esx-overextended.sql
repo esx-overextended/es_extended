@@ -189,8 +189,6 @@ ALTER TABLE `owned_vehicles`
 
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE INDEX IF NOT EXISTS `plate` (`plate`),
-    ADD UNIQUE INDEX IF NOT EXISTS `vin` (`vin`);
--- These two ALTERs *cannot* join with each other as it produces error    
-ALTER TABLE `owned_vehicles`
-    ADD INDEX IF NOT EXISTS `FK_owned_vehicles_users` (`owner`),
-    ADD CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD UNIQUE INDEX IF NOT EXISTS `vin` (`vin`),
+
+    ADD INDEX IF NOT EXISTS `owner` (`owner`);
