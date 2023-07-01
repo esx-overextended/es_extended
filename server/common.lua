@@ -65,8 +65,6 @@ MySQL.ready(function()
         StartPayCheck()
     end
 
-    MySQL.query("UPDATE `owned_vehicles` SET `stored` = ? WHERE `stored` = 0", { nil })
-
     Core.DatabaseConnected = true
 end)
 
