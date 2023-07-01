@@ -143,8 +143,7 @@ CREATE TABLE IF NOT EXISTS `owned_vehicles` (
     UNIQUE INDEX `plate` (`plate`),
     UNIQUE INDEX `vin` (`vin`),
     INDEX `FK_owned_vehicles_users` (`owner`),
-    CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `FK_owned_vehicles_groups` FOREIGN KEY (`job`) REFERENCES `groups` (`name`) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /*
@@ -194,5 +193,4 @@ ALTER TABLE `owned_vehicles`
 -- These two ALTERs *cannot* join with each other as it produces error    
 ALTER TABLE `owned_vehicles`
     ADD INDEX IF NOT EXISTS `FK_owned_vehicles_users` (`owner`),
-    ADD CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE,
-    ADD CONSTRAINT `FK_owned_vehicles_groups` FOREIGN KEY (`job`) REFERENCES `groups` (`name`) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT `FK_owned_vehicles_users` FOREIGN KEY (`owner`) REFERENCES `users` (`identifier`) ON UPDATE CASCADE ON DELETE CASCADE;
