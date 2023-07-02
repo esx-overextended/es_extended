@@ -59,7 +59,7 @@ function api.spawnPlayer(spawnData, cb)
     if spawnData.model then
         spawnData.model = type(spawnData.model) == "string" and joaat(spawnData.model) or spawnData.model
 
-        lib.requestModel(spawnData.model)
+        lib.requestModel(spawnData.model, 100000)
 
         SetPlayerModel(cache.playerId, spawnData.model)
         SetModelAsNoLongerNeeded(spawnData.model)
