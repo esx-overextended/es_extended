@@ -100,6 +100,22 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     return xVehicle
 end
 
+---Gets a vehicle model type based on esx-legacy (used in DB column to keep backward-compatibility)
+---@param modelName string
+---@param modelType? string
+local function getVehicleTypeFromModel(modelName, modelType)
+    modelType = modelType or ESX.GetVehicleData(modelName)?.type --[[@as string]]
+
+    if modelType == "automobile" then return "car"
+    elseif modelType == "bike" then return "bike"
+    elseif modelType == "quadbike" then return "bike"
+    elseif modelType == "heli" then return "heli"
+    elseif modelType == "plane" then return "plane"
+    elseif modelType == "trailer" then return "trailer"
+    elseif modelType == "boat" then return "boat"
+    else return modelType end
+end
+
 ---@param modelName string
 ---@param modelType string
 ---@param coordinates vector3
@@ -242,8 +258,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     vehicleProperties.plate = plate
     vehicleProperties.model = modelData.hash -- backward compatibility with esx-legacy
 
-    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`plate`, `vin`, `vehicle`, `owner`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", {
-        plate, vin, json.encode(vehicleProperties), owner or nil, group or nil, model, modelData.class, json.encode(metadata), stored
+    local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`owner`, `plate`, `vin`, `vehicle`, `type`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", {
+        owner or nil, plate, vin, json.encode(vehicleProperties), getVehicleTypeFromModel(model, modelData.type), group or nil, model, modelData.class, json.encode(metadata), stored
     }) or nil
 
     if stored then
@@ -309,7 +325,6 @@ function Core.GeneratePlate()
                 plate[tableLen] = getAlphanumeric()
             elseif char == "^" then
                 i += 1
-
                 plate[tableLen] = plateFormat:sub(i, i)
             else
                 plate[tableLen] = char
@@ -414,22 +429,12 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
     end
 end
 
-AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
+AddStateBagChangeHandler("initVehicle", "", function(bagName, _, value, _, _)
     if value ~= nil then return end
 
     local entity = GetEntityFromStateBagName(bagName)
 
     if not entity or entity == 0 then return end
-
-    local doesEntityExist, timeout = false, 0
-
-    while not doesEntityExist and timeout < 1000 do
-        doesEntityExist = DoesEntityExist(entity)
-        timeout += 1
-        Wait(0)
-    end
-
-    if not doesEntityExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
 
     -- workaround for server-vehicles that exist in traffic randomly creating peds
     -- https://forum.cfx.re/t/sometimes-an-npc-spawns-inside-an-vehicle-spawned-with-createvehicleserversetter-or-create-automobile/4947251
