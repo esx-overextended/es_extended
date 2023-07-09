@@ -946,40 +946,6 @@ local xPlayerMethods = {
         end
     end,
 
-    ---Shows a notification to the player.
-    ---@param self xPlayer
-    showNotification = function(self)
-        ---@param message string | table
-        ---@param type? string
-        ---@param duration? number
-        ---@param extra? table
-        return function(message, type, duration, extra)
-            self.triggerSafeEvent("esx:showNotification", {
-                message = message,
-                type = type,
-                duration = duration,
-                extra = extra
-            })
-        end
-    end,
-
-    ---Shows a help-type notification to the player.
-    ---@param self xPlayer
-    showHelpNotification = function(self)
-        ---@param message string
-        ---@param thisFrame boolean
-        ---@param beep boolean
-        ---@param duration number
-        return function(message, thisFrame, beep, duration)
-            self.triggerSafeEvent("esx:showHelpNotification", {
-                message = message,
-                thisFrame = thisFrame,
-                beep = beep,
-                duration = duration
-            })
-        end
-    end,
-
     ---Gets the player's specified metadata. Returns all metadatas if the key/index is omitted.
     ---@param self xPlayer
     getMetadata = function(self)

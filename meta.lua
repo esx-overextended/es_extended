@@ -77,8 +77,6 @@
 ---@field hasWeapon fun(weaponName: string): boolean
 ---@field hasItem fun(itemName: string): false | table, integer | number | nil
 ---@field getWeapon fun(weaponName: string): false | integer | number, table?
----@field showNotification fun(message: string | table, type?: string, duration?: integer | number, extra)
----@field showHelpNotification fun(message: string, thisFrame: boolean, beep: boolean, duration: integer | number)
 ---@field getMetadata fun(index?: string, subIndex?: string | table): nil | string | table
 ---@field getMeta fun(index: string, subIndex?: string | table): nil | string | table
 ---@field setMetadata fun(index: string, value?: string | number | table, subValue?: any): boolean
