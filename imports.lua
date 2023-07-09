@@ -4,6 +4,7 @@ if not IsDuplicityVersion() then -- Only register these for the client
     AddEventHandler("esx:setPlayerData", function(key, val, last)
         if GetInvokingResource() == "es_extended" then
             ESX.PlayerData[key] = val
+
             if _G.OnPlayerData then
                 _G.OnPlayerData(key, val, last)
             end
@@ -32,16 +33,19 @@ else -- Only register these for the server
         ESX.Jobs = setmetatable({}, {
             __index = function(self, index)
                 if not next(self) then self() end
+
                 return rawget(self, index)
             end,
             __call = function(self)
                 for key, data in pairs(ESX.GetJobs()) do
                     rawset(self, key, data)
                 end
+
                 return self
             end,
             __pairs = function(self)
                 if not next(self) then self() end
+
                 return next, self, nil ---@diagnostic disable-line: redundant-return-value
             end
         })
@@ -49,16 +53,19 @@ else -- Only register these for the server
         ESX.Groups = setmetatable({}, {
             __index = function(self, index)
                 if not next(self) then self() end
+
                 return rawget(self, index)
             end,
             __call = function(self)
                 for key, data in pairs(ESX.GetGroups()) do
                     rawset(self, key, data)
                 end
+
                 return self
             end,
             __pairs = function(self)
                 if not next(self) then self() end
+
                 return next, self, nil ---@diagnostic disable-line: redundant-return-value
             end
         })

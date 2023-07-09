@@ -134,3 +134,6 @@ do
         end
     })
 end
+
+---@class xPlayer
+---@field triggerSafeEvent fun(eventName: string, eventData: table, eventOptions?: CEventOptions)

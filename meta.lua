@@ -25,7 +25,6 @@
 ---@field maxWeight integer | number
 ---@field metadata table<string, any>
 ---@field triggerEvent fun(eventName: string, ...)
----@field triggerSafeEvent fun(eventName: string, eventData: table, eventOptions?: CEventOptions)
 ---@field setCoords fun(coords: vector3 | vector4 | table)
 ---@field getCoords fun(vector?: boolean): vector4 | table
 ---@field kick fun(reason?: string)
@@ -86,15 +85,6 @@
 ---@field setMeta fun(index: string, value?: string | number | table, subValue?: any): boolean
 ---@field clearMetadata fun(index: string | string[]): boolean
 ---@field clearMeta fun(index: string | string[]): boolean
----@field getInScopePlayers fun(includeSelf?: boolean): xScope | nil
----@field isInPlayerScope fun(targetId: integer | number): boolean
----@field isPlayerInScope fun(targetId: integer | number): boolean
----@field triggerScopedEvent fun(eventName: string, includeSelf?: boolean, ...)
----@field triggerSafeScopedEvent fun(eventName: string, includeSelf?: boolean, eventData?: table<string, any>, eventOptions?: CEventOptions)
----@field getRoutingBucket fun(): routingBucket | nil
----@field setRoutingBucket fun(bucketId: routingBucket): boolean
----@field setField fun(fieldName: string, value: number | string | boolean | table): boolean
----@field setMethod fun(fnName: string, fn: function): boolean
 
 
 ---@class xVehicle
@@ -124,19 +114,16 @@
 ---@field braking number
 ---@field handling number
 ---@field speed number
-
-
----@class TopVehicleStats
----@field air VehicleData
----@field land VehicleData
----@field sea VehicleData
-
-
----@class VehicleData
 ---@field class number
 ---@field doors number
 ---@field make string
 ---@field name string
 ---@field seats number
 ---@field type string
----@field hash integer | number
+---@field hash number
+
+
+---@class TopVehicleStats
+---@field air VehicleData
+---@field land VehicleData
+---@field sea VehicleData

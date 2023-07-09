@@ -186,3 +186,10 @@ do
         end
     })
 end
+
+---@class xPlayer
+---@field getInScopePlayers fun(includeSelf?: boolean): xScope | nil
+---@field isInPlayerScope fun(targetId: integer | number): boolean
+---@field isPlayerInScope fun(targetId: integer | number): boolean
+---@field triggerScopedEvent fun(eventName: string, includeSelf?: boolean, ...)
+---@field triggerSafeScopedEvent fun(eventName: string, includeSelf?: boolean, eventData?: table<string, any>, eventOptions?: CEventOptions)

@@ -250,3 +250,11 @@ do
         end
     })
 end
+
+---@class xPlayer
+---@field setField fun(fieldName: string, value: number | string | boolean | table): boolean
+---@field setMethod fun(fnName: string, fn: function): boolean
+
+---@class xVehicle
+---@field setField fun(fieldName: string, value: number | string | boolean | table): boolean
+---@field setMethod fun(fnName: string, fn: function): boolean

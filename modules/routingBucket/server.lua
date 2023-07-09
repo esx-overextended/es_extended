@@ -219,7 +219,7 @@ do
 
         if not xPlayer then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/routingBucket/server.lua") end
 
-        xPlayer.routingBucket = ESX.GetPlayerRoutingBucket(xPlayer.source)
+        xPlayer.routingBucket = ESX.GetPlayerRoutingBucket(xPlayer.source) --[[@as number]]
     end)
 
     ESX.RegisterPlayerMethodOverrides({
@@ -240,7 +240,7 @@ do
             return function(bucketId)
                 local success = ESX.SetPlayerRoutingBucket(self.source, bucketId)
 
-                if success then self.routingBucket = tonumber(bucketId) end
+                if success then self.routingBucket = tonumber(bucketId) --[[@as number]] end
 
                 return success
             end
@@ -252,7 +252,7 @@ do
 
         if not xVehicle then return print("[^1ERROR^7] Unexpected behavior from onVehicleCreate hook in modules/routingBucket/server.lua") end
 
-        xVehicle.routingBucket = ESX.GetEntityRoutingBucket(xVehicle.entity)
+        xVehicle.routingBucket = ESX.GetEntityRoutingBucket(xVehicle.entity) --[[@as number]]
     end)
 
     ESX.RegisterPlayerMethodOverrides({
@@ -273,10 +273,20 @@ do
             return function(bucketId)
                 local success = ESX.SetEntityRoutingBucket(self.entity, bucketId)
 
-                if success then self.routingBucket = tonumber(bucketId) end
+                if success then self.routingBucket = tonumber(bucketId) --[[@as number]] end
 
                 return success
             end
         end
     })
 end
+
+---@class xPlayer
+---@field routingBucket integer | number
+---@field getRoutingBucket fun(): routingBucket | nil
+---@field setRoutingBucket fun(bucketId: routingBucket): boolean
+
+---@class xVehicle
+---@field routingBucket integer | number
+---@field getRoutingBucket fun(): routingBucket | nil
+---@field setRoutingBucket fun(bucketId: routingBucket): boolean
