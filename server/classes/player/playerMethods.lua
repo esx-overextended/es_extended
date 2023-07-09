@@ -1147,25 +1147,6 @@ local xPlayerMethods = {
         return function(eventName, includeSelf, eventData, eventOptions)
             ESX.TriggerSafeScopedEvent(eventName, self.source, includeSelf, eventData, eventOptions)
         end
-    end,
-
-    ---Gets the routing bucket id that the player is inside.
-    ---@param self xPlayer
-    getRoutingBucket = function(self)
-        ---@return number
-        return function()
-            return ESX.GetPlayerRoutingBucket(self.source) --[[@as number]]
-        end
-    end,
-
-    ---Adds the player to the specified routing bucket id.
-    ---@param self xPlayer
-    setRoutingBucket = function(self)
-        ---@param bucketId routingBucket
-        ---@return boolean
-        return function(bucketId)
-            return ESX.SetPlayerRoutingBucket(self.source, bucketId)
-        end
     end
 }
 
