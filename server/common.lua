@@ -74,6 +74,6 @@ RegisterServerEvent("esx:clientLog", function(msg)
     end
 end)
 
-lib.require("modules.safeEvent.server")
-lib.require("modules.override.server")
 lib.require("modules.hooks.server")
+lib.require("modules.override.server")
+lib.require("modules.safeEvent.server")
