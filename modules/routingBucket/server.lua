@@ -255,7 +255,7 @@ do
         xVehicle.routingBucket = ESX.GetEntityRoutingBucket(xVehicle.entity) --[[@as number]]
     end)
 
-    ESX.RegisterPlayerMethodOverrides({
+    ESX.RegisterVehicleMethodOverrides({
         ---Gets the routing bucket id that the vehicle is inside.
         ---@param self xVehicle
         getRoutingBucket = function(self)
