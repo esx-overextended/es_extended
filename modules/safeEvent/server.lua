@@ -119,3 +119,21 @@ end
 
 AddEventHandler("onResourceStop", onResourceStop)
 AddEventHandler("onServerResourceStop", onResourceStop)
+
+do
+    ESX.RegisterPlayerMethodOverrides({
+        ---Triggers a safe event for the player.
+        ---@param self xPlayer
+        triggerSafeEvent = function(self)
+            ---@param eventName string -- name of the safe event
+            ---@param eventData? table -- data to send through the safe event
+            ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
+            return function(eventName, eventData, eventOptions)
+                ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
+            end
+        end
+    })
+end
+
+---@class xPlayer
+---@field triggerSafeEvent fun(eventName: string, eventData: table, eventOptions?: CEventOptions)

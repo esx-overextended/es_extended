@@ -26,10 +26,10 @@ local function configureBucket(bucketId)
                 if value then
                     SetPlayerRoutingBucket(index, bucketId)
 
-                    ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
+                    if ESX.Players[index] then ESX.Players[index].routingBucket = bucketId end
 
-                    if ESX.Players[index] then ESX.Players[index].set("routingBucket", bucketId)
-                    else Player(index).state:set("routingBucket", bucketId, true) end
+                    Player(index).state:set("routingBucket", bucketId, true)
+                    ESX.TriggerSafeEvent("esx:setPlayerRoutingBucket", index, { routingBucket = bucketId }, { server = true, client = true })
                 end
 
                 if routingBuckets[bucketId].players and next(routingBuckets[bucketId].players) or routingBuckets[bucketId].entities and next(routingBuckets[bucketId].entities) then return end
@@ -47,10 +47,10 @@ local function configureBucket(bucketId)
                 if value then
                     SetEntityRoutingBucket(index, bucketId)
 
-                    TriggerEvent("esx:setEntityRoutingBucket", index, bucketId)
+                    if Core.Vehicles[index] then Core.Vehicles[index].routingBucket = bucketId end
 
-                    if Core.Vehicles[index] then Core.Vehicles[index].set("routingBucket", bucketId)
-                    else Entity(index).state:set("routingBucket", bucketId, true) end
+                    Entity(index).state:set("routingBucket", bucketId, true)
+                    TriggerEvent("esx:setEntityRoutingBucket", index, bucketId)
                 end
 
                 if routingBuckets[bucketId].entities and next(routingBuckets[bucketId].entities) or routingBuckets[bucketId].players and next(routingBuckets[bucketId].players) then return end
@@ -215,10 +215,78 @@ end)
 
 do
     Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
-        local xPlayer = payload?.xPlayer
+        local xPlayer = payload?.xPlayer and ESX.Players[payload.xPlayer?.source]
 
         if not xPlayer then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/routingBucket/server.lua") end
 
-        xPlayer.set("routingBucket", ESX.GetPlayerRoutingBucket(xPlayer.source))
+        xPlayer.routingBucket = ESX.GetPlayerRoutingBucket(xPlayer.source) --[[@as number]]
     end)
+
+    ESX.RegisterPlayerMethodOverrides({
+        ---Gets the routing bucket id that the player is inside.
+        ---@param self xPlayer
+        getRoutingBucket = function(self)
+            ---@return number
+            return function()
+                return self.routingBucket
+            end
+        end,
+
+        ---Adds the player to the specified routing bucket id.
+        ---@param self xPlayer
+        setRoutingBucket = function(self)
+            ---@param bucketId routingBucket
+            ---@return boolean
+            return function(bucketId)
+                local success = ESX.SetPlayerRoutingBucket(self.source, bucketId)
+
+                if success then self.routingBucket = tonumber(bucketId) --[[@as number]] end
+
+                return success
+            end
+        end
+    })
+
+    Core.ResourceExport:registerHook("onVehicleCreate", function(payload)
+        local xVehicle = payload?.xVehicle and Core.Vehicles[payload.xVehicle?.entity]
+
+        if not xVehicle then return print("[^1ERROR^7] Unexpected behavior from onVehicleCreate hook in modules/routingBucket/server.lua") end
+
+        xVehicle.routingBucket = ESX.GetEntityRoutingBucket(xVehicle.entity) --[[@as number]]
+    end)
+
+    ESX.RegisterVehicleMethodOverrides({
+        ---Gets the routing bucket id that the vehicle is inside.
+        ---@param self xVehicle
+        getRoutingBucket = function(self)
+            ---@return number
+            return function()
+                return self.routingBucket
+            end
+        end,
+
+        ---Adds the vehicle to the specified routing bucket id.
+        ---@param self xVehicle
+        setRoutingBucket = function(self)
+            ---@param bucketId routingBucket
+            ---@return boolean
+            return function(bucketId)
+                local success = ESX.SetEntityRoutingBucket(self.entity, bucketId)
+
+                if success then self.routingBucket = tonumber(bucketId) --[[@as number]] end
+
+                return success
+            end
+        end
+    })
 end
+
+---@class xPlayer
+---@field routingBucket integer | number
+---@field getRoutingBucket fun(): routingBucket | nil
+---@field setRoutingBucket fun(bucketId: routingBucket): boolean
+
+---@class xVehicle
+---@field routingBucket integer | number
+---@field getRoutingBucket fun(): routingBucket | nil
+---@field setRoutingBucket fun(bucketId: routingBucket): boolean

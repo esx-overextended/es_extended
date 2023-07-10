@@ -24,7 +24,6 @@ server_scripts {
     "server/classes/**/*.lua",
     "server/events.lua",
     "server/functions.lua",
-    "server/onesync.lua",
     "server/paycheck.lua",
     "server/main.lua",
     "server/commands.lua"
