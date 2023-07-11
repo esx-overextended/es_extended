@@ -43,39 +43,6 @@ function ESX.SetPlayerData(key, val)
     end
 end
 
-function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-    if saveToBrief == nil then saveToBrief = true end
-
-    AddTextEntry("esxAdvancedNotification", msg)
-    BeginTextCommandThefeedPost("esxAdvancedNotification")
-
-    if hudColorIndex then ThefeedSetNextPostBackgroundColor(hudColorIndex) end
-
-    EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
-    EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
-end
-
-function ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
-    AddTextEntry("esxHelpNotification", msg)
-
-    if thisFrame then
-        DisplayHelpTextThisFrame("esxHelpNotification", false)
-    else
-        if beep == nil then beep = true end
-
-        BeginTextCommandDisplayHelp("esxHelpNotification")
-        EndTextCommandDisplayHelp(0, false, beep, duration or -1)
-    end
-end
-
-function ESX.ShowFloatingHelpNotification(msg, coords)
-    AddTextEntry("esxFloatingHelpNotification", msg)
-    SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
-    SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-    BeginTextCommandDisplayHelp("esxFloatingHelpNotification")
-    EndTextCommandDisplayHelp(2, false, false, -1)
-end
-
 ESX.HashString = function(str)
     local hash = joaat(str)
     local input_map = string.format("~INPUT_%s~", string.upper(string.format("%x", hash)))

@@ -19,3 +19,53 @@ function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtr
         iconColor = notifyExtra?.iconColor
     })
 end
+
+---Shows an advanced GTA-based type notification
+---@param sender string
+---@param subject string
+---@param msg string
+---@param textureDict string
+---@param iconType number
+---@param flash? boolean
+---@param saveToBrief? boolean
+---@param hudColorIndex? number
+function ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+    if saveToBrief == nil then saveToBrief = true end
+
+    AddTextEntry("esxAdvancedNotification", msg)
+    BeginTextCommandThefeedPost("esxAdvancedNotification")
+
+    if hudColorIndex then ThefeedSetNextPostBackgroundColor(hudColorIndex) end
+
+    EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
+    EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
+end
+
+---Shows a GTA-based type help notification
+---@param msg string
+---@param thisFrame? boolean
+---@param beep? boolean
+---@param duration? number
+function ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
+    AddTextEntry("esxHelpNotification", msg)
+
+    if thisFrame then
+        DisplayHelpTextThisFrame("esxHelpNotification", false)
+    else
+        if beep == nil then beep = true end
+
+        BeginTextCommandDisplayHelp("esxHelpNotification")
+        EndTextCommandDisplayHelp(0, false, beep, duration or -1)
+    end
+end
+
+---Shows a GTA-based type floating help notification
+---@param msg string
+---@param coords vector3
+function ESX.ShowFloatingHelpNotification(msg, coords)
+    AddTextEntry("esxFloatingHelpNotification", msg)
+    SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
+    SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
+    BeginTextCommandDisplayHelp("esxFloatingHelpNotification")
+    EndTextCommandDisplayHelp(2, false, false, -1)
+end
