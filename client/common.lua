@@ -2,9 +2,6 @@ ESX = {}
 ESX.PlayerData = {}
 ESX.PlayerLoaded = false
 ESX.UI = {}
-ESX.Scaleform = {}
-ESX.Scaleform.Utils = {}
-ESX.Streaming = {}
 Core = {}
 Core.ResourceExport = exports[cache.resource]
 
