@@ -20,3 +20,5 @@ function ESX.Math.Trim(value)
 
     return (string.gsub(value, "^%s*(.-)%s*$", "%1"))
 end
+
+ESX.Round = ESX.Math.Round --  leave for backward-compatibility =[

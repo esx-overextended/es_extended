@@ -74,6 +74,10 @@ RegisterServerEvent("esx:clientLog", function(msg)
     end
 end)
 
+function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field
+    return Config
+end
+
 lib.require("modules.hooks.server")
 lib.require("modules.override.server")
 lib.require("modules.safeEvent.server")

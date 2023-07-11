@@ -19,4 +19,8 @@ exports("getSharedObject", function()
     return ESX
 end)
 
+function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field
+    return Config
+end
+
 lib.require("modules.safeEvent.client")
