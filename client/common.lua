@@ -6,7 +6,6 @@ ESX.Scaleform = {}
 ESX.Scaleform.Utils = {}
 ESX.Streaming = {}
 Core = {}
-Core.Input = {}
 Core.ResourceExport = exports[cache.resource]
 
 AddEventHandler("esx:getSharedObject", function(cb)
