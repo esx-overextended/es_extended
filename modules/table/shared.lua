@@ -4,24 +4,22 @@ ESX.Table = {}
 function ESX.Table.SizeOf(t)
     local count = 0
 
-    for _, _ in pairs(t) do
-        count = count + 1
-    end
+    for _, _ in pairs(t) do count += 1 end
 
     return count
 end
 
 function ESX.Table.Set(t)
     local set = {}
+
     for _, v in ipairs(t) do set[v] = true end
+
     return set
 end
 
 function ESX.Table.IndexOf(t, value)
     for i = 1, #t, 1 do
-        if t[i] == value then
-            return i
-        end
+        if t[i] == value then return i end
     end
 
     return -1
@@ -29,9 +27,7 @@ end
 
 function ESX.Table.LastIndexOf(t, value)
     for i = #t, 1, -1 do
-        if t[i] == value then
-            return i
-        end
+        if t[i] == value then return i end
     end
 
     return -1
@@ -39,9 +35,7 @@ end
 
 function ESX.Table.Find(t, cb)
     for i = 1, #t, 1 do
-        if cb(t[i]) then
-            return t[i]
-        end
+        if cb(t[i]) then return t[i] end
     end
 
     return nil
@@ -49,20 +43,19 @@ end
 
 function ESX.Table.FindIndex(t, cb)
     for i = 1, #t, 1 do
-        if cb(t[i]) then
-            return i
-        end
+        if cb(t[i]) then return i end
     end
 
     return -1
 end
 
 function ESX.Table.Filter(t, cb)
-    local newTable = {}
+    local newTable, newTableCount = {}, 0
 
     for i = 1, #t, 1 do
         if cb(t[i]) then
-            newTable[#newTable + 1] = t[i]
+            newTableCount += 1
+            newTable[newTableCount] = t[i]
         end
     end
 
@@ -80,10 +73,11 @@ function ESX.Table.Map(t, cb)
 end
 
 function ESX.Table.Reverse(t)
-    local newTable = {}
+    local newTable, newTableCount = {}, 0
 
     for i = #t, 1, -1 do
-        newTable[#newTable + 1] = t[i]
+        newTableCount += 1
+        newTable[newTableCount] = t[i]
     end
 
     return newTable
@@ -93,26 +87,28 @@ function ESX.Table.Clone(t)
     if type(t) ~= "table" then return t end
 
     local meta = getmetatable(t)
-    local target = {}
+    local newTable = {}
 
     for k, v in pairs(t) do
         if type(v) == "table" then
-            target[k] = ESX.Table.Clone(v)
+            newTable[k] = ESX.Table.Clone(v)
         else
-            target[k] = v
+            newTable[k] = v
         end
     end
 
-    setmetatable(target, meta)
+    setmetatable(newTable, meta)
 
-    return target
+    return newTable
 end
 
 function ESX.Table.Concat(t1, t2)
     local t3 = ESX.Table.Clone(t1)
+    local t3Count = #t3
 
     for i = 1, #t2, 1 do
-        t3[#t3 + 1] = t2[i]
+        t3Count += 1
+        t3[t3Count] = t2[i]
     end
 
     return t3
@@ -137,18 +133,16 @@ end
 function ESX.Table.TableContains(tab, val)
     if type(val) == "table" then
         for _, value in pairs(tab) do
-            if ESX.Table.TableContains(val, value) then
-                return true
-            end
+            if ESX.Table.TableContains(val, value) then return true end
         end
+
         return false
     else
         for _, value in pairs(tab) do
-            if value == val then
-                return true
-            end
+            if value == val then return true end
         end
     end
+
     return false
 end
 
@@ -156,10 +150,11 @@ end
 -- Description: sort function for pairs
 function ESX.Table.Sort(t, order)
     -- collect the keys
-    local keys = {}
+    local keys, keysCount = {}, 0
 
     for k, _ in pairs(t) do
-        keys[#keys + 1] = k
+        keysCount += 1
+        keys[keysCount] = k
     end
 
     -- if order function given, sort by it by passing the table and keys a, b,
@@ -176,9 +171,8 @@ function ESX.Table.Sort(t, order)
     local i = 0
 
     return function()
-        i = i + 1
-        if keys[i] then
-            return keys[i], t[keys[i]]
-        end
+        i += 1
+
+        if keys[i] then return keys[i], t[keys[i]] end
     end
 end
