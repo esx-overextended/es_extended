@@ -242,7 +242,6 @@ function ESX.Game.GetPlayers(onlyOtherPlayers, returnKeyValue, returnPeds)
     return players
 end
 
-
 function ESX.Game.GetClosestObject(coords, modelFilter)
     return ESX.Game.GetClosestEntity(ESX.Game.GetObjects(), false, coords, modelFilter)
 end
@@ -352,19 +351,19 @@ function ESX.Game.GetVehicleProperties(vehicle)
     local customPrimaryColor = nil
 
     if hasCustomPrimaryColor then
-        customPrimaryColor = {GetVehicleCustomPrimaryColour(vehicle)}
+        customPrimaryColor = { GetVehicleCustomPrimaryColour(vehicle) }
     end
 
     local hasCustomXenonColor, customXenonColorR, customXenonColorG, customXenonColorB = GetVehicleXenonLightsCustomColor(vehicle)
     local customXenonColor = nil
     if hasCustomXenonColor then
-        customXenonColor = {customXenonColorR, customXenonColorG, customXenonColorB}
+        customXenonColor = { customXenonColorR, customXenonColorG, customXenonColorB }
     end
 
     local hasCustomSecondaryColor = GetIsVehicleSecondaryColourCustom(vehicle)
     local customSecondaryColor = nil
     if hasCustomSecondaryColor then
-        customSecondaryColor = {GetVehicleCustomSecondaryColour(vehicle)}
+        customSecondaryColor = { GetVehicleCustomSecondaryColour(vehicle) }
     end
 
     local extras = {}
@@ -377,11 +376,11 @@ function ESX.Game.GetVehicleProperties(vehicle)
     local doorsBroken, windowsBroken, tyreBurst = {}, {}, {}
     local numWheels = tostring(GetVehicleNumberOfWheels(vehicle))
 
-    local TyresIndex = { -- Wheel index list according to the number of vehicle wheels.
-        ["2"] = {0, 4}, -- Bike and cycle.
-        ["3"] = {0, 1, 4, 5}, -- Vehicle with 3 wheels (get for wheels because some 3 wheels vehicles have 2 wheels on front and one rear or the reverse).
-        ["4"] = {0, 1, 4, 5}, -- Vehicle with 4 wheels.
-        ["6"] = {0, 1, 2, 3, 4, 5} -- Vehicle with 6 wheels.
+    local TyresIndex = {             -- Wheel index list according to the number of vehicle wheels.
+        ["2"] = { 0, 4 },            -- Bike and cycle.
+        ["3"] = { 0, 1, 4, 5 },      -- Vehicle with 3 wheels (get for wheels because some 3 wheels vehicles have 2 wheels on front and one rear or the reverse).
+        ["4"] = { 0, 1, 4, 5 },      -- Vehicle with 4 wheels.
+        ["6"] = { 0, 1, 2, 3, 4, 5 } -- Vehicle with 6 wheels.
     }
 
     if TyresIndex[numWheels] then
@@ -431,7 +430,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
         xenonColor = GetVehicleXenonLightsColor(vehicle),
         customXenonColor = customXenonColor,
 
-        neonEnabled = {IsVehicleNeonLightEnabled(vehicle, 0), IsVehicleNeonLightEnabled(vehicle, 1), IsVehicleNeonLightEnabled(vehicle, 2), IsVehicleNeonLightEnabled(vehicle, 3)},
+        neonEnabled = { IsVehicleNeonLightEnabled(vehicle, 0), IsVehicleNeonLightEnabled(vehicle, 1), IsVehicleNeonLightEnabled(vehicle, 2), IsVehicleNeonLightEnabled(vehicle, 3) },
 
         neonColor = table.pack(GetVehicleNeonLightsColour(vehicle)),
         extras = extras,
@@ -786,7 +785,7 @@ function ESX.ShowInventory()
 
     local playerPed = ESX.PlayerData.ped
     local elements = {
-        {unselectable = true, icon = "fas fa-box", title = "Player Inventory"}
+        { unselectable = true, icon = "fas fa-box", title = "Player Inventory" }
     }
     local currentWeight = 0
 
@@ -795,7 +794,7 @@ function ESX.ShowInventory()
             local formattedMoney = _U("locale_currency", ESX.Math.GroupDigits(ESX.PlayerData.accounts[i].money))
             local canDrop = ESX.PlayerData.accounts[i].name ~= "bank"
 
-            elements[#elements+1] = {
+            elements[#elements + 1] = {
                 icon = "fas fa-money-bill-wave",
                 title = ("%s: %s"):format(ESX.PlayerData.accounts[i].label, formattedMoney),
                 count = ESX.PlayerData.accounts[i].money,
@@ -812,7 +811,7 @@ function ESX.ShowInventory()
         if v.count > 0 then
             currentWeight = currentWeight + (v.weight * v.count)
 
-            elements[#elements+1] = {
+            elements[#elements + 1] = {
                 icon = "fas fa-box",
                 title = ("%s x%s"):format(v.label, v.count),
                 count = v.count,
@@ -832,7 +831,7 @@ function ESX.ShowInventory()
             local ammo = GetAmmoInPedWeapon(playerPed, weaponHash)
             local label = v.ammo and ("%s - %s %s"):format(v.label, ammo, v.ammo.label) or v.label
 
-            elements[#elements+1] = {
+            elements[#elements + 1] = {
                 icon = "fas fa-gun",
                 title = label,
                 count = 1,
@@ -847,10 +846,10 @@ function ESX.ShowInventory()
         end
     end
 
-    elements[#elements+1] = {
+    elements[#elements + 1] = {
         unselectable = true,
         icon = "fas fa-weight",
-        title = "Current Weight: "..currentWeight
+        title = "Current Weight: " .. currentWeight
     }
 
     ESX.CloseContext()
@@ -861,7 +860,7 @@ function ESX.ShowInventory()
         local elements2 = {}
 
         if element.usable then
-            elements2[#elements2+1] = {
+            elements2[#elements2 + 1] = {
                 icon = "fas fa-utensils",
                 title = _U("use"),
                 action = "use",
@@ -872,7 +871,7 @@ function ESX.ShowInventory()
 
         if element.canRemove then
             if player ~= -1 and distance <= 3.0 then
-                elements2[#elements2+1] = {
+                elements2[#elements2 + 1] = {
                     icon = "fas fa-hands",
                     title = _U("give"),
                     action = "give",
@@ -881,7 +880,7 @@ function ESX.ShowInventory()
                 }
             end
 
-            elements2[#elements2+1] = {
+            elements2[#elements2 + 1] = {
                 icon = "fas fa-trash",
                 title = _U("remove"),
                 action = "remove",
@@ -891,7 +890,7 @@ function ESX.ShowInventory()
         end
 
         if element.type == "item_weapon" and element.canGiveAmmo and element.ammo > 0 and player ~= -1 and distance <= 3.0 then
-            elements2[#elements2+1] = {
+            elements2[#elements2 + 1] = {
                 icon = "fas fa-gun",
                 title = _U("giveammo"),
                 action = "give_ammo",
@@ -900,7 +899,7 @@ function ESX.ShowInventory()
             }
         end
 
-        elements2[#elements2+1] = {
+        elements2[#elements2 + 1] = {
             icon = "fas fa-arrow-left",
             title = _U("return"),
             action = "return"
@@ -915,7 +914,7 @@ function ESX.ShowInventory()
                 if #playersNearby > 0 then
                     local players = {}
                     local elements3 = {
-                        {unselectable = true, icon = "fas fa-users", title = "Nearby Players"}
+                        { unselectable = true, icon = "fas fa-users", title = "Nearby Players" }
                     }
 
                     for _, playerNearby in ipairs(playersNearby) do
@@ -924,7 +923,7 @@ function ESX.ShowInventory()
 
                     ESX.TriggerServerCallback("esx:getPlayerNames", function(returnedPlayers)
                         for playerId, playerName in pairs(returnedPlayers) do
-                            elements3[#elements3+1] = {
+                            elements3[#elements3 + 1] = {
                                 icon = "fas fa-user",
                                 title = playerName,
                                 playerId = playerId
@@ -945,9 +944,9 @@ function ESX.ShowInventory()
                                         ESX.CloseContext()
                                     else
                                         local elementsG = {
-                                            {unselectable = true, icon = "fas fa-trash", title = element.title},
-                                            {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000},
-                                            {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
+                                            { unselectable = true,          icon = "fas fa-trash", title = element.title },
+                                            { icon = "fas fa-hashtag",      title = "Amount",      input = true,         inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000 },
+                                            { icon = "fas fa-check-double", title = "Confirm",     val = "confirm" }
                                         }
 
                                         ESX.OpenContext("right", elementsG, function(menuG, _)
@@ -984,9 +983,9 @@ function ESX.ShowInventory()
                         TriggerServerEvent("esx:removeInventoryItem", type, item)
                     else
                         local elementsR = {
-                            {unselectable = true, icon = "fas fa-trash", title = element.title},
-                            {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to remove...", inputMin = 1, inputMax = 1000},
-                            {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
+                            { unselectable = true,          icon = "fas fa-trash", title = element.title },
+                            { icon = "fas fa-hashtag",      title = "Amount",      input = true,         inputType = "number", inputPlaceholder = "Amount to remove...", inputMin = 1, inputMax = 1000 },
+                            { icon = "fas fa-check-double", title = "Confirm",     val = "confirm" }
                         }
 
                         ESX.OpenContext("right", elementsR, function(menuR, _)
@@ -1019,9 +1018,9 @@ function ESX.ShowInventory()
                     if closestPlayer ~= -1 and closestDistance < 3.0 then
                         if pedAmmo > 0 then
                             local elementsGA = {
-                                {unselectable = true, icon = "fas fa-trash", title = element.title},
-                                {icon = "fas fa-hashtag", title = "Amount", input = true, inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000},
-                                {icon = "fas fa-check-double", title = "Confirm", val = "confirm"}
+                                { unselectable = true,          icon = "fas fa-trash", title = element.title },
+                                { icon = "fas fa-hashtag",      title = "Amount",      input = true,         inputType = "number", inputPlaceholder = "Amount to give...", inputMin = 1, inputMax = 1000 },
+                                { icon = "fas fa-check-double", title = "Confirm",     val = "confirm" }
                             }
 
                             ESX.OpenContext("right", elementsGA, function(menuGA, _)
@@ -1050,48 +1049,4 @@ function ESX.ShowInventory()
             end
         end)
     end)
-end
-
-AddEventHandler("esx:showNotification", function(notifyText, notifyType, notifyDuration, notifyExtra)
-    ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
-end)
-
-AddEventHandler("esx:showAdvancedNotification", function(sender, subject, message, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-    ESX.ShowAdvancedNotification(sender, subject, message, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-end)
-
-AddEventHandler("esx:showHelpNotification", function(message, thisFrame, beep, duration)
-    ESX.ShowHelpNotification(message, thisFrame, beep, duration)
-end)
-
----@param model string | number
----@param cb? function
----@return string?
-function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-set-field
-    local typeModel = type(model)
-
-    if typeModel ~= "string" and typeModel ~= "number" then
-        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel)) return
-    end
-
-    if typeModel == "number" or type(tonumber(model)) == "number" then
-        typeModel = "number"
-        model = tonumber(model) --[[@as number]]
-
-        for vModel, vData in pairs(ESX.GetVehicleData()) do
-            if vData.hash == model then
-                model = vModel
-                break
-            end
-        end
-    end
-
-    model = typeModel == "string" and model:lower() or model --[[@as string]]
-    local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
-
-    if not modelData then
-        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model))
-    end
-
-    return cb and cb(modelData?.type) or modelData?.type
 end

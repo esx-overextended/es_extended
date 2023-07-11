@@ -69,3 +69,7 @@ function ESX.ShowFloatingHelpNotification(msg, coords)
     BeginTextCommandDisplayHelp("esxFloatingHelpNotification")
     EndTextCommandDisplayHelp(2, false, false, -1)
 end
+
+AddEventHandler("esx:showNotification", ESX.ShowNotification)
+AddEventHandler("esx:showHelpNotification", ESX.ShowHelpNotification)
+AddEventHandler("esx:showAdvancedNotification", ESX.ShowAdvancedNotification)
