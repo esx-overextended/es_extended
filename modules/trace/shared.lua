@@ -12,10 +12,10 @@ function ESX.Trace(message, traceType, forcePrint)
     if not Config.EnableDebug and not forcePrint then return end
 
     if type(traceType) ~= "string" or not traceTypes[traceType:lower()] then
-        traceType = traceTypes.trace ---@diagnostic disable-line: cast-local-type
+        traceType = "trace"
     end
 
-    print(("%s %s^7"):format(traceType, message))
+    print(("%s %s^7"):format(traceTypes[traceType:lower()], message))
 end
 
 do
