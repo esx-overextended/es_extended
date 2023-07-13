@@ -1,9 +1,3 @@
-function ESX.Trace(msg)
-    if Config.EnableDebug then
-        print(("[^2TRACE^7] %s^7"):format(msg))
-    end
-end
-
 function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     if type(name) == "table" then
         for _, v in ipairs(name) do
