@@ -76,16 +76,14 @@ function Core.TriggerEventHooks(event, payload)
         for i = 1, #hooks do
             local hook = hooks[i]
 
-            if hook.print then
-                print(("Triggering event hook '%s:%s:%s'"):format(hook.resource, event, i))
-            end
+            ESX.Trace(("Triggering event hook '%s:%s:%s'"):format(hook.resource, event, i), "trace", hook.print)
 
             local start = clock()
-            local _, response = xpcall(hooks[i], function() print(("[^1ERROR^7] There was an error in trigerring event hook '%s:%s:%s'"):format(hook.resource, event, i)) end, payload)
+            local _, response = xpcall(hooks[i], function() ESX.Trace(("There was an error in trigerring event hook '%s:%s:%s'"):format(hook.resource, event, i), "error", true) end, payload)
             local executionTime = (clock() - start) * 1000 -- convert execution time to milliseconds
 
             if executionTime >= 100 then
-                warn(("[^3WARNING^7] Execution of event hook '%s:%s:%s' took %.2fms"):format(hook.resource, event, i, executionTime))
+                ESX.Trace(("Execution of event hook '%s:%s:%s' took %.2fms"):format(hook.resource, event, i, executionTime), "warning", true)
             end
 
             if response == false then

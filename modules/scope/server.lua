@@ -44,7 +44,7 @@ AddEventHandler("playerEnteredScope", function(data)
 
     if not scopes[player] then
         onPlayerJoining(player)
-        print(("[^4INFO^7] Player Id ^3%s^7 did not have its scope configured beforehand. However that is handled but it should not have happened!"):format(player))
+        ESX.Trace(("Player Id ^3%s^7 did not have its scope configured beforehand. However that is handled, but it should not have happened!"):format(player), "warning", true)
     end
 
     scopes[player][playerEntering] = true
@@ -107,7 +107,7 @@ end
 function ESX.TriggerScopedEvent(eventName, scopeOwner, includeScopeOwner, ...)
     local targets = ESX.GetPlayersInScope(scopeOwner, includeScopeOwner)
 
-    if not targets then return print(("[^3WARNING^7] No such scope (^5%s^7) is available!"):format(scopeOwner)) end
+    if not targets then return ESX.Trace(("No such scope (^5%s^7) is available!"):format(scopeOwner), "error", true) end
 
     for targetId in pairs(targets) do
         TriggerClientEvent(eventName, targetId, ...)
@@ -123,7 +123,7 @@ end
 function ESX.TriggerSafeScopedEvent(eventName, scopeOwner, includeScopeOwner, eventData, eventOptions)
     local targets = ESX.GetPlayersInScope(scopeOwner, includeScopeOwner)
 
-    if not targets then return print(("[^3WARNING^7] No such scope (^5%s^7) is available!"):format(scopeOwner)) end
+    if not targets then return ESX.Trace(("No such scope (^5%s^7) is available!"):format(scopeOwner), "error", true) end
 
     for targetId in pairs(targets) do
         ESX.TriggerSafeEvent(eventName, targetId, eventData, eventOptions or { server = false, client = true })

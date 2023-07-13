@@ -16,7 +16,7 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
     local newMethodsType = type(newMethods)
 
     if newMethodsType ~= "table" then
-        return print(("[^1ERROR^7] Expected a parameter with type of ^3table^7 in ^4ESX.RegisterPlayerMethodOverrides^7 function. Received (^3%s^7)"):format(newMethodsType))
+        return ESX.Trace(("Expected a parameter with type of ^3table^7 in ^4ESX.RegisterPlayerMethodOverrides^7 function. Received (^3%s^7)"):format(newMethodsType), "error", true)
     end
 
     ---@type table<string, number>
@@ -39,7 +39,7 @@ function ESX.RegisterPlayerMethodOverrides(newMethods)
         registeredHooks[fnName] = Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
             local xPlayer = payload?.xPlayer --[[@as xPlayer]]
 
-            if not ESX.Players[xPlayer?.source] then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/override/server.lua") end
+            if not ESX.Players[xPlayer?.source] then return ESX.Trace("Unexpected behavior from onPlayerLoad hook in modules/override/server.lua", "error", true) end
 
             xPlayer.setMethod(fnName, fn) -- registering the new method(s) to apply to the future players right after their xPlayer creation
         end)
@@ -70,7 +70,7 @@ function ESX.RegisterVehicleMethodOverrides(newMethods)
     local newMethodsType = type(newMethods)
 
     if newMethodsType ~= "table" then
-        return print(("[^1ERROR^7] Expected a parameter with type of ^3table^7 in ^4ESX.RegisterVehicleMethodOverrides^7 function. Received (^3%s^7)"):format(newMethodsType))
+        return ESX.Trace(("Expected a parameter with type of ^3table^7 in ^4ESX.RegisterVehicleMethodOverrides^7 function. Received (^3%s^7)"):format(newMethodsType), "error", true)
     end
 
     ---@type table<string, number>
@@ -93,7 +93,7 @@ function ESX.RegisterVehicleMethodOverrides(newMethods)
         registeredHooks[fnName] = Core.ResourceExport:registerHook("onVehicleCreate", function(payload)
             local xVehicle = payload?.xVehicle --[[@as xVehicle]]
 
-            if not Core.Vehicles[xVehicle?.entity] then return print("[^1ERROR^7] Unexpected behavior from onVehicleCreate hook in modules/override/server.lua") end
+            if not Core.Vehicles[xVehicle?.entity] then return ESX.Trace("Unexpected behavior from onVehicleCreate hook in modules/override/server.lua", "error", true) end
 
             xVehicle.setMethod(fnName, fn) -- registering the new method(s) to apply to the future vehicles right after their xVehicle creation
         end)
@@ -154,16 +154,14 @@ do
                 local valueType = type(value)
                 local isValueValid = (valueType == "number" or valueType == "string" or valueType == "boolean" or (valueType == "table" and not value?.__cfx_functionReference)) and true or false
 
-                if fieldNameType ~= "string" then print(("[^1ERROR^7] The field name (^3%s^7) passed in ^5player(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.source)) return false
-                elseif not isValueValid then print(("[^1ERROR^7] The value passed in ^5player(%s)'s setField()^7 does not have a valid type!"):format(self.source)) return false end
+                if fieldNameType ~= "string" then ESX.Trace(("The field name (^3%s^7) passed in ^5player(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.source), "error", true) return false
+                elseif not isValueValid then ESX.Trace(("The value passed in ^5player(%s)'s setField()^7 does not have a valid type!"):format(self.source), "error", true) return false end
 
-                if fieldName == "setField" or fieldName == "setMethod" then print(("[^1ERROR^7] Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName)) return false end
+                if fieldName == "setField" or fieldName == "setMethod" then ESX.Trace(("Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName), "error", true) return false end
 
                 self[fieldName] = value
 
-                if Config.EnableDebug then
-                    print(("[^5INFO^7] Setting field (^2%s^7) for player(%s) through ^5xPlayer.setField()^7."):format(fieldName, self.source))
-                end
+                ESX.Trace(("Setting field (^2%s^7) for player(%s) through ^5xPlayer.setField()^7."):format(fieldName, self.source), "info", Config.EnableDebug)
 
                 return true
             end
@@ -180,16 +178,14 @@ do
                 local fnType = type(fn)
                 local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-                if fnNameType ~= "string" then print(("[^1ERROR^7] The method name (^3%s^7) passed in ^5player(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.source)) return false
-                elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5player(%s)'s setMethod()^7 is not a valid function!"):format(self.source)) return false end
+                if fnNameType ~= "string" then ESX.Trace(("The method name (^3%s^7) passed in ^5player(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.source), "error", true) return false
+                elseif not isFnValid then ESX.Trace(("The function passed in ^5player(%s)'s setMethod()^7 is not a valid function!"):format(self.source), "error", true) return false end
 
-                if fnName == "setMethod" or fnName == "setField" then print(("[^1ERROR^7] Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName)) return false end
+                if fnName == "setMethod" or fnName == "setField" then ESX.Trace(("Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName), "error", true) return false end
 
                 self[fnName] = fn(self)
 
-                if Config.EnableDebug then
-                    print(("[^5INFO^7] Setting method (^2%s^7) for player(%s) through ^5xPlayer.setMethod()^7."):format(fnName, self.source))
-                end
+                ESX.Trace(("Setting method (^2%s^7) for player(%s) through ^5xPlayer.setMethod()^7."):format(fnName, self.source), "info", Config.EnableDebug)
 
                 return true
             end
@@ -208,16 +204,14 @@ do
                 local valueType = type(value)
                 local isValueValid = (valueType == "number" or valueType == "string" or valueType == "boolean" or (valueType == "table" and not value?.__cfx_functionReference)) and true or false
 
-                if fieldNameType ~= "string" then print(("[^1ERROR^7] The field name (^3%s^7) passed in ^5vehicle(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.entity)) return false
-                elseif not isValueValid then print(("[^1ERROR^7] The value passed in ^5vehicle(%s)'s setField()^7 does not have a valid type!"):format(self.entity)) return false end
+                if fieldNameType ~= "string" then ESX.Trace(("The field name (^3%s^7) passed in ^5vehicle(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.entity), "error", true) return false
+                elseif not isValueValid then ESX.Trace(("The value passed in ^5vehicle(%s)'s setField()^7 does not have a valid type!"):format(self.entity), "error", true) return false end
 
-                if fieldName == "setField" or fieldName == "setMethod" then print(("[^1ERROR^7] Field ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fieldName)) return false end
+                if fieldName == "setField" or fieldName == "setMethod" then ESX.Trace(("Field ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fieldName), "error", true) return false end
 
                 self[fieldName] = value
 
-                if Config.EnableDebug then
-                    print(("[^5INFO^7] Setting field (^2%s^7) for vehicle(%s) through ^5xVehicle.setField()^7."):format(fieldName, self.entity))
-                end
+                ESX.Trace(("Setting field (^2%s^7) for vehicle(%s) through ^5xVehicle.setField()^7."):format(fieldName, self.entity), "info", Config.EnableDebug)
 
                 return true
             end
@@ -234,15 +228,15 @@ do
                 local fnType = type(fn)
                 local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-                if fnNameType ~= "string" then print(("[^1ERROR^7] The method name (^3%s^7) passed in ^5vehicle(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.entity)) return false
-                elseif not isFnValid then print(("[^1ERROR^7] The function passed in ^5vehicle(%s)'s setMethod()^7 is not a valid function!"):format(self.entity)) return false end
+                if fnNameType ~= "string" then ESX.Trace(("The method name (^3%s^7) passed in ^5vehicle(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.entity), "error", true) return false
+                elseif not isFnValid then ESX.Trace(("The function passed in ^5vehicle(%s)'s setMethod()^7 is not a valid function!"):format(self.entity), "error", true) return false end
 
-                if fnName == "setMethod" or fnName == "setField" then print(("[^1ERROR^7] Method ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fnName)) return false end
+                if fnName == "setMethod" or fnName == "setField" then ESX.Trace(("Method ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fnName), "error", true) return false end
 
                 self[fnName] = fn(self)
 
                 if Config.EnableDebug then
-                    print(("[^5INFO^7] Setting method (^2%s^7) for vehicle(%s) through ^5xVehicle.setMethod()^7."):format(fnName, self.entity))
+                    ESX.Trace(("Setting method (^2%s^7) for vehicle(%s) through ^5xVehicle.setMethod()^7."):format(fnName, self.entity), "info", true)
                 end
 
                 return true

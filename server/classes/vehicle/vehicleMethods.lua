@@ -68,22 +68,22 @@ local xVehicleMethods = {
         ---@param subValue? any
         ---@return boolean
         return function(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.setMetadata)...
-            if not index then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 is Missing!") return false end
+            if not index then ESX.Trace("xVehicle.setMetadata ^5index^7 is Missing!", "error", true) return false end
 
-            if type(index) ~= "string" then print("[^1ERROR^7] xVehicle.setMetadata ^5index^7 should be ^5string^7!") return false end
+            if type(index) ~= "string" then ESX.Trace("xVehicle.setMetadata ^5index^7 should be ^5string^7!", "error", true) return false end
 
             local _type = type(value)
 
             if not subValue then
                 if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                    print(("[^1ERROR^7] xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
+                    ESX.Trace(("xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value), "error", true)
                     return false
                 end
 
                 self.metadata[index] = value
             else
                 if _type ~= "string" then
-                    print(("[^1ERROR^7] xVehicle.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
+                    ESX.Trace(("xVehicle.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value), "error", true)
                     return false
                 end
 
@@ -105,7 +105,7 @@ local xVehicleMethods = {
         return function(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.getMetadata)...
             if not index then return self.metadata end
 
-            if type(index) ~= "string" then  print("[^1ERROR^7] xVehicle.getMetadata ^5index^7 should be ^5string^7!") end
+            if type(index) ~= "string" then ESX.Trace("xVehicle.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
 
             if self.metadata[index] then
                 if subIndex and type(self.metadata[index]) == "table" then

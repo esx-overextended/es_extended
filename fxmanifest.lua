@@ -18,7 +18,6 @@ server_scripts {
     "@oxmysql/lib/MySQL.lua",
     "config.logs.lua",
     "server/common.lua",
-    "common/**/*.lua",
     "modules/**/*shared*.lua",
     "modules/**/*server*.lua",
     "server/classes/**/*.lua",
@@ -32,7 +31,6 @@ server_scripts {
 client_scripts {
     "client/common.lua",
     "client/functions.lua",
-    "common/**/*.lua",
     "modules/**/*shared*.lua",
     "modules/**/*client*.lua",
     "client/events.lua",

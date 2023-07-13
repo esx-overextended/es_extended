@@ -2,13 +2,7 @@ ESX = {}
 ESX.PlayerData = {}
 ESX.PlayerLoaded = false
 ESX.UI = {}
-ESX.Game = {}
-ESX.Game.Utils = {}
-ESX.Scaleform = {}
-ESX.Scaleform.Utils = {}
-ESX.Streaming = {}
 Core = {}
-Core.Input = {}
 Core.ResourceExport = exports[cache.resource]
 
 AddEventHandler("esx:getSharedObject", function(cb)
@@ -18,5 +12,9 @@ end)
 exports("getSharedObject", function()
     return ESX
 end)
+
+function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field
+    return Config
+end
 
 lib.require("modules.safeEvent.client")

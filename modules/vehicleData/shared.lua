@@ -88,7 +88,7 @@ lib.callback.register("esx:generateVehicleData", function(processAll)
     local vehicleData = {}
     local vehicleTopStats = {}
 
-    print(("Generating vehicle data from models (%s models loaded)."):format(numModels))
+    ESX.Trace(("Generating vehicle data from models (%s models loaded)."):format(numModels), "info", true)
 
     for i = 1, numModels do
         local model = models[i]:lower()
@@ -183,7 +183,7 @@ lib.callback.register("esx:generateVehicleData", function(processAll)
         end
     end
 
-    print(("Generated vehicle data from %s models."):format(numParsed))
+    ESX.Trace(("Generated vehicle data from %s models."):format(numParsed), "info", true)
 
     return vehicleData, vehicleTopStats
 end)

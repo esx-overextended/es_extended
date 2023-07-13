@@ -84,7 +84,7 @@ local function onPlayerDropped(source)
 
     local bucketId = routingBucketPlayers[source] --[[@as routingBucket]]
 
-    if not bucketId then return print(("[^3WARNING^7] Player Id (^5%s^7) surprisingly did not have routing bucket id assigned!"):format(source)) end
+    if not bucketId then return ESX.Trace(("Player Id (^5%s^7) surprisingly did not have routing bucket id assigned!"):format(source), "warning", true) end
 
     getmetatable(routingBuckets[bucketId].players).__newindex(routingBuckets[bucketId].players, source, nil)
 end
@@ -217,7 +217,7 @@ do
     Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
         local xPlayer = payload?.xPlayer and ESX.Players[payload.xPlayer?.source]
 
-        if not xPlayer then return print("[^1ERROR^7] Unexpected behavior from onPlayerLoad hook in modules/routingBucket/server.lua") end
+        if not xPlayer then return ESX.Trace("Unexpected behavior from onPlayerLoad hook in modules/routingBucket/server.lua", "error", true) end
 
         xPlayer.routingBucket = ESX.GetPlayerRoutingBucket(xPlayer.source) --[[@as number]]
     end)
@@ -250,7 +250,7 @@ do
     Core.ResourceExport:registerHook("onVehicleCreate", function(payload)
         local xVehicle = payload?.xVehicle and Core.Vehicles[payload.xVehicle?.entity]
 
-        if not xVehicle then return print("[^1ERROR^7] Unexpected behavior from onVehicleCreate hook in modules/routingBucket/server.lua") end
+        if not xVehicle then return ESX.Trace("Unexpected behavior from onVehicleCreate hook in modules/routingBucket/server.lua", "error", true) end
 
         xVehicle.routingBucket = ESX.GetEntityRoutingBucket(xVehicle.entity) --[[@as number]]
     end)

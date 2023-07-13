@@ -133,7 +133,10 @@ local xPlayerMethods = {
         return function(groupName, groupGrade)
             if type(groupName) ~= "string" or type(groupGrade) ~= "number" or self.hasGroup(groupName, groupGrade) then return false end
 
-            if not ESX.DoesGroupExist(groupName, groupGrade) then print(("[^3WARNING^7] Ignoring invalid ^5.addGroup(%s, %s)^7 usage for Player ^5%s^7"):format(groupName, groupGrade, self.source)) return false end
+            if not ESX.DoesGroupExist(groupName, groupGrade) then
+                ESX.Trace(("Ignoring invalid ^5.addGroup(%s, %s)^7 usage for Player ^5%s^7"):format(groupName, groupGrade, self.source), "warning", true)
+                return false
+            end
 
             local triggerRemoveGroup, previousGroup, groupToRemove = false, self.group, nil
             local lastGroups = json.decode(json.encode(self.groups))
@@ -218,7 +221,10 @@ local xPlayerMethods = {
         ---@param newGroup string
         ---@return boolean
         return function(newGroup)
-            if not Config.AdminGroupsByName[newGroup] and Core.DefaultGroup ~= newGroup then print(("[^3WARNING^7] Ignoring invalid ^5.setGroup(%s)^7 usage for Player ^5%s^7"):format(newGroup, self.source)) return false end
+            if not Config.AdminGroupsByName[newGroup] and Core.DefaultGroup ~= newGroup then
+                ESX.Trace(("Ignoring invalid ^5.setGroup(%s)^7 usage for Player ^5%s^7"):format(newGroup, self.source), "warning", true)
+                return false
+            end
 
             return self.addGroup(newGroup, 0)
         end
@@ -378,14 +384,14 @@ local xPlayerMethods = {
             reason = reason or "Unknown"
 
             if not money or money < 0 then
-                print(("[^1ERROR^7] Tried to set account ^5%s^0 for Player ^5%s^0 to with invalid value -> ^5%s^7"):format(accountName, self.playerId, money))
+                ESX.Trace(("Tried to set account ^5%s^0 for Player ^5%s^0 to with invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
                 return false
             end
 
             local account = self.getAccount(accountName)
 
             if not account then
-                print(("[^1ERROR^7] Tried to set money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId))
+                ESX.Trace(("Tried to set money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
                 return false
             end
 
@@ -410,14 +416,14 @@ local xPlayerMethods = {
             reason = reason or "Unknown"
 
             if not money or money <= 0 then
-                print(("[^1ERROR^7] Tried to add account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money))
+                ESX.Trace(("Tried to add account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
                 return false
             end
 
             local account = self.getAccount(accountName)
 
             if not account then
-                print(("[^1ERROR^7] Tried to add money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId))
+                ESX.Trace(("Tried to add money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
                 return false
             end
 
@@ -443,14 +449,14 @@ local xPlayerMethods = {
             reason = reason or "Unknown"
 
             if not money or money <= 0 then
-                print(("[^1ERROR^7] Tried to remove account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money))
+                ESX.Trace(("Tried to remove account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
                 return false
             end
 
             local account = self.getAccount(accountName)
 
             if not account then
-                print(("[^1ERROR^7] Tried to remove money from an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId))
+                ESX.Trace(("Tried to remove money from an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
                 return false
             end
 
@@ -520,7 +526,7 @@ local xPlayerMethods = {
 
             local newCount = item.count - itemCount
 
-            if newCount < 0 then print(("[^1ERROR^7] Tried to remove non-existance count(%s) of %s item for Player ^5%s^0"):format(itemCount, itemName, self.playerId)) return false end
+            if newCount < 0 then ESX.Trace(("Tried to remove non-existance count(%s) of %s item for Player ^5%s^0"):format(itemCount, itemName, self.playerId), "error", true) return false end
 
             item.count = newCount
             self.weight = self.weight - (item.weight * itemCount)
@@ -583,7 +589,7 @@ local xPlayerMethods = {
         ---@param itemCount number
         ---@return boolean
         return function(itemName, itemCount)
-            if not ESX.Items[itemName] then print(("[^3WARNING^7] Item ^5'%s'^7 was used but does not exist!"):format(itemName)) return false end
+            if not ESX.Items[itemName] then ESX.Trace(("Item ^5'%s'^7 was used but does not exist!"):format(itemName), "warning", true) return false end
 
             local currentWeight, itemWeight = self.weight, ESX.Items[itemName].weight
             local newWeight = currentWeight + (itemWeight * itemCount)
@@ -630,7 +636,7 @@ local xPlayerMethods = {
         ---@param duty? boolean if not provided, it will use the job's default duty value
         ---@return boolean
         return function(job, grade, duty)
-            if not ESX.DoesJobExist(job, grade) then print(("[^3WARNING^7] Ignoring invalid ^5.setJob()^7 usage for Player ^5%s^7, Job: ^5%s^7"):format(self.source, job)) return false end
+            if not ESX.DoesJobExist(job, grade) then ESX.Trace(("Ignoring invalid ^5.setJob()^7 usage for Player ^5%s^7, Job: ^5%s^7"):format(self.source, job), "warning", true) return false end
 
             grade = tostring(grade)
             local lastJob = json.decode(json.encode(self.job))
@@ -955,7 +961,7 @@ local xPlayerMethods = {
         return function(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases...
             if not index then return self.metadata end
 
-            if type(index) ~= "string" then  print("[^1ERROR^7] xPlayer.getMetadata ^5index^7 should be ^5string^7!") end
+            if type(index) ~= "string" then  ESX.Trace("xPlayer.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
 
             if self.metadata[index] then
                 if subIndex and type(self.metadata[index]) == "table" then
@@ -993,23 +999,23 @@ local xPlayerMethods = {
         ---@param subValue? any
         ---@return boolean
         return function(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases...
-            if not index then print("[^1ERROR^7] xPlayer.setMetadata ^5index^7 is Missing!") return false end
+            if not index then ESX.Trace("xPlayer.setMetadata ^5index^7 is Missing!", "error", true) return false end
 
-            if type(index) ~= "string" then print("[^1ERROR^7] xPlayer.setMetadata ^5index^7 should be ^5string^7!") return false end
+            if type(index) ~= "string" then ESX.Trace("xPlayer.setMetadata ^5index^7 should be ^5string^7!", "error", true) return false end
 
             local _type = type(value)
             local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
             if not subValue then
                 if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                    print(("[^1ERROR^7] xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value))
+                    ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value), "error", true)
                     return false
                 end
 
                 self.metadata[index] = value
             else
                 if _type ~= "string" then
-                    print(("[^1ERROR^7] xPlayer.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value))
+                    ESX.Trace(("xPlayer.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value), "error", true)
                     return false
                 end
 
@@ -1029,7 +1035,7 @@ local xPlayerMethods = {
         ---@param index string | string[]
         ---@return boolean
         return function(index) -- TODO: Get back to this as it looks like the return value won't work properly with all different cases...
-            if not index then print(("[^1ERROR^7] xPlayer.clearMetadata ^5%s^7 is missing!"):format(index)) return false end
+            if not index then ESX.Trace(("xPlayer.clearMetadata ^5%s^7 is missing!"):format(index), "error", true) return false end
 
             if type(index) == "table" then
                 for _, val in pairs(index) do
@@ -1039,7 +1045,7 @@ local xPlayerMethods = {
                 return true
             end
 
-            if not self.metadata[index] then print(("[^1ERROR^7] xPlayer.clearMetadata ^5%s^7 not exist!"):format(index)) return false end
+            if not self.metadata[index] then ESX.Trace(("xPlayer.clearMetadata ^5%s^7 not exist!"):format(index), "error", true) return false end
 
             local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
             self.metadata[index] = nil

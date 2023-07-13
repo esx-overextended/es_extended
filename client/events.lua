@@ -115,7 +115,9 @@ AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
         Wait(0)
     end
 
-    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesNetIdExist then
+        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
+    end
 
     Wait(500)
 
@@ -144,7 +146,9 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
         Wait(0)
     end
 
-    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesNetIdExist then
+        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
+    end
 
     Wait(500)
 

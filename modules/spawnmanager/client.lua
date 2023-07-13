@@ -36,7 +36,7 @@ function api.spawnPlayer(spawnData, cb)
     if type(spawnData) ~= "table" then
         isSpawning = false
 
-        print("[^1ERROR^7] The first paramater of spawnPlayer function is invalid!")
+        ESX.Trace("The first paramater of spawnPlayer function is invalid!", "error", true)
 
         return false
     end
@@ -48,7 +48,7 @@ function api.spawnPlayer(spawnData, cb)
 
     for key, value in pairs(spawnData) do
         if type(value) == "number" and value == -1 then
-            print(("[^1ERROR^7] The key '%s' from first parameter of spawnPlayer function is invalid!"):format(key))
+            ESX.Trace(("The key '%s' from first parameter of spawnPlayer function is invalid!"):format(key), "error", true)
 
             return false
         end

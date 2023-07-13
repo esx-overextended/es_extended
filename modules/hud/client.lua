@@ -150,13 +150,17 @@ if Config.EnableHud then
         end
     end)
 
-    ESX.RegisterInput("es_extended_hud_button", "Show/Hide Hud", "KEYBOARD", Config.HudButton, function()
-        if not ESX.UI.HUD.Hidden then
-            ESX.UI.HUD.SetDisplay(0.0)
-            ESX.UI.HUD.Hidden = true
-        else
-            ESX.UI.HUD.Hidden = false
-            ESX.UI.HUD.SetDisplay(1.0)
-        end
+    AddEventHandler("onClientResourceStart", function(resource)
+        if resource ~= cache.resource then return end
+
+        ESX.RegisterInput("es_extended_hud_button", "Show/Hide Hud", "KEYBOARD", Config.HudButton, function()
+            if not ESX.UI.HUD.Hidden then
+                ESX.UI.HUD.SetDisplay(0.0)
+                ESX.UI.HUD.Hidden = true
+            else
+                ESX.UI.HUD.Hidden = false
+                ESX.UI.HUD.SetDisplay(1.0)
+            end
+        end)
     end)
 end

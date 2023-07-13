@@ -16,7 +16,7 @@ end
 
 RegisterNetEvent("esx:serverCallback", function(requestId, invoker, ...)
     if not serverRequests[requestId] then
-        return print(("[^1ERROR^7] Server Callback with requestId ^5%s^7 Was Called by ^5%s^7 but does not exist."):format(requestId, invoker))
+        return ESX.Trace(("Server callback with requestId of ^5%s^7 was called by ^5%s^7 but does not exist."):format(requestId, invoker), "error", true)
     end
 
     serverRequests[requestId](...)
@@ -31,7 +31,7 @@ end
 
 RegisterNetEvent("esx:triggerClientCallback", function(eventName, requestId, invoker, ...)
     if not clientCallbacks[eventName] then
-        return print(("[^1ERROR^7] Client Callback not registered, name: ^5%s^7, invoker resource: ^5%s^7"):format(eventName, invoker))
+        return ESX.Trace(("Client callback not registered, name: ^5%s^7, invoker resource: ^5%s^7"):format(eventName, invoker), "error", true)
     end
 
     clientCallbacks[eventName](function(...)

@@ -32,14 +32,14 @@ function ESX.RefreshGroups()
         if Groups[data.group_name] then
             Groups[data.group_name].grades[tostring(data.grade)] = data
         else
-            print(("[^3WARNING^7] Ignoring group grades for ^5'%s'^0 due to missing group"):format(data.group_name))
+            ESX.Trace(("Ignoring group grades for ^5'%s'^0 due to missing group"):format(data.group_name), "warning", true)
         end
     end
 
     for key, data in pairs(Groups) do
         if ESX.Table.SizeOf(data.grades) == 0 then
             Groups[key] = nil
-            print(("[^3WARNING^7] Ignoring group ^5'%s'^0 due to no group grades found"):format(key))
+            ESX.Trace(("[^3WARNING^7] Ignoring group ^5'%s'^0 due to no group grades found"):format(key), "warning", true)
         end
     end
 
