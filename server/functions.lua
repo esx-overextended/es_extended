@@ -8,7 +8,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end
 
     if Core.RegisteredCommands[name] then
-        print(("[^3WARNING^7] Command ^5'%s'^7 already registered, overriding command"):format(name))
+        ESX.Trace(("Command ^5'%s'^7 already registered, overriding command"):format(name), "info", true)
 
         if Core.RegisteredCommands[name].suggestion then
             TriggerClientEvent("chat:removeSuggestion", -1, ("/%s"):format(name))
@@ -32,7 +32,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
         local command = Core.RegisteredCommands[name]
 
         if not command.allowConsole and playerId == 0 then
-            print(("[^3WARNING^7] ^5%s"):format(_U("commanderror_console")))
+            ESX.Trace(("^5%s"):format(_U("commanderror_console")), "warning", true)
         else
             local xPlayer, error = ESX.Players[playerId], nil
 
@@ -112,14 +112,14 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 
             if error then
                 if playerId == 0 then
-                    print(("[^3WARNING^7] %s^7"):format(error))
+                    ESX.Trace(("%s^7"):format(error), "warning", true)
                 else
                     xPlayer.showNotification(error)
                 end
             else
                 cb(xPlayer or false, args, function(msg)
                     if playerId == 0 then
-                        print(("[^3WARNING^7] %s^7"):format(msg))
+                        ESX.Trace(("%s^7"):format(msg), "warning", true)
                     else
                         xPlayer.showNotification(msg)
                     end
@@ -162,7 +162,7 @@ function Core.SavePlayer(xPlayer, cb)
 
     for groupName, groupGrade in pairs(xPlayer.groups) do
         if groupName ~= xPlayer.group then
-            queries[#queries+1] = {
+            queries[#queries + 1] = {
                 query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
                 values = {xPlayer.identifier, groupName, groupGrade}
             }
@@ -170,7 +170,7 @@ function Core.SavePlayer(xPlayer, cb)
     end
 
     MySQL.transaction(queries, function(success)
-        print((success and "[^2INFO^7] Saved player ^5'%s'^7" or "[^1ERROR^7] Error in saving player ^5'%s'^7"):format(xPlayer.name))
+        ESX.Trace((success and "Saved player ^5'%s'^7" or "Error in saving player ^5'%s'^7"):format(xPlayer.name), success and "info" or "error", true)
 
         if success then TriggerEvent("esx:playerSaved", xPlayer.source, xPlayer) end
 
@@ -226,7 +226,7 @@ function Core.SavePlayers(cb)
     end
 
     MySQL.transaction(queries, function(success)
-        print((success and "[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms" or "[^1ERROR^7] Failed to save ^5%s^7 %s over ^5%s^7 ms"):format(playerCounts, playerCounts > 1 and "players" or "player", ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+        ESX.Trace((success and "Saved ^5%s^7 %s over ^5%s^7 ms" or "Failed to save ^5%s^7 %s over ^5%s^7 ms"):format(playerCounts, playerCounts > 1 and "players" or "player", ESX.Math.Round((os.time() - startTime) / 1000000, 2)), success and "info" or "error", true)
 
         return type(cb) == "function" and cb(success)
     end)
@@ -377,12 +377,11 @@ function ESX.UseItem(source, item, ...)
             local success, result = pcall(itemCallback, source, item, ...)
 
             if not success then
-                return result and print(result) or
-                    print(("[^3WARNING^7] An error occured when using item ^5'%s'^7! This was not caused by ESX."):format(item))
+                return ESX.Trace(result and result or ("An error occured when using item ^5'%s'^7! This was not caused by ESX."):format(item), result and "error" or "warning", true)
             end
         end
     else
-        print(("[^3WARNING^7] Item ^5'%s'^7 was used but does not exist!"):format(item))
+        ESX.Trace(("Item ^5'%s'^7 was used but does not exist!"):format(item), "warning", true)
     end
 end
 
@@ -394,11 +393,11 @@ function ESX.GetItemLabel(item)
         end
     end
 
-    if ESX.Items[item] then
-        return ESX.Items[item].label
-    else
-        print("[^3WARNING^7] Attemting to get invalid Item -> ^5" .. item .. "^7")
+    if not ESX.Items[item] then
+        return ESX.Trace(("Attemting to get invalid Item -> ^5%s^7"):format(item), "warning", true)
     end
+
+    return ESX.Items[item].label
 end
 
 function ESX.GetUsableItems()

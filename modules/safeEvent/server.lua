@@ -22,13 +22,13 @@ AddStateBagChangeHandler(nil, "global", function(_, key, value, _, _)
     local notEventLength = #notEvent
 
     if string.sub(key, 1, notEventLength) ~= notEvent then
-        return print(("[^1ERROR^7] Mulfunctioned GlobalState bag ^4name^7 (^2%s^7) received for triggering safe event!"):format(key))
+        return ESX.Trace(("Mulfunctioned GlobalState bag ^4name^7 (^2%s^7) received for triggering safe event!"):format(key), "error", true)
     end
 
     local eventName = string.sub(key, notEventLength + 1)
 
     if not registeredEvents[eventName] then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not registered on server!"):format(eventName))
+        return ESX.Trace(("The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not registered on server!"):format(eventName), "error", true)
     end
 
     registeredEvents[eventName].callback(value)
@@ -38,7 +38,7 @@ end)
 ---@param cb function
 function ESX.RegisterSafeEvent(eventName, cb) ---@diagnostic disable-line: duplicate-set-field
     if type(eventName) ~= "string" then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName))
+        return ESX.Trace(("The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is not a valid string!"):format(eventName), "error", true)
     end
 
     local invokingResource = GetInvokingResource() or GetCurrentResourceName()
@@ -46,18 +46,18 @@ function ESX.RegisterSafeEvent(eventName, cb) ---@diagnostic disable-line: dupli
     local isCbValid = (cbType == "function" or (cbType == "table" and cb?.__cfx_functionReference and true)) or false
 
     if not cb then
-        return print(("[^1ERROR^7] No callback function has passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7"):format(eventName, invokingResource))
+        return ESX.Trace(("No callback function has passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7"):format(eventName, invokingResource), "error", true)
     end
 
     if not isCbValid then
-        return print(("[^1ERROR^7] The callback function passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7 is not a valid function!"):format(eventName, invokingResource))
+        return ESX.Trace(("The callback function passed in ^4ESX.RegisterEvent^7 for (^3%s^7) within ^3%s^7 is not a valid function!"):format(eventName, invokingResource), "error", true)
     end
 
     local originalCb = invokingResource == currentResourceName and cb
 
     if registeredEvents[eventName] then
         originalCb = registeredEvents[eventName].originalCallback
-        print(("[^5INFO^7] The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is being re-registered from ^2%s^7 to ^2%s^7!"):format(eventName, registeredEvents[eventName].resource, invokingResource))
+        ESX.Trace(("The event (^3%s^7) passed in ^4ESX.RegisterEvent^7 is being re-registered from ^2%s^7 to ^2%s^7!"):format(eventName, registeredEvents[eventName].resource, invokingResource), "info", true)
     end
 
     registeredEvents[eventName] = {
@@ -79,16 +79,16 @@ function ESX.TriggerSafeEvent(eventName, source, eventData, eventOptions)
     if not eventName or not source then return end
 
     if type(eventName) ~= "string" then
-        return print(("[^1ERROR^7] The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a valid string!"):format(eventName))
+        return ESX.Trace(("The event (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a valid string!"):format(eventName), "error", true)
     end
 
     source = tonumber(source) --[[@as number]]
     source = source and math.floor(source)
 
-    if not source or (source <= 0 and source ~= -1) then return print("[^1ERROR^7] The source passed in ^4ESX.TriggerSafeEvent^7 must be a valid player id or -1!") end
+    if not source or (source <= 0 and source ~= -1) then return ESX.Trace("The source passed in ^4ESX.TriggerSafeEvent^7 must be a valid player id or -1!", "error", true) end
 
     if eventData and type(eventData) ~= "table" then
-        return print(("[^1ERROR^7] The data (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a table type!"):format(eventName))
+        return ESX.Trace(("The data (^3%s^7) passed in ^4ESX.TriggerSafeEvent^7 is not a table type!"):format(eventName), "error", true)
     end
 
     eventData                     = eventData or {}

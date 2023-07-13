@@ -57,7 +57,7 @@ MySQL.ready(function()
 
     ESX.RefreshJobs()
 
-    print(("[^2INFO^7] ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(GetCurrentResourceName(), "version", 0)))
+    ESX.Trace(("ESX ^5Overextended %s^0 Initialized!"):format(GetResourceMetadata(cache.resource, "version", 0)), "info", true)
 
     startDBSync()
 
@@ -69,9 +69,7 @@ MySQL.ready(function()
 end)
 
 RegisterServerEvent("esx:clientLog", function(msg)
-    if Config.EnableDebug then
-        print(("[^2TRACE^7] %s^7"):format(msg))
-    end
+    ESX.Trace(msg)
 end)
 
 function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field

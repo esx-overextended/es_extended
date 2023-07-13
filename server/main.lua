@@ -48,7 +48,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Job
     if not ESX.DoesJobExist(job, grade) then
         job, grade, duty = "unemployed", "0", false
-        print(("[^3WARNING^7] Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]"):format(identifier, job, grade))
+        ESX.Trace(("Ignoring invalid job for ^5%s^7 [job: ^5%s^7, grade: ^5%s^7]"):format(identifier, job, grade), "warning", true)
     end
 
     local jobObject, gradeObject      = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
@@ -77,7 +77,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
                 if item then
                     foundItems[name] = count
                 else
-                    print(("[^3WARNING^7] Ignoring invalid item ^5'%s'^7 for ^5'%s'^7"):format(name, identifier))
+                    ESX.Trace(("Ignoring invalid item ^5'%s'^7 for ^5'%s'^7"):format(name, identifier), "warning", true)
                 end
             end
         end
@@ -115,7 +115,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
             local groupData = result.groups[i]
 
             if not ESX.DoesGroupExist(groupData.name, groupData.grade) then
-                print(("[^3WARNING^7] Ignoring invalid group for ^5%s^7 [group: ^5%s^7, grade: ^5%s^7]"):format(identifier, groupData.name, groupData.grade))
+                ESX.Trace(("Ignoring invalid group for ^5%s^7 [group: ^5%s^7, grade: ^5%s^7]"):format(identifier, groupData.name, groupData.grade), "warning", true)
                 goto skip
             end
 
@@ -214,7 +214,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
 
     xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
 
-    print(("[^2INFO^0] Player ^5'%s'^0 has connected to the server. ID: ^5%s^7"):format(xPlayer.getName(), playerId))
+    ESX.Trace(("Player ^5'%s'^0 has connected to the server. ID: ^5%s^7"):format(xPlayer.getName(), playerId), "info", true)
 end
 
 local function createESXPlayer(identifier, playerId, data)
@@ -226,7 +226,7 @@ local function createESXPlayer(identifier, playerId, data)
 
     local defaultGroup = Core.GetPlayerAdminGroup(playerId)
 
-    if Core.IsPlayerAdmin(playerId) then print(("[^2INFO^0] Player ^5%s^0 Has been granted %s permissions via ^5Ace Perms^7"):format(playerId, defaultGroup)) end
+    if Core.IsPlayerAdmin(playerId) then ESX.Trace(("Player ^5%s^0 Has been granted %s permissions via ^5Ace Perms^7"):format(playerId, defaultGroup), "info", true) end
 
     if not Config.Multichar then
         MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()
@@ -374,8 +374,7 @@ if not Config.OxInventory then
         local targetXPlayer = ESX.GetPlayerFromId(target)
         local distance = #(GetEntityCoords(GetPlayerPed(playerId)) - GetEntityCoords(GetPlayerPed(target)))
         if not sourceXPlayer or not targetXPlayer or distance > Config.DistanceGive then
-            print("[^3WARNING^7] Player Detected Cheating: ^5" .. GetPlayerName(playerId) .. "^7")
-            return
+            return ESX.Trace(("Player Detected Cheating: ^5%s^7"):format(GetPlayerName(playerId)), "warning", true)
         end
 
         if type == "item_standard" then

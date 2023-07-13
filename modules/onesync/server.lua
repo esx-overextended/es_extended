@@ -59,7 +59,7 @@ function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
     local typeModel = type(model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.OneSync.SpawnVehicle^7!"):format(typeModel)) return
+        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.OneSync.SpawnVehicle^7!"):format(typeModel), "error", true) return
     end
 
     if typeModel == "number" or type(tonumber(model)) == "number" then
@@ -78,7 +78,7 @@ function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model)) return
+        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true) return
     end
 
     local entity = Core.SpawnVehicle(model, modelData.type, coords, heading or coords.w or coords.heading or 0.0)
@@ -108,7 +108,7 @@ function ESX.OneSync.SpawnObject(model, coords, heading, cb)
         Wait(0)
     end
 
-    if not doesEntityExist then return print(("[^3WARNING^7] Spawning (^3%s^7) timed out after waiting %s ticks for object creation!"):format(entity, timeout)) end
+    if not doesEntityExist then return ESX.Trace(("Spawning (^3%s^7) timed out after waiting %s ticks for object creation!"):format(entity, timeout), "warning", true) end
 
     SetEntityHeading(entity, heading or 0.0)
 
@@ -132,7 +132,7 @@ function ESX.OneSync.SpawnPed(model, coords, heading, cb)
         Wait(0)
     end
 
-    if not doesEntityExist then return print(("[^3WARNING^7] Spawning (^3%s^7) timed out after waiting %s ticks for ped creation!"):format(entity, timeout)) end
+    if not doesEntityExist then return ESX.Trace(("Spawning (^3%s^7) timed out after waiting %s ticks for ped creation!"):format(entity, timeout), "warning", true) end
 
     return cb and cb(NetworkGetNetworkIdFromEntity(entity))
 end
@@ -153,7 +153,7 @@ function ESX.OneSync.SpawnPedInVehicle(model, vehicle, seat, cb)
         Wait(0)
     end
 
-    if not doesEntityExist then return print(("[^3WARNING^7] Spawning ped in vehicle (^3%s^7) timed out after waiting %s ticks for ped creation!"):format(entity, timeout)) end
+    if not doesEntityExist then return ESX.Trace(("Spawning ped in vehicle (^3%s^7) timed out after waiting %s ticks for ped creation!"):format(entity, timeout), "warning", true) end
 
     return cb and cb(NetworkGetNetworkIdFromEntity(entity))
 end

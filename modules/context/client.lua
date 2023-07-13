@@ -122,7 +122,7 @@ function ESX.PreviewContext(position, elements, onSelect, onClose, canClose)
         return exports["esx_context"]:Preview(position, elements, onSelect, onClose, canClose)
     end
 
-    print("[^1ERROR^7] Tried to ^5preview^7 context menu, but ^5ox_lib does not offer such functionality^7 at the moment!")
+    ESX.Trace("Tried to ^2preview^7 a context menu, but ^5ox_lib does not offer such functionality^7 at the moment!", "error", true)
 end
 
 ---@param onExit? boolean defaults to true
@@ -145,7 +145,7 @@ function ESX.RefreshContext(elements, position)
 
     if not currentContextId then return end
     if currentContextId ~= contextData?.id then -- strict check whether the current context is opened through ESX.OpenContext or not
-        return print("[^1ERROR^7] Tried to ^5refresh^7 a context menu that hasn't been opened through ^2ESX.OpenContext^7.")
+        return ESX.Trace("Tried to ^5refresh^7 a context menu that hasn't been opened through ^2ESX.OpenContext^7.", "error", true)
     end
 
     local _contextData = contextData -- save the current context menu data since it will be nil once ESX.CloseContext is called

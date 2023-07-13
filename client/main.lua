@@ -145,23 +145,23 @@ if not Config.OxInventory then
     end)
 
     RegisterNetEvent("esx:addWeapon", function()
-        print("[^1ERROR^7] event ^5'esx:addWeapon'^7 Has Been Removed. Please use ^5xPlayer.addWeapon^7 Instead!")
+        ESX.Trace("Event ^5'esx:addWeapon'^7 Has Been Removed. Please use ^5xPlayer.addWeapon^7 Instead!", "error", true)
     end)
 
     RegisterNetEvent("esx:removeWeapon", function()
-        print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
+        ESX.Trace("Event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!", "error", true)
     end)
 
     RegisterNetEvent("esx:setWeaponAmmo", function()
-        print("[^1ERROR^7] event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.addWeaponAmmo^7 Instead!")
+        ESX.Trace("Event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.updateWeaponAmmo^7 Instead!", "error", true)
     end)
 
     RegisterNetEvent("esx:addWeaponComponent", function()
-        print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
+        ESX.Trace("Event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!", "error", true)
     end)
 
     RegisterNetEvent("esx:removeWeaponComponent", function()
-        print("[^1ERROR^7] event ^5'esx:removeWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.removeWeaponComponent^7 Instead!")
+        ESX.Trace("Event ^5'esx:removeWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.removeWeaponComponent^7 Instead!", "error", true)
     end)
 
     AddEventHandler("esx:setWeaponTint", function(weapon, weaponTintIndex)
@@ -494,23 +494,6 @@ end)
 ESX.RegisterClientCallback("esx:GetVehicleType", function(cb, model)
     cb(ESX.GetVehicleType(model))
 end)
-
-local DoNotUse = {
-    "essentialmode",
-    "es_admin2",
-    "basic-gamemode",
-    "mapmanager",
-    "fivem-map-skater",
-    "fivem-map-hipster",
-    "qb-core",
-    "default_spawnpoint",
-}
-
-for i = 1, #DoNotUse do
-    if GetResourceState(DoNotUse[i]):find("start") then
-        print("[^1ERROR^7] YOU ARE USING A RESOURCE THAT WILL BREAK ^1ESX^7, PLEASE REMOVE ^5" .. DoNotUse[i] .. "^7")
-    end
-end
 
 lib.onCache("ped", function(value)
     ESX.SetPlayerData("ped", value)

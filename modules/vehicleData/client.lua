@@ -6,7 +6,7 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local typeModel = type(model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        print(("[^1ERROR^7] Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel)) return
+        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel), "error", true) return
     end
 
     if typeModel == "number" or type(tonumber(model)) == "number" then
@@ -25,7 +25,7 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model))
+        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
     end
 
     return cb and cb(modelData?.type) or modelData?.type

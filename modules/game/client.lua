@@ -89,7 +89,7 @@ function ESX.Game.SpawnVehicle(vehicle, coords, heading, cb, networked)
 
     if dist > 424 then -- Onesync infinity Range (https://docs.fivem.net/docs/scripting-reference/onesync/)
         local executingResource = GetInvokingResource() or "unknown"
-        return print(("[^1ERROR^7] Resource ^5%s^7 tried to spawn vehicle on the client but the position is too far away (Out of onesync range)."):format(executingResource))
+        return ESX.Trace(("Resource ^5%s^7 tried to spawn vehicle on the client but the position is too far away (Out of onesync range)."):format(executingResource), "error", true)
     end
 
     CreateThread(function()
@@ -270,7 +270,7 @@ end
 
 function ESX.Game.GetVehicleProperties(vehicle)
     if not DoesEntityExist(vehicle) then
-        print(("[^1ERROR^7] Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle))
+        ESX.Trace(("Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", true)
         return
     end
 
@@ -422,12 +422,12 @@ end
 
 function ESX.Game.SetVehicleProperties(vehicle, props)
     if not DoesEntityExist(vehicle) then
-        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle))
+        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", true)
         return false
     end
 
     if NetworkGetEntityIsNetworked(vehicle) and NetworkGetEntityOwner(vehicle) ~= cache.playerId then
-        print(("[^1ERROR^7] Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle))
+        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle), "error", true)
         return false
     end
 

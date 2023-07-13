@@ -342,7 +342,7 @@ end, true, {
 
 ESX.RegisterCommand("save", "admin", function(_, args, _)
     Core.SavePlayer(args.playerId)
-    print("[^2Info^0] Saved Player - ^5" .. args.playerId.source .. "^0")
+    ESX.Trace(("Saved Player (^5%s^0)"):format(), "info", true)
 end, true, {
     help = _U("command_save"),
     validate = true,
@@ -356,26 +356,22 @@ ESX.RegisterCommand("saveall", "admin", function(_, _, _)
 end, true, { help = _U("command_saveall") })
 
 ESX.RegisterCommand("group", { "user", "admin" }, function(xPlayer, _, _)
-    print(xPlayer.getName() .. ", You are currently: ^5" .. xPlayer.getGroup() .. "^0")
+    ESX.Trace(("%s, You are currently: ^5%s^0"):format(xPlayer.getName(), xPlayer.getGroup()), "info", true)
 end, true)
 
 ESX.RegisterCommand("job", { "user", "admin" }, function(xPlayer, _, _)
-    local data = ("%s, You are currently: ^5%s^0 - ^5%s^0 (^5%s-Duty^0)"):format(xPlayer.getName(), xPlayer.getJob().name, xPlayer.getJob().grade_label, xPlayer.getDuty() and "On" or "Off")
-    print(data)
+    ESX.Trace(("%s, You are currently: ^5%s^0 - ^5%s^0 (^5%s-Duty^0)"):format(xPlayer.getName(), xPlayer.getJob().name, xPlayer.getJob().grade_label, xPlayer.getDuty() and "On" or "Off"), "info", true)
 end, true)
 
 ESX.RegisterCommand("info", { "user", "admin" }, function(xPlayer, _, _)
-    local job = xPlayer.getJob().name
-    print("^2ID : ^5" .. xPlayer.source .. " ^0| ^2Name:^5" .. xPlayer.getName() .. " ^0 | ^2Group:^5" ..
-        xPlayer.getGroup() .. "^0 | ^2Job:^5" .. job .. "^0")
+    ESX.Trace(("^2ID: ^5%s^0 | ^2Name: ^5%s^0 | ^2Group: ^5%s^0 | ^2Job: ^5%s^0"):format(xPlayer.source, xPlayer.getName(), xPlayer.getGroup(), xPlayer.getJob().name), "info", true)
 end, true)
 
 ESX.RegisterCommand("coords", "admin", function(xPlayer, _, _)
-    local ped = GetPlayerPed(xPlayer.source)
-    local coords = GetEntityCoords(ped, false)
-    local heading = GetEntityHeading(ped)
-    print("Coords - Vector3: ^5" .. vector3(coords.x, coords.y, coords.z) .. "^0")
-    print("Coords - Vector4: ^5" .. vector4(coords.x, coords.y, coords.z, heading) .. "^0")
+    local coords = xPlayer.getCoords()
+
+    ESX.Trace(("Coords - Vector3: ^5%s^0"):format(vector3(coords.x, coords.y, coords.z)), "info", true)
+    ESX.Trace(("Coords - Vector4: ^5%s^0"):format(vector4(coords.x, coords.y, coords.z, coords.heading)), "info", true)
 end, true)
 
 ESX.RegisterCommand("tpm", "admin", function(xPlayer, _, _)
@@ -439,14 +435,15 @@ ESX.RegisterCommand("noclip", "admin", function(xPlayer, _, _)
 end, false)
 
 ESX.RegisterCommand("players", "admin", function(_, _, _)
-    local xPlayers = ESX.GetExtendedPlayers() -- Returns all xPlayers
-    print("^5" .. #xPlayers .. " ^2online player(s)^0")
-    for i = 1, #(xPlayers) do
+    local xPlayers = ESX.GetExtendedPlayers()
+    local xPlayersCount = #xPlayers
+
+    ESX.Trace(("^5%s^2 Online Player(s)^0"):format(xPlayersCount), "info", true)
+
+    for i = 1, xPlayersCount do
         local xPlayer = xPlayers[i]
-        print("^1[ ^2ID : ^5" ..
-            xPlayer.source ..
-            " ^0| ^2Name : ^5" .. xPlayer.getName() .. " ^0 | ^2Group : ^5" ..
-            xPlayer.getGroup() .. " ^0 | ^2Identifier : ^5" .. xPlayer.identifier .. "^1]^0\n")
+
+        ESX.Trace(("\n[^2ID: ^5%s^0 | ^2Name: ^5%s^0 | ^2Group: ^5%s^0 | ^2Job: ^5%s^0]"):format(xPlayer.source, xPlayer.getName(), xPlayer.getGroup(), xPlayer.getJob().name), "info", true)
     end
 end, true)
 

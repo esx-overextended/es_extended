@@ -94,7 +94,7 @@ function ESX.AddJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been added"):format(jobsTable[index].label, jobsTable[index].name))
+        ESX.Trace(("Job ^5'%s'^7 (%s) has been added"):format(jobsTable[index].label, jobsTable[index].name), "info", true)
     end
 
     ESX.RefreshJobs()
@@ -206,7 +206,7 @@ function ESX.UpdateJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been updated"):format(jobsTable[index].label, jobsTable[index].name))
+        ESX.Trace(("Job ^5'%s'^7 (%s) has been updated"):format(jobsTable[index].label, jobsTable[index].name), "info", true)
     end
 
     ESX.RefreshJobs()
@@ -264,7 +264,7 @@ function ESX.RemoveJob(jobObject)
     if not MySQL.transaction.await(queries) then return false, "error_in_executing_queries" end
 
     for index in pairs(jobsTable) do
-        print(("[^2INFO^7] Job ^5'%s'^7 (%s) has been removed"):format(jobsTable[index].label, jobsTable[index].name))
+        ESX.Trace(("Job ^5'%s'^7 (%s) has been removed"):format(jobsTable[index].label, jobsTable[index].name), "info", true)
     end
 
     ESX.RefreshJobs()
@@ -288,14 +288,14 @@ function ESX.RefreshJobs()
         if Jobs[v.job_name] then
             Jobs[v.job_name].grades[tostring(v.grade)] = v
         else
-            print(("[^3WARNING^7] Ignoring job grades for ^5'%s'^0 due to missing job"):format(v.job_name))
+            ESX.Trace(("Ignoring job grades for ^5'%s'^0 due to missing job"):format(v.job_name), "warning", true)
         end
     end
 
     for _, v in pairs(Jobs) do
         if ESX.Table.SizeOf(v.grades) == 0 then
             Jobs[v.name] = nil
-            print(("[^3WARNING^7] Ignoring job ^5'%s'^0 due to no job grades found"):format(v.name))
+            ESX.Trace(("Ignoring job ^5'%s'^0 due to no job grades found"):format(v.name), "warning", true)
         end
     end
 
