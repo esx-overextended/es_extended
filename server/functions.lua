@@ -135,37 +135,6 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end
 end
 
----Saves all vehicles for the resource and despawns them
----@param resource string?
-function Core.SaveVehicles(resource)
-    local parameters, pSize = {}, 0
-    local vehicles, vSize = {}, 0
-
-    if not next(Core.Vehicles) then return end
-
-    if resource == cache.resource then resource = nil end
-
-    for _, xVehicle in pairs(Core.Vehicles) do
-        if not resource or resource == xVehicle.script then
-            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it"s handled through xVehicle.delete()
-                pSize += 1
-                parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
-            end
-
-            vSize += 1
-            vehicles[vSize] = xVehicle.entity
-        end
-    end
-
-    if vSize > 0 then
-        ESX.DeleteVehicle(vehicles)
-    end
-
-    if pSize > 0 then
-        MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", parameters)
-    end
-end
-
 ESX.GetPlayers = GetPlayers
 
 ---Gets a player id rockstar"s license identifier without "license:" prefix
