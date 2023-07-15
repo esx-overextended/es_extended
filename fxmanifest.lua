@@ -18,11 +18,11 @@ server_scripts {
     "@oxmysql/lib/MySQL.lua",
     "config.logs.lua",
     "server/common.lua",
+    "server/functions.lua",
     "modules/**/*shared*.lua",
     "modules/**/*server*.lua",
     "server/classes/**/*.lua",
     "server/events.lua",
-    "server/functions.lua",
     "server/paycheck.lua",
     "server/main.lua",
     "server/commands.lua"
