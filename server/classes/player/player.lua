@@ -195,3 +195,33 @@ function Core.SavePlayers(cb)
         return type(cb) == "function" and cb(success)
     end)
 end
+
+---@param playerId integer | number | string
+---@return boolean
+function Core.IsPlayerAdmin(playerId)
+    if (IsPlayerAceAllowed(tostring(playerId), "command") or GetConvar("sv_lan", "") == "true") and true or false then
+        return true
+    end
+
+    playerId = tonumber(playerId) --[[@as number]]
+
+    return Config.AdminGroupsByName[ESX.Players[playerId]?.group] ~= nil
+end
+
+---@param playerId integer | number | string
+---@return string
+function Core.GetPlayerAdminGroup(playerId)
+    playerId = tostring(playerId)
+    local group = Core.DefaultGroup
+
+    for i = 1, #Config.AdminGroups do -- start from the highest perm admin group
+        local groupName = Config.AdminGroups[i]
+
+        if IsPlayerAceAllowed(playerId, Core.Groups[groupName].principal) then
+            group = groupName
+            break
+        end
+    end
+
+    return group
+end
