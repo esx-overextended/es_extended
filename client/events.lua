@@ -36,6 +36,8 @@ do
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
+    value.xPlayerClient.ped = PlayerPedId() -- including ped id in the player-data before esx:playerLoaded gets triggered
+
     TriggerEvent("esx:playerLoaded", value.xPlayerClient, value.isNew, value.skin)
 end)
 

@@ -15,7 +15,6 @@ end)
 
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
-    ESX.SetPlayerData("ped", PlayerPedId())
     ESX.PlayerLoaded = true
 
     if not Config.Multichar then
