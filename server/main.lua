@@ -334,6 +334,8 @@ local function onPlayerLogout(source, reason, cb)
     if xPlayer then
         TriggerEvent("esx:playerDropped", source, reason)
 
+        local p = promise.new()
+
         Core.SavePlayer(xPlayer, function()
             local playerGroups = json.decode(json.encode(xPlayer.groups)) -- avoid holding reference since it will add Core.DefaultGroup if the admin group is removed which causes error
 
@@ -344,8 +346,12 @@ local function onPlayerLogout(source, reason, cb)
             Core.PlayersByIdentifier[xPlayer.identifier] = nil
             ESX.Players[source] = nil
 
-            return cb and cb()
+            p:resolve()
+
+            if cb then cb() end
         end)
+
+        Citizen.Await(p)
     end
 
     ESX.TriggerSafeEvent("esx:onPlayerLogout", source, nil, { server = false, client = true })
