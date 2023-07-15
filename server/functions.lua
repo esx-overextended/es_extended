@@ -251,29 +251,47 @@ function ESX.GetUsableItems()
     return usables
 end
 
-if not Config.OxInventory then
-    function ESX.CreatePickup(type, name, count, label, playerId, components, tintIndex)
-        local pickupId = (Core.PickupId == 65635 and 0 or Core.PickupId + 1)
-        local xPlayer = ESX.Players[playerId]
-        local coords = xPlayer.getCoords()
+---Creates a pickup item/weapon in a coordinates for all players
+---@param type string
+---@param name string
+---@param count number
+---@param label string
+---@param coordinates xPlayer | vector3 | number
+---@param components any
+---@param tintIndex any
+function ESX.CreatePickup(type, name, count, label, coordinates, components, tintIndex)
+    local pickupId = (Core.PickupId == 65635 and 0 or Core.PickupId + 1)
+    local coords
 
-        Core.Pickups[pickupId] = { type = type, name = name, count = count, label = label, coords = coords }
+    local typeCoordinates = type(coordinates)
 
-        if type == "item_weapon" then
-            Core.Pickups[pickupId].components = components
-            Core.Pickups[pickupId].tintIndex = tintIndex
-        end
-
-        ESX.TriggerSafeEvent("esx:createPickup", -1, {
-            pickupId = pickupId,
-            label = label,
-            coords = coords,
-            type = type,
-            name = name,
-            components = components,
-            tintIndex = tintIndex
-        }, { server = false, client = true })
-
-        Core.PickupId = pickupId
+    if typeCoordinates == "table" and coordinates.getCoords then -- xPlayer
+        coords = coordinates.getCoords()
+    elseif typeCoordinates == "vector3" then
+        coords = coordinates
+    elseif typeCoordinates == "number" then
+        local xPlayer = ESX.Players[coordinates]
+        coords = xPlayer and xPlayer.getCoords()
     end
+
+    if not coords then return ESX.Trace("The 5th parameter passed in ^3ESX.CreatePickup^7 is invalid!", "error", true) end
+
+    Core.Pickups[pickupId] = { type = type, name = name, count = count, label = label, coords = coords }
+
+    if type == "item_weapon" then
+        Core.Pickups[pickupId].components = components
+        Core.Pickups[pickupId].tintIndex = tintIndex
+    end
+
+    ESX.TriggerSafeEvent("esx:createPickup", -1, {
+        pickupId = pickupId,
+        label = label,
+        coords = coords,
+        type = type,
+        name = name,
+        components = components,
+        tintIndex = tintIndex
+    }, { server = false, client = true })
+
+    Core.PickupId = pickupId
 end
