@@ -19,6 +19,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
         if not suggestion.arguments then
             suggestion.arguments = {}
         end
+
         if not suggestion.help then
             suggestion.help = ""
         end
@@ -64,14 +65,11 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
                                 end
 
                                 if targetPlayer then
-                                    local xTargetPlayer = ESX.GetPlayerFromId(targetPlayer)
+                                    ---@cast targetPlayer number
+                                    local xTargetPlayer = ESX.Players[targetPlayer]
 
                                     if xTargetPlayer then
-                                        if v.type == "player" then
-                                            newArgs[v.name] = xTargetPlayer
-                                        else
-                                            newArgs[v.name] = targetPlayer
-                                        end
+                                        newArgs[v.name] = v.type == "player" and xTargetPlayer or targetPlayer
                                     else
                                         error = _U("commanderror_invalidplayerid")
                                     end
@@ -137,101 +135,6 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
     end
 end
 
-function Core.SavePlayer(xPlayer, cb)
-    local queries = {
-        {
-            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
-            values = {
-                json.encode(xPlayer.getAccounts(true)),
-                xPlayer.job.name,
-                xPlayer.job.grade,
-                xPlayer.job.duty,
-                xPlayer.group,
-                json.encode(xPlayer.getCoords()),
-                json.encode(xPlayer.getInventory(true)),
-                json.encode(xPlayer.getLoadout(true)),
-                json.encode(xPlayer.getMetadata()),
-                xPlayer.identifier
-            }
-        },
-        {
-            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
-            values = {xPlayer.identifier, xPlayer.group}
-        }
-    }
-
-    for groupName, groupGrade in pairs(xPlayer.groups) do
-        if groupName ~= xPlayer.group then
-            queries[#queries + 1] = {
-                query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
-                values = {xPlayer.identifier, groupName, groupGrade}
-            }
-        end
-    end
-
-    MySQL.transaction(queries, function(success)
-        ESX.Trace((success and "Saved player ^5'%s'^7" or "Error in saving player ^5'%s'^7"):format(xPlayer.name), success and "info" or "error", true)
-
-        if success then TriggerEvent("esx:playerSaved", xPlayer.source, xPlayer) end
-
-        return type(cb) == "function" and cb(success)
-    end)
-end
-
-function Core.SavePlayers(cb)
-    local xPlayers <const> = ESX.Players
-
-    if not next(xPlayers) then return end
-
-    local startTime <const> = os.time()
-
-    local queries, count = {}, 0
-    local playerCounts = 0
-
-    for _, xPlayer in pairs(xPlayers) do
-        count += 1
-        queries[count] = {
-            query = "UPDATE `users` SET `accounts` = ?, `job` = ?, `job_grade` = ?, `job_duty` = ?, `group` = ?, `position` = ?, `inventory` = ?, `loadout` = ?, `metadata` = ? WHERE `identifier` = ?",
-            values = {
-                json.encode(xPlayer.getAccounts(true)),
-                xPlayer.job.name,
-                xPlayer.job.grade,
-                xPlayer.job.duty,
-                xPlayer.group,
-                json.encode(xPlayer.getCoords()),
-                json.encode(xPlayer.getInventory(true)),
-                json.encode(xPlayer.getLoadout(true)),
-                json.encode(xPlayer.getMetadata()),
-                xPlayer.identifier
-            }
-        }
-
-        count += 1
-        queries[count] = {
-            query = "DELETE FROM `user_groups` WHERE `identifier` = ? AND `name` <> ?",
-            values = {xPlayer.identifier, xPlayer.group}
-        }
-
-        for groupName, groupGrade in pairs(xPlayer.groups) do
-            if groupName ~= xPlayer.group then
-                count += 1
-                queries[count] = {
-                    query = "INSERT INTO `user_groups` (identifier, name, grade) VALUES (?, ?, ?)",
-                    values = {xPlayer.identifier, groupName, groupGrade}
-                }
-            end
-        end
-
-        playerCounts += 1
-    end
-
-    MySQL.transaction(queries, function(success)
-        ESX.Trace((success and "Saved ^5%s^7 %s over ^5%s^7 ms" or "Failed to save ^5%s^7 %s over ^5%s^7 ms"):format(playerCounts, playerCounts > 1 and "players" or "player", ESX.Math.Round((os.time() - startTime) / 1000000, 2)), success and "info" or "error", true)
-
-        return type(cb) == "function" and cb(success)
-    end)
-end
-
 ---Saves all vehicles for the resource and despawns them
 ---@param resource string?
 function Core.SaveVehicles(resource)
@@ -264,37 +167,6 @@ function Core.SaveVehicles(resource)
 end
 
 ESX.GetPlayers = GetPlayers
-
----Returns instance of xPlayers
----@param key? string
----@param value? any
----@return xPlayer[], integer | number
-function ESX.GetExtendedPlayers(key, value)
-    local xPlayers, count = {}, 0
-
-    for _, xPlayer in pairs(ESX.Players) do
-        if key then
-            if (key == "job" and xPlayer.job.name == value) or (key == "group" and xPlayer.groups[value]) or xPlayer[key] == value then
-                count += 1
-                xPlayers[count] = xPlayer
-            end
-        else
-            count += 1
-            xPlayers[count] = xPlayer
-        end
-    end
-
-    return xPlayers, count
-end
-
----@diagnostic disable-next-line: duplicate-set-field
-function ESX.GetPlayerFromId(source)
-    return ESX.Players[tonumber(source)]
-end
-
-function ESX.GetPlayerFromIdentifier(identifier)
-    return Core.PlayersByIdentifier[identifier]
-end
 
 ---Gets a player id rockstar"s license identifier without "license:" prefix
 ---@param playerId integer
@@ -401,11 +273,13 @@ function ESX.GetItemLabel(item)
 end
 
 function ESX.GetUsableItems()
-    local Usables = {}
+    local usables = {}
+
     for k in pairs(Core.UsableItemsCallbacks) do
-        Usables[k] = true
+        usables[k] = true
     end
-    return Usables
+
+    return usables
 end
 
 if not Config.OxInventory then

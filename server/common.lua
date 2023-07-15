@@ -68,10 +68,6 @@ MySQL.ready(function()
     Core.DatabaseConnected = true
 end)
 
-RegisterServerEvent("esx:clientLog", function(msg)
-    ESX.Trace(msg)
-end)
-
 function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field
     return Config
 end
