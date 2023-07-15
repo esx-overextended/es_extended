@@ -473,6 +473,8 @@ if not Config.OxInventory then
         local playerId = source
         local xPlayer = ESX.GetPlayerFromId(playerId)
 
+        if not xPlayer then return end
+
         if type == "item_standard" then
             if itemCount == nil or itemCount < 1 then
                 xPlayer.showNotification(_U("imp_invalid_quantity"))
@@ -533,6 +535,9 @@ if not Config.OxInventory then
     RegisterServerEvent("esx:useItem", function(itemName)
         local source = source
         local xPlayer = ESX.GetPlayerFromId(source)
+
+        if not xPlayer then return end
+
         local count = xPlayer.getInventoryItem(itemName).count
 
         if count > 0 then
@@ -545,7 +550,7 @@ if not Config.OxInventory then
     RegisterServerEvent("esx:onPickup", function(pickupId)
         local pickup, xPlayer, success = Core.Pickups[pickupId], ESX.GetPlayerFromId(source)
 
-        if pickup then
+        if xPlayer and pickup then
             if pickup.type == "item_standard" then
                 if xPlayer.canCarryItem(pickup.name, pickup.count) then
                     xPlayer.addInventoryItem(pickup.name, pickup.count)
@@ -581,6 +586,8 @@ end
 ESX.RegisterServerCallback("esx:getPlayerData", function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
 
+    if not xPlayer then return cb() end
+
     cb({
         identifier = xPlayer.identifier,
         accounts = xPlayer.getAccounts(),
@@ -604,6 +611,8 @@ end)
 
 ESX.RegisterServerCallback("esx:getOtherPlayerData", function(_, cb, target)
     local xPlayer = ESX.GetPlayerFromId(target)
+
+    if not xPlayer then return cb() end
 
     cb({
         identifier = xPlayer.identifier,
