@@ -16,6 +16,7 @@ end)
 AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
     ESX.PlayerData = xPlayer
     ESX.SetPlayerData("ped", PlayerPedId())
+    ESX.PlayerLoaded = true
 
     if not Config.Multichar then
         Core.ResourceExport:spawnPlayer({
@@ -42,8 +43,6 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
         ShutdownLoadingScreen()
         ShutdownLoadingScreenNui()
     end
-
-    ESX.PlayerLoaded = true
 
     SetDefaultVehicleNumberPlateTextPattern(-1, Config.CustomAIPlates)
 
