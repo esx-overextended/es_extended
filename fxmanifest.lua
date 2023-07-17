@@ -3,7 +3,7 @@ game "gta5"
 lua54 "yes"
 
 description "ESX Overextended"
-version "0.1.0"
+version "0.2.0"
 
 shared_scripts {
     "@ox_lib/init.lua",
@@ -18,12 +18,11 @@ server_scripts {
     "@oxmysql/lib/MySQL.lua",
     "config.logs.lua",
     "server/common.lua",
-    "common/**/*.lua",
+    "server/functions.lua",
     "modules/**/*shared*.lua",
     "modules/**/*server*.lua",
     "server/classes/**/*.lua",
     "server/events.lua",
-    "server/functions.lua",
     "server/paycheck.lua",
     "server/main.lua",
     "server/commands.lua"
@@ -32,7 +31,6 @@ server_scripts {
 client_scripts {
     "client/common.lua",
     "client/functions.lua",
-    "common/**/*.lua",
     "modules/**/*shared*.lua",
     "modules/**/*client*.lua",
     "client/events.lua",

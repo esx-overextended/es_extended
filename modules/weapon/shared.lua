@@ -1,11 +1,3 @@
-local Charset = {}
-
-for _, range in ipairs({ { 48, 57 }, { 65, 90 }, { 97, 122 } }) do
-    for i = range[1], range[2] do
-        Charset[#Charset + 1] = string.char(i)
-    end
-end
-
 local weaponsByName = {}
 local weaponsByHash = {}
 
@@ -15,16 +7,6 @@ CreateThread(function()
         weaponsByHash[joaat(weapon.name)] = weapon
     end
 end)
-
-function ESX.GetRandomString(length)
-    math.randomseed(GetGameTimer())
-
-    return length > 0 and ESX.GetRandomString(length - 1) .. Charset[math.random(1, #Charset)] or ""
-end
-
-function ESX.GetConfig()
-    return Config
-end
 
 function ESX.GetWeapon(weaponName)
     weaponName = string.upper(weaponName)
@@ -58,6 +40,7 @@ function ESX.GetWeaponComponent(weaponName, weaponComponent)
     weaponName = string.upper(weaponName)
 
     assert(weaponsByName[weaponName], "Invalid weapon name!")
+
     local weapon = Config.Weapons[weaponsByName[weaponName]]
 
     for _, component in ipairs(weapon.components) do
@@ -65,38 +48,4 @@ function ESX.GetWeaponComponent(weaponName, weaponComponent)
             return component
         end
     end
-end
-
-function ESX.DumpTable(table, nb)
-    if nb == nil then
-        nb = 0
-    end
-
-    if type(table) == "table" then
-        local s = ""
-        for _ = 1, nb + 1, 1 do
-            s = s .. "    "
-        end
-
-        s = "{\n"
-        for k, v in pairs(table) do
-            if type(k) ~= "number" then k = "'" .. k .. "'" end
-            for _ = 1, nb, 1 do
-                s = s .. "    "
-            end
-            s = s .. "[" .. k .. "] = " .. ESX.DumpTable(v, nb + 1) .. ",\n"
-        end
-
-        for _ = 1, nb, 1 do
-            s = s .. "    "
-        end
-
-        return s .. "}"
-    else
-        return tostring(table)
-    end
-end
-
-function ESX.Round(value, numDecimalPlaces)
-    return ESX.Math.Round(value, numDecimalPlaces)
 end

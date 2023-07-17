@@ -36,6 +36,8 @@ do
 end
 
 ESX.RegisterSafeEvent("esx:playerLoaded", function(value)
+    value.xPlayerClient.ped = PlayerPedId() -- including ped id in the player-data before esx:playerLoaded gets triggered
+
     TriggerEvent("esx:playerLoaded", value.xPlayerClient, value.isNew, value.skin)
 end)
 
@@ -79,22 +81,6 @@ ESX.RegisterSafeEvent("esx:removePickup", function(value)
     TriggerEvent("esx:removePickup", value.pickupId)
 end)
 
-ESX.RegisterSafeEvent("esx:registerSuggestions", function(value)
-    TriggerEvent("esx:registerSuggestions", value.registeredCommands)
-end)
-
-ESX.RegisterSafeEvent("esx:showNotification", function(value)
-    TriggerEvent("esx:showNotification", value.message, value.type, value.duration, value.extra)
-end)
-
-ESX.RegisterSafeEvent("esx:showAdvancedNotification", function(value)
-    TriggerEvent("esx:showAdvancedNotification", value.sender, value.subject, value.message, value.textureDict, value.iconType, value.flash, value.saveToBrief, value.hudColorIndex)
-end)
-
-ESX.RegisterSafeEvent("esx:showHelpNotification", function(value)
-    TriggerEvent("esx:showHelpNotification", value.message, value.thisFrame, value.beep, value.duration)
-end)
-
 ESX.RegisterSafeEvent("esx:freezePlayer", function(value)
     TriggerEvent("esx:freezePlayer", value.state)
 end)
@@ -115,7 +101,9 @@ AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
         Wait(0)
     end
 
-    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesNetIdExist then
+        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
+    end
 
     Wait(500)
 
@@ -144,7 +132,9 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
         Wait(0)
     end
 
-    if not doesNetIdExist then print(("[^3WARNING^7] Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key)) return end
+    if not doesNetIdExist then
+        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
+    end
 
     Wait(500)
 

@@ -133,7 +133,7 @@ function Core.SpawnVehicle(modelName, modelType, coordinates, heading)
 
     local entity = CreateVehicleServerSetter(joaat(modelName), modelType, coordinates.x, coordinates.y, coordinates.z, heading)
 
-    if not DoesEntityExist(entity) then return print(("[^1ERROR^7] Failed to spawn vehicle (^4%s^7)"):format(modelName)) end
+    if not DoesEntityExist(entity) then return ESX.Trace(("Failed to spawn vehicle (^4%s^7)"):format(modelName), "error", true) end
 
     TriggerEvent("entityCreated", entity)
 
@@ -150,14 +150,14 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local typeData = type(data)
     local script = GetInvokingResource()
 
-    if typeData ~= "number" and typeData ~= "table" then print(("[^1ERROR^7] Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData)) return end
+    if typeData ~= "number" and typeData ~= "table" then ESX.Trace(("Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData), "error", true) return end
 
     if typeData == "number" then
         local typeCoords = type(coords)
 
         if typeCoords == "table" then
             if not coords[1] or not coords[2] or not coords[3] then
-                print(("[^1ERROR^7] Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords)) return
+                ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true) return
             end
 
             coords = vector3(coords[1], coords[2], coords[3])
@@ -166,7 +166,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             coords = vector3(coords.x, coords.y, coords.z)
             heading = heading or coords.w
         elseif typeCoords ~= "vector3" then
-            print(("[^1ERROR^7] Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords)) return
+            ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true) return
         end
 
         heading = heading or 0.0
@@ -174,7 +174,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
         local vehicle = MySQL.prepare.await(("SELECT `owner`, `job`, `plate`, `vin`, `model`, `class`, `vehicle`, `metadata` FROM `owned_vehicles` WHERE `id` = ? %s"):format(not forceSpawn and "AND `stored` = 1" or ""), { data })
 
         if not vehicle then
-            print(("[^1ERROR^7] Failed to spawn vehicle with id %s (invalid id%s)"):format(data, not forceSpawn and " or already spawned" or "")) return
+            ESX.Trace(("Failed to spawn vehicle with id %s (invalid id%s)"):format(data, not forceSpawn and " or already spawned" or ""), "error", true) return
         end
 
         vehicle.vehicle = json.decode(vehicle.vehicle --[[@as string]])
@@ -200,7 +200,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
                 end
             end
 
-            if not vehicleData then print(("[^1ERROR^7] Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model)) return end
+            if not vehicleData then ESX.Trace(("Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model), "error", true) return end
 
             MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
                 vehicle.vin or Core.GenerateVin(vehicleData.model),
@@ -216,7 +216,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
         local modelData = ESX.GetVehicleData(vehicle.model) --[[@as VehicleData]]
 
         if not modelData then
-            print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model)) return
+            ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model), "error", true) return
         end
 
         return spawnVehicle(data, vehicle.owner, vehicle.job, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type, vehicle.vehicle)
@@ -225,7 +225,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local typeModel = type(data.model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        print(("[^1ERROR^7] Invalid type of data.model (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeModel)) return
+        ESX.Trace(("Invalid type of data.model (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeModel), "error", true) return
     end
 
     if typeModel == "number" or type(tonumber(data.model)) == "number" then
@@ -244,7 +244,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        print(("[^1ERROR^7] Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model)) return
+        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true) return
     end
 
     local owner = type(data.owner) == "string" and data.owner or false
@@ -371,6 +371,37 @@ function Core.GenerateVin(model)
     end
 end
 
+---Saves all vehicles for the resource and despawns them
+---@param resource string?
+function Core.SaveVehicles(resource)
+    local parameters, pSize = {}, 0
+    local vehicles, vSize = {}, 0
+
+    if not next(Core.Vehicles) then return end
+
+    if resource == cache.resource then resource = nil end
+
+    for _, xVehicle in pairs(Core.Vehicles) do
+        if not resource or resource == xVehicle.script then
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it"s handled through xVehicle.delete()
+                pSize += 1
+                parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
+            end
+
+            vSize += 1
+            vehicles[vSize] = xVehicle.entity
+        end
+    end
+
+    if vSize > 0 then
+        ESX.DeleteVehicle(vehicles)
+    end
+
+    if pSize > 0 then
+        MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", parameters)
+    end
+end
+
 ---Deletes the passed vehicle entity/entities
 ---@param vehicleEntity integer | number | table<number, number>
 function ESX.DeleteVehicle(vehicleEntity)
@@ -385,7 +416,7 @@ function ESX.DeleteVehicle(vehicleEntity)
     end
 
     if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
-        print(("[^3WARNING^7] Tried to delete a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        ESX.Trace(("Tried to delete a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity), "warning", true)
         return
     end
 
@@ -416,7 +447,7 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
     end
 
     if _type ~= "number" or vehicleEntity <= 0 or not DoesEntityExist(vehicleEntity) or GetEntityType(vehicleEntity) ~= 2 then
-        print(("[^3WARNING^7] Tried to set properties to a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity))
+        ESX.Trace(("Tried to set properties to a vehicle entity (^1%s^7) that is invalid!"):format(vehicleEntity), "warning", true)
         return
     end
 

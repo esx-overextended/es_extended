@@ -5,6 +5,8 @@ Config.OxInventory = true
 SetConvarReplicated("inventory:framework", "esx")
 SetConvarReplicated("inventory:weight", Config.MaxWeight * 1000) ---@diagnostic disable-line: param-type-mismatch
 
+ESX.CreatePickup = nil
+
 local Inventory
 
 AddEventHandler("ox_inventory:loadInventory", function(module)
@@ -202,7 +204,7 @@ ESX.RegisterPlayerMethodOverrides({
     end,
 
     hasItem = function(self)
-        return function(name,metadata)
+        return function(name, metadata)
             return Inventory.GetItem(self.source, name, metadata)
         end
     end,

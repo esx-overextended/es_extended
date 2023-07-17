@@ -1,3 +1,5 @@
+ESX.Streaming = {}
+
 function ESX.Streaming.RequestModel(modelHash, cb)
     modelHash = (type(modelHash) == "number" and modelHash or joaat(modelHash))
 
