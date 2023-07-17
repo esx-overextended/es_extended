@@ -81,18 +81,6 @@ ESX.RegisterSafeEvent("esx:removePickup", function(value)
     TriggerEvent("esx:removePickup", value.pickupId)
 end)
 
-ESX.RegisterSafeEvent("esx:showNotification", function(value)
-    TriggerEvent("esx:showNotification", value.message, value.type, value.duration, value.extra)
-end)
-
-ESX.RegisterSafeEvent("esx:showAdvancedNotification", function(value)
-    TriggerEvent("esx:showAdvancedNotification", value.sender, value.subject, value.message, value.textureDict, value.iconType, value.flash, value.saveToBrief, value.hudColorIndex)
-end)
-
-ESX.RegisterSafeEvent("esx:showHelpNotification", function(value)
-    TriggerEvent("esx:showHelpNotification", value.message, value.thisFrame, value.beep, value.duration)
-end)
-
 ESX.RegisterSafeEvent("esx:freezePlayer", function(value)
     TriggerEvent("esx:freezePlayer", value.state)
 end)
