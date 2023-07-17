@@ -212,8 +212,6 @@ local function loadESXPlayer(identifier, playerId, isNew)
         exports.ox_inventory:setPlayerInventory(xPlayer, userData.inventory)
     end
 
-    xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
-
     ESX.Trace(("Player ^5'%s'^0 has connected to the server. ID: ^5%s^7"):format(xPlayer.getName(), playerId), "info", true)
 end
 

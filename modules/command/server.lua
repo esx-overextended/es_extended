@@ -155,3 +155,13 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 end
 
 AddEventHandler("esx:triggerCommand", triggerCommand)
+
+do
+    Core.ResourceExport:registerHook("onPlayerLoad", function(payload)
+        local xPlayer = payload?.xPlayer and ESX.Players[payload.xPlayer?.source]
+
+        if not xPlayer then return ESX.Trace("Unexpected behavior from onPlayerLoad hook in modules/command/server.lua", "error", true) end
+
+        xPlayer.triggerSafeEvent("esx:registerSuggestions", { registeredCommands = Core.RegisteredCommands })
+    end)
+end

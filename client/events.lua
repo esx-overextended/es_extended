@@ -81,10 +81,6 @@ ESX.RegisterSafeEvent("esx:removePickup", function(value)
     TriggerEvent("esx:removePickup", value.pickupId)
 end)
 
-ESX.RegisterSafeEvent("esx:registerSuggestions", function(value)
-    TriggerEvent("esx:registerSuggestions", value.registeredCommands)
-end)
-
 ESX.RegisterSafeEvent("esx:showNotification", function(value)
     TriggerEvent("esx:showNotification", value.message, value.type, value.duration, value.extra)
 end)
