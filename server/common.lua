@@ -3,7 +3,6 @@ ESX.Players = {} --[[@type table<number, xPlayer> ]]
 ESX.Items = {}
 Core = {}
 Core.UsableItemsCallbacks = {}
-Core.RegisteredCommands = {}
 Core.Pickups = {}
 Core.PickupId = 0
 Core.DatabaseConnected = false
