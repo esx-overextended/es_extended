@@ -45,7 +45,8 @@ AddEventHandler("esx:playerLoaded", function(xPlayer, isNew, skin)
 
     SetDefaultVehicleNumberPlateTextPattern(-1, Config.CustomAIPlates)
 
-    StartServerSyncLoops()
+    Core.StartServerSyncLoop()
+    Core.StartDroppedItemsLoop()
 end)
 
 AddEventHandler("esx:onPlayerLogout", function()
@@ -113,7 +114,60 @@ AddEventHandler("esx:setAccountMoney", function(account)
     ESX.SetPlayerData("accounts", ESX.PlayerData.accounts)
 end)
 
-if not Config.OxInventory then
+AddEventHandler("esx:setMetadata", function(metadata)
+    ESX.SetPlayerData("metadata", metadata)
+end)
+
+AddEventHandler("onClientResourceStart", function(resource)
+    if resource ~= cache.resource or Config.OxInventory then return end
+
+    local function setObjectProperties(entity, pickupId, coords, label)
+        SetEntityAsMissionEntity(entity, true, false)
+        PlaceObjectOnGroundProperly(entity)
+        FreezeEntityPosition(entity, true)
+        SetEntityCollision(entity, false, true)
+
+        pickups[pickupId] = {
+            obj = entity,
+            label = label,
+            inRange = false,
+            coords = vector3(coords.x, coords.y, coords.z)
+        }
+    end
+
+    AddEventHandler("esx:createPickup", function(pickupId, label, coords, type, name, components, tintIndex)
+        if type == "item_weapon" then
+            local weaponHash = joaat(name)
+            ESX.Streaming.RequestWeaponAsset(weaponHash)
+            local pickupObject = CreateWeaponObject(weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
+            SetWeaponObjectTintIndex(pickupObject, tintIndex)
+
+            for _, v in ipairs(components) do
+                local component = ESX.GetWeaponComponent(name, v)
+                GiveWeaponComponentToWeaponObject(pickupObject, component.hash)
+            end
+
+            setObjectProperties(pickupObject, pickupId, coords, label)
+        else
+            ESX.Game.SpawnLocalObject("prop_money_bag_01", coords, function(entity)
+                setObjectProperties(entity, pickupId, coords, label)
+            end)
+        end
+    end)
+
+    AddEventHandler("esx:removePickup", function(pickupId)
+        if pickups[pickupId] and pickups[pickupId].obj then
+            ESX.Game.DeleteObject(pickups[pickupId].obj)
+            pickups[pickupId] = nil
+        end
+    end)
+
+    AddEventHandler("esx:createMissingPickups", function(missingPickups)
+        for pickupId, pickup in pairs(missingPickups) do
+            TriggerEvent("esx:createPickup", pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+        end
+    end)
+
     AddEventHandler("esx:addInventoryItem", function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then
@@ -165,115 +219,67 @@ if not Config.OxInventory then
     AddEventHandler("esx:setWeaponTint", function(weapon, weaponTintIndex)
         SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
     end)
-end
 
-AddEventHandler("esx:setMetadata", function(metadata)
-    ESX.SetPlayerData("metadata", metadata)
+    if Config.EnableDefaultInventory then
+        RegisterCommand("showinv", function()
+            if ESX.PlayerData.dead then return end
+
+            ESX.ShowInventory()
+        end, false)
+
+        RegisterKeyMapping("showinv", _U("keymap_showinventory"), "keyboard", "F2")
+    end
 end)
 
-if not Config.OxInventory then
-    AddEventHandler("esx:createPickup", function(pickupId, label, coords, type, name, components, tintIndex)
-        local function setObjectProperties(object)
-            SetEntityAsMissionEntity(object, true, false)
-            PlaceObjectOnGroundProperly(object)
-            FreezeEntityPosition(object, true)
-            SetEntityCollision(object, false, true)
+function Core.StartServerSyncLoop() ---@diagnostic disable-line: duplicate-set-field
+    CreateThread(function()
+        local currentWeapon = { Ammo = 0 }
+        local sleep
 
-            pickups[pickupId] = {
-                obj = object,
-                label = label,
-                inRange = false,
-                coords = vector3(coords.x, coords.y, coords.z)
-            }
-        end
+        while ESX.PlayerLoaded do
+            sleep = 1500
 
-        if type == "item_weapon" then
-            local weaponHash = joaat(name)
-            ESX.Streaming.RequestWeaponAsset(weaponHash)
-            local pickupObject = CreateWeaponObject(weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
-            SetWeaponObjectTintIndex(pickupObject, tintIndex)
+            if GetSelectedPedWeapon(ESX.PlayerData.ped) ~= -1569615261 then
+                sleep = 1000
+                local _, weaponHash = GetCurrentPedWeapon(ESX.PlayerData.ped, true)
+                local weapon = ESX.GetWeaponFromHash(weaponHash)
 
-            for _, v in ipairs(components) do
-                local component = ESX.GetWeaponComponent(name, v)
-                GiveWeaponComponentToWeaponObject(pickupObject, component.hash)
-            end
+                if weapon then
+                    local ammoCount = GetAmmoInPedWeapon(ESX.PlayerData.ped, weaponHash)
 
-            setObjectProperties(pickupObject)
-        else
-            ESX.Game.SpawnLocalObject("prop_money_bag_01", coords, setObjectProperties)
-        end
-    end)
-
-    AddEventHandler("esx:createMissingPickups", function(missingPickups)
-        for pickupId, pickup in pairs(missingPickups) do
-            TriggerEvent("esx:createPickup", pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
-        end
-    end)
-end
-
-if not Config.OxInventory then
-    AddEventHandler("esx:removePickup", function(pickupId)
-        if pickups[pickupId] and pickups[pickupId].obj then
-            ESX.Game.DeleteObject(pickups[pickupId].obj)
-            pickups[pickupId] = nil
-        end
-    end)
-end
-
-function StartServerSyncLoops()
-    if not Config.OxInventory then
-        -- keep track of ammo
-
-        CreateThread(function()
-            local currentWeapon = { Ammo = 0 }
-            while ESX.PlayerLoaded do
-                local sleep = 1500
-                if GetSelectedPedWeapon(ESX.PlayerData.ped) ~= -1569615261 then
-                    sleep = 1000
-                    local _, weaponHash = GetCurrentPedWeapon(ESX.PlayerData.ped, true)
-                    local weapon = ESX.GetWeaponFromHash(weaponHash)
-                    if weapon then
-                        local ammoCount = GetAmmoInPedWeapon(ESX.PlayerData.ped, weaponHash)
-                        if weapon.name ~= currentWeapon.name then
+                    if weapon.name ~= currentWeapon.name then
+                        currentWeapon.Ammo = ammoCount
+                        currentWeapon.name = weapon.name
+                    else
+                        if ammoCount ~= currentWeapon.Ammo then
                             currentWeapon.Ammo = ammoCount
-                            currentWeapon.name = weapon.name
-                        else
-                            if ammoCount ~= currentWeapon.Ammo then
-                                currentWeapon.Ammo = ammoCount
-                                TriggerServerEvent("esx:updateWeaponAmmo", weapon.name, ammoCount)
-                            end
+
+                            TriggerServerEvent("esx:updateWeaponAmmo", weapon.name, ammoCount)
                         end
                     end
                 end
-                Wait(sleep)
             end
-        end)
-    end
-end
 
-if not Config.OxInventory and Config.EnableDefaultInventory then
-    RegisterCommand("showinv", function()
-        if not ESX.PlayerData.dead then
-            ESX.ShowInventory()
+            Wait(sleep)
         end
-    end, false)
-
-    RegisterKeyMapping("showinv", _U("keymap_showinventory"), "keyboard", "F2")
+    end)
 end
 
-if not Config.OxInventory then
+function Core.StartDroppedItemsLoop() ---@diagnostic disable-line: duplicate-set-field
     CreateThread(function()
-        while true do
-            local Sleep = 1500
-            local playerCoords = GetEntityCoords(ESX.PlayerData.ped)
-            local _, closestDistance = ESX.Game.GetClosestPlayer(playerCoords)
+        local sleep
+
+        while ESX.PlayerLoaded do
+            sleep = 1500
+            local _, closestDistance = ESX.Game.GetClosestPlayer(cache.coords)
 
             for pickupId, pickup in pairs(pickups) do
-                local distance = #(playerCoords - pickup.coords)
+                local distance = #(cache.coords - pickup.coords)
+
                 PlaceObjectOnGroundProperly(pickup.obj)
 
                 if distance < 5 then
-                    Sleep = 0
+                    sleep = 0
                     local label = pickup.label
 
                     if distance < 1 then
@@ -304,13 +310,12 @@ if not Config.OxInventory then
                     pickup.inRange = false
                 end
             end
-            Wait(Sleep)
+            Wait(sleep)
         end
     end)
 end
 
 ----- Admin commnads from esx_adminplus
-
 RegisterNetEvent("esx:tpm")
 AddEventHandler("esx:tpm", function()
     local GetEntityCoords = GetEntityCoords
