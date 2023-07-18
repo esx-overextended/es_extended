@@ -289,22 +289,19 @@ else
 
         if identifier then
             if not Config.EnableDebug and ESX.GetPlayerFromIdentifier(identifier) then
-                return deferrals.done(("[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s")
-                    :format(identifier))
+                return deferrals.done(("[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s"):format(identifier))
             else
                 return deferrals.done()
             end
         else
-            return deferrals.done(
-                "[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.")
+            return deferrals.done("[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.")
         end
     end)
 
     RegisterServerEvent("esx:onPlayerJoined", function()
         local _source = source
-        while not next(ESX.Jobs) do
-            Wait(50)
-        end
+
+        while not next(ESX.Jobs) do Wait(50) end
 
         if not ESX.Players[_source] then
             onPlayerJoined(_source)
@@ -363,7 +360,9 @@ AddEventHandler("esx:playerLogout", function(source, cb)
     onPlayerLogout(source, "Logged out of character", cb)
 end)
 
-if not Config.OxInventory then
+AddEventHandler("onServerResourceStop", function(resource)
+    if resource ~= cache.resource or Config.OxInventory then return end
+
     RegisterServerEvent("esx:updateWeaponAmmo", function(weaponName, ammoCount)
         local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -585,7 +584,7 @@ if not Config.OxInventory then
             end
         end
     end)
-end
+end)
 
 ESX.RegisterServerCallback("esx:getPlayerData", function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
