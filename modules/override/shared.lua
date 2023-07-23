@@ -4,9 +4,29 @@ local originalFunctions = {}
 ---@type table<string, string>
 local invokedResources = {}
 
+---@param fieldName string
+---@param value number | string | boolean | table
+---@return boolean (whether the action was successful or not)
+function ESX.SetField(fieldName, value)
+    local fieldNameType = type(fieldName)
+    local valueType = type(value)
+    local isValueValid = (valueType == "number" or valueType == "string" or valueType == "boolean" or (valueType == "table" and not value?.__cfx_functionReference)) and true or false
+
+    if fieldNameType ~= "string" then ESX.Trace(("The field name (^3%s^7) passed in ^5ESX.SetField^7 in ^3%s^7 is not a valid string!"):format(fieldName, lib.context), "error", true) return false
+    elseif not isValueValid then ESX.Trace(("The value passed in ^5ESX.SetField^7 in ^3%s^7 does not have a valid type!"):format(lib.context), "error", true) return false end
+
+    if fieldName == "SetField" then ESX.Trace(("Field ^2%s^7 of ESX ^1cannot^7 be overrided!"):format(fieldName), "error", true) return false end
+
+    ESX[fieldName] = value
+
+    ESX.Trace(("Setting field (^2%s^7) for ^2ESX^7 through ^5ESX.SetField^7 in ^3%s^7."):format(fieldName, lib.context), "info", true)
+
+    return true
+end
+
 ---@param fnName string
 ---@param fn function
----@return boolean
+---@return boolean (whether the action was successful or not)
 function ESX.SetFunction(fnName, fn)
     local fnNameType = type(fnName)
     local fnType = type(fn)

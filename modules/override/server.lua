@@ -235,9 +235,7 @@ do
 
                 self[fnName] = fn(self)
 
-                if Config.EnableDebug then
-                    ESX.Trace(("Setting method (^2%s^7) for vehicle(%s) through ^5xVehicle.setMethod()^7."):format(fnName, self.entity), "info", true)
-                end
+                ESX.Trace(("Setting method (^2%s^7) for vehicle(%s) through ^5xVehicle.setMethod()^7."):format(fnName, self.entity), "info", Config.EnableDebug)
 
                 return true
             end
