@@ -15,7 +15,9 @@ function ESX.Trace(message, traceType, forcePrint)
         traceType = "trace"
     end
 
-    print(("%s %s^7"):format(traceTypes[traceType:lower()], message))
+    local invokingResource = GetInvokingResource() or "es_extended"
+
+    print(("[^4%s^7]%s %s^7"):format(invokingResource:upper(), traceTypes[traceType:lower()], message))
 end
 
 do
