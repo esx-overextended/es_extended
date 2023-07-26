@@ -106,14 +106,13 @@ end
 local function getVehicleTypeFromModel(modelName, modelType)
     modelType = modelType or ESX.GetVehicleData(modelName)?.type --[[@as string]]
 
-    if modelType == "automobile" then return "car"
-    elseif modelType == "bike" then return "bike"
-    elseif modelType == "quadbike" then return "bike"
-    elseif modelType == "heli" then return "heli"
-    elseif modelType == "plane" then return "plane"
-    elseif modelType == "trailer" then return "trailer"
-    elseif modelType == "boat" then return "boat"
-    else return modelType end
+    if modelType == "automobile" then
+        return "car"
+    elseif modelType == "quadbike" then
+        return "bike"
+    end
+
+    return modelType
 end
 
 ---@param modelName string
@@ -150,14 +149,18 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local typeData = type(data)
     local script = GetInvokingResource()
 
-    if typeData ~= "number" and typeData ~= "table" then ESX.Trace(("Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData), "error", true) return end
+    if typeData ~= "number" and typeData ~= "table" then
+        ESX.Trace(("Invalid type of data (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeData), "error", true)
+        return
+    end
 
     if typeData == "number" then
         local typeCoords = type(coords)
 
         if typeCoords == "table" then
             if not coords[1] or not coords[2] or not coords[3] then
-                ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true) return
+                ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true)
+                return
             end
 
             coords = vector3(coords[1], coords[2], coords[3])
@@ -166,7 +169,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
             coords = vector3(coords.x, coords.y, coords.z)
             heading = heading or coords.w
         elseif typeCoords ~= "vector3" then
-            ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true) return
+            ESX.Trace(("Invalid type of coords (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeCoords), "error", true)
+            return
         end
 
         heading = heading or 0.0
@@ -174,7 +178,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
         local vehicle = MySQL.prepare.await(("SELECT `owner`, `job`, `plate`, `vin`, `model`, `class`, `vehicle`, `metadata` FROM `owned_vehicles` WHERE `id` = ? %s"):format(not forceSpawn and "AND `stored` = 1" or ""), { data })
 
         if not vehicle then
-            ESX.Trace(("Failed to spawn vehicle with id %s (invalid id%s)"):format(data, not forceSpawn and " or already spawned" or ""), "error", true) return
+            ESX.Trace(("Failed to spawn vehicle with id %s (invalid id%s)"):format(data, not forceSpawn and " or already spawned" or ""), "error", true)
+            return
         end
 
         vehicle.vehicle = json.decode(vehicle.vehicle --[[@as string]])
@@ -200,7 +205,10 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
                 end
             end
 
-            if not vehicleData then ESX.Trace(("Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model), "error", true) return end
+            if not vehicleData then
+                ESX.Trace(("Vehicle model hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.vehicle?.model), "error", true)
+                return
+            end
 
             MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
                 vehicle.vin or Core.GenerateVin(vehicleData.model),
@@ -216,7 +224,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
         local modelData = ESX.GetVehicleData(vehicle.model) --[[@as VehicleData]]
 
         if not modelData then
-            ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model), "error", true) return
+            ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicle.model), "error", true)
+            return
         end
 
         return spawnVehicle(data, vehicle.owner, vehicle.job, vehicle.plate, vehicle.vin, vehicle.model, script, vehicle.metadata, coords, heading, modelData.type, vehicle.vehicle)
@@ -225,7 +234,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local typeModel = type(data.model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        ESX.Trace(("Invalid type of data.model (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeModel), "error", true) return
+        ESX.Trace(("Invalid type of data.model (^1%s^7) in ^5ESX.CreateVehicle^7!"):format(typeModel), "error", true)
+        return
     end
 
     if typeModel == "number" or type(tonumber(data.model)) == "number" then
@@ -244,7 +254,8 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true) return
+        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
+        return
     end
 
     local owner = type(data.owner) == "string" and data.owner or false
@@ -490,7 +501,7 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
     table.remove(Core.VehiclesPropertiesQueue[entity], 1) -- removing the properties that just applied from the queue
 
     if next(Core.VehiclesPropertiesQueue[entity]) then
-        Wait(10) -- needed. if we don't have a wait here, the server's change handler will not be triggerred all the time, therefore the queue will not empty, causing the future ESX.SetVehicleProperties calls not to take in place
+        Wait(10)                                                                                                                         -- needed. if we don't have a wait here, the server's change handler will not be triggerred all the time, therefore the queue will not empty, causing the future ESX.SetVehicleProperties calls not to take in place
         return Core.VehiclesPropertiesQueue[entity]?[1] and Entity(entity).state:set(key, Core.VehiclesPropertiesQueue[entity][1], true) -- applying the next properties from the queue
         --[[
         local bagName = ("entity:%d"):format(NetworkGetNetworkIdFromEntity(entity))
