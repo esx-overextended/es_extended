@@ -15,7 +15,7 @@ local xPlayerMethods = lib.require("server.classes.player.playerMethods")
 ---@return xPlayer
 function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     ---@type xPlayer
-    local self = {}
+    local self = {} ---@diagnostic disable-line: missing-fields
 
     self.accounts = playerAccounts
     self.groups = playerGroups

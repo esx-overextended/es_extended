@@ -30,7 +30,7 @@ Core.VehiclesPropertiesQueue = {}
 ---@return xVehicle
 local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehicleNetId, vehicleEntity, vehicleModel, vehiclePlate, vehicleVin, vehicleScript, vehicleMetadata)
     ---@type xVehicle
-    local self = {}
+    local self = {} ---@diagnostic disable-line: missing-fields
 
     self.id = vehicleId
     self.owner = vehicleOwner

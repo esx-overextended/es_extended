@@ -72,17 +72,17 @@ function ESX.RefreshGroups()
 
     for i = 1, #Config.AdminGroups do
         local group = Config.AdminGroups[i]
-        Core.Groups[group] = {
+        Core.Groups[group] = { ---@diagnostic disable-line: missing-fields
             name = group,
             label = group:gsub("^%l", string.upper),
-            grades = { ["0"] = { group_name = group, grade = 0, label = group:gsub("^%l", string.upper) } }
+            grades = { ["0"] = { group_name = group, grade = 0, label = group:gsub("^%l", string.upper) } } ---@diagnostic disable-line: missing-fields
         }
     end
 
-    Core.Groups[Core.DefaultGroup] = {
+    Core.Groups[Core.DefaultGroup] = { ---@diagnostic disable-line: missing-fields
         name = Core.DefaultGroup,
         label = Core.DefaultGroup:gsub("^%l", string.upper),
-        grades = { ["0"] = { group_name = Core.DefaultGroup, grade = 0, label = Core.DefaultGroup:gsub("^%l", string.upper) } }
+        grades = { ["0"] = { group_name = Core.DefaultGroup, grade = 0, label = Core.DefaultGroup:gsub("^%l", string.upper) } } ---@diagnostic disable-line: missing-fields
     }
 
     for key, xGroup in pairs(Core.Groups) do
