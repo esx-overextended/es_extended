@@ -1,5 +1,9 @@
 ESX = exports["es_extended"]:getSharedObject()
 
+if not _VERSION:find("5.4") then
+    return ESX.Trace("^1Lua 5.4 must be enabled in the resource manifest!^7", "error", true)
+end
+
 if not IsDuplicityVersion() then -- Only register these for the client
     AddEventHandler("esx:setPlayerData", function(key, val, last)
         if GetInvokingResource() == "es_extended" then
@@ -86,13 +90,13 @@ else -- Only register these for the server
     do setupESX() end
 
     AddEventHandler("esx:jobsObjectRefreshed", function()
-        if ESX?.Jobs then
+        if ESX and ESX.Jobs then
             ESX.Jobs = ESX.GetJobs()
         end
     end)
 
     AddEventHandler("esx:groupsObjectRefreshed", function()
-        if ESX?.Groups then
+        if ESX and ESX.Groups then
             ESX.Groups = ESX.GetGroups()
         end
     end)
