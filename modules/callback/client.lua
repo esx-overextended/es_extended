@@ -1,4 +1,4 @@
-local RequestId = 0
+local requestId = 0
 local serverRequests = {}
 
 local clientCallbacks = {}
@@ -6,21 +6,35 @@ local clientCallbacks = {}
 ---@param eventName string
 ---@param callback function
 ---@param ... any
-ESX.TriggerServerCallback = function(eventName, callback, ...)
-    serverRequests[RequestId] = callback
+function ESX.TriggerServerCallback(eventName, callback, ...)
+    serverRequests[requestId] = callback
 
-    TriggerServerEvent("esx:triggerServerCallback", eventName, RequestId, GetInvokingResource() or "unknown", ...)
+    TriggerServerEvent("esx:triggerServerCallback", eventName, requestId, GetInvokingResource() or "unknown", ...)
 
-    RequestId = RequestId + 1
+    requestId = requestId + 1
 end
 
-RegisterNetEvent("esx:serverCallback", function(requestId, invoker, ...)
-    if not serverRequests[requestId] then
-        return ESX.Trace(("Server callback with requestId of ^5%s^7 was called by ^5%s^7 but does not exist."):format(requestId, invoker), "error", true)
+---@param eventName string
+---@param ... any
+function ESX.AwaitTriggerServerCallback(eventName, ...)
+    local _promise = promise.new()
+
+    ESX.TriggerServerCallback(eventName, function(...)
+        _promise:resolve(...)
+    end, ...)
+
+    return Citizen.Await(_promise)
+end
+
+RegisterNetEvent("esx:serverCallback", function(receivedRequestId, invoker, ...)
+    local callback = serverRequests[receivedRequestId] --[[@as function]]
+
+    if not callback then
+        return ESX.Trace(("Server callback with requestId of ^5%s^7 was called by ^5%s^7 but does not exist."):format(receivedRequestId, invoker), "error", true)
     end
 
-    serverRequests[requestId](...)
-    serverRequests[requestId] = nil
+    serverRequests[receivedRequestId] = nil
+    callback(...)
 end)
 
 ---@param eventName string
