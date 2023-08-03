@@ -19,7 +19,7 @@ function ESX.TriggerClientCallback(playerId, eventName, cb, ...)
         table.insert(args, 1, cb)
     end
 
-    TriggerClientEvent("esx:triggerClientCallback", playerId, eventName, _requestId, GetInvokingResource() or "unknown", table.unpack(args))
+    TriggerClientEvent("esx:triggerClientCallback", playerId, eventName, _requestId, GetInvokingResource() or cache.resource, table.unpack(args))
 
     clientRequests[_requestId] = function(...)
         clientRequests[_requestId] = nil

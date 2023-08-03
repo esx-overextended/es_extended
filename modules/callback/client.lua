@@ -18,7 +18,7 @@ function ESX.TriggerServerCallback(eventName, cb, ...)
         table.insert(args, 1, cb)
     end
 
-    TriggerServerEvent("esx:triggerServerCallback", eventName, _requestId, GetInvokingResource() or "unknown", table.unpack(args))
+    TriggerServerEvent("esx:triggerServerCallback", eventName, _requestId, GetInvokingResource() or cache.resource, table.unpack(args))
 
     serverRequests[_requestId] = function(...)
         serverRequests[_requestId] = nil
