@@ -1,25 +1,29 @@
 local requestId = 0
 local serverRequests = {}
-
 local clientCallbacks = {}
 
 ---@param eventName string
----@param cb? function
+---@param cb? any
 ---@param ... any
 ---@return ...
-local function triggerServerCallback(eventName, cb, ...)
-    local _requestId = requestId
+function ESX.TriggerServerCallback(eventName, cb, ...)
     requestId += 1
+    local _requestId = requestId
+    local typeCb = type(cb)
+    local isCbFunction = typeCb == "function" or (typeCb == "table" and cb?.__cfx_functionReference and true)
+    local _promise = not (isCbFunction) and promise.new()
+    local args = { ... }
 
-    TriggerServerEvent("esx:triggerServerCallback", eventName, _requestId, GetInvokingResource() or "unknown", ...)
+    if _promise then
+        table.insert(args, 1, cb)
+    end
 
-    ---@type promise?
-    local _promise = not cb and promise.new() or nil
+    TriggerServerEvent("esx:triggerServerCallback", eventName, _requestId, GetInvokingResource() or "unknown", table.unpack(args))
 
     serverRequests[_requestId] = function(...)
         serverRequests[_requestId] = nil
 
-        if cb then
+        if isCbFunction then
             cb(...)
         elseif _promise then
             _promise:resolve({ ... })
@@ -29,14 +33,6 @@ local function triggerServerCallback(eventName, cb, ...)
     if _promise then
         return table.unpack(Citizen.Await(_promise))
     end
-end
-
-ESX.TriggerServerCallback = triggerServerCallback
-
----@param eventName string
----@param ... any
-function ESX.AwaitTriggerServerCallback(eventName, ...)
-    return triggerServerCallback(eventName, nil, ...)
 end
 
 RegisterNetEvent("esx:serverCallback", function(receivedRequestId, invoker, ...)
@@ -55,12 +51,12 @@ ESX.RegisterClientCallback = function(eventName, callback)
     clientCallbacks[eventName] = callback
 end
 
-RegisterNetEvent("esx:triggerClientCallback", function(eventName, requestId, invoker, ...)
+RegisterNetEvent("esx:triggerClientCallback", function(eventName, receivedRequestId, invoker, ...)
     if not clientCallbacks[eventName] then
         return ESX.Trace(("Client callback not registered, name: ^5%s^7, invoker resource: ^5%s^7"):format(eventName, invoker), "error", true)
     end
 
     clientCallbacks[eventName](function(...)
-        TriggerServerEvent("esx:clientCallback", requestId, invoker, ...)
+        TriggerServerEvent("esx:clientCallback", receivedRequestId, invoker, ...)
     end, ...)
 end)
