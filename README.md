@@ -3,7 +3,7 @@
 
 <hr>
 
-### 📝 Significant changes in compare to ESX Legacy v1.9.4 (WIP)
+### 📝 Significant changes in compare to ESX Legacy v1.9.4
 
 - Resolved Lua Lint CI Pipeline Issues: Fixed the problems with the Lua Lint CI pipeline to ensure smooth code analysis and validation.
 
@@ -19,7 +19,7 @@
 
 - Reduced Framework Dependency Resources: This aims to streamline resource allocation by minimizing the framework's dependency resources.
 
-- Enhanced Job Module: Integrated pre-defined job duties and job types
+- Enhanced Some Modules/Functions: Took steps to further improve some already existing functionalities such as including response await for callback calls, integrating pre-defined job duties and job types, etc...
 
 - Revived Some Previous ESX Functions: Reinstated the original ESX HUD and reintroduced the esx:getSharedObject event for loading of the ESX object in external resources
 
