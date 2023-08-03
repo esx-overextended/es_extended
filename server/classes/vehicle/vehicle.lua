@@ -513,3 +513,8 @@ AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, 
 
     Core.VehiclesPropertiesQueue[entity] = nil
 end)
+
+-- leave for providing backward-compatibility with legacy esx_vehicleshop
+ESX.RegisterServerCallback("esx:generatePlate", function(_, cb)
+    cb(Core.GeneratePlate())
+end)
