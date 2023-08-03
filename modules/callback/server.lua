@@ -48,7 +48,7 @@ end)
 
 ---@param eventName string
 ---@param callback function
-ESX.RegisterServerCallback = function(eventName, callback)
+function ESX.RegisterServerCallback(eventName, callback)
     serverCallbacks[eventName] = callback
 end
 
