@@ -300,64 +300,11 @@ function ESX.GetVehicles()
     return vehicles
 end
 
-local math_random = math.random
-
-local function getNumber()
-    return math_random(0, 9)
-end
-
-local function getLetter()
-    return string.char(math_random(65, 90))
-end
-
-local function getAlphanumeric()
-    return math_random(0, 1) == 1 and getLetter() or getNumber()
-end
-
-local plateFormat = string.upper(Config.PlatePattern)
-local formatLen = #plateFormat
-
 ---Creates a unique vehicle plate.
 ---@return string
 function Core.GeneratePlate()
-    local plate = table.create(8, 0)
-
-    while true do
-        local tableLen = 1
-
-        for i = 1, formatLen do
-            local char = plateFormat:sub(i, i)
-
-            if char == "1" then
-                plate[tableLen] = getNumber()
-            elseif char == "A" then
-                plate[tableLen] = getLetter()
-            elseif char == "." then
-                plate[tableLen] = getAlphanumeric()
-            elseif char == "^" then
-                i += 1
-                plate[tableLen] = plateFormat:sub(i, i)
-            else
-                plate[tableLen] = char
-            end
-
-            tableLen += 1
-
-            if tableLen == 9 then
-                break
-            end
-        end
-
-        if tableLen < 9 then
-            for i = tableLen, 8 do
-                plate[i] = " "
-            end
-        end
-
-        local str = table.concat(plate)
-
-        if not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { str }) then return str end
-    end
+    local generatedPlate = string.upper(ESX.GetRandomString(8, string.upper(Config.PlatePattern)))
+    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { generatedPlate }) generatedPlate or Core.GeneratePlate()
 end
 
 ---Creates a unique vehicle vin number.
