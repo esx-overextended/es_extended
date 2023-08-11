@@ -313,11 +313,11 @@ end
 function Core.GenerateVin(model)
     local vehicle = ESX.GetVehicleData(model:lower())
     local arr = {
-        math_random(1, 9),
+        math.random(1, 9),
         vehicle.make == "" and "ESX" or vehicle.make:sub(1, 2):upper(), ---@diagnostic disable-line: param-type-mismatch
         model:sub(1, 2):upper(),
-        getAlphanumeric(),
-        string.char(math_random(65, 90)),
+        ESX.GetRandomString(1, "."),
+        string.char(math.random(65, 90)),
     }
 
     while true do
@@ -341,7 +341,7 @@ function Core.SaveVehicles(resource)
 
     for _, xVehicle in pairs(Core.Vehicles) do
         if not resource or resource == xVehicle.script then
-            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it"s handled through xVehicle.delete()
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it's handled through xVehicle.delete()
                 pSize += 1
                 parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
             end
