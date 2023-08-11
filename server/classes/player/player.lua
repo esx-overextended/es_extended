@@ -1,6 +1,7 @@
 local xPlayerMethods = lib.require("server.classes.player.playerMethods")
 
 ---Creates an xPlayer object
+---@param cid string
 ---@param playerId number
 ---@param playerIdentifier string
 ---@param playerGroups table<string, number>
@@ -13,10 +14,11 @@ local xPlayerMethods = lib.require("server.classes.player.playerMethods")
 ---@param playerName string
 ---@param playerMetadata table
 ---@return xPlayer
-function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
+function CreateExtendedPlayer(cid, playerId, playerIdentifier, playerGroups, playerGroup, playerAccounts, playerInventory, playerInventoryWeight, playerJob, playerLoadout, playerName, playerMetadata)
     ---@type xPlayer
     local self = {} ---@diagnostic disable-line: missing-fields
 
+    self.cid = cid
     self.accounts = playerAccounts
     self.groups = playerGroups
     self.group = playerGroup
@@ -39,6 +41,7 @@ function CreateExtendedPlayer(playerId, playerIdentifier, playerGroups, playerGr
 
     local stateBag = Player(self.source).state
 
+    stateBag:set("cid", self.cid, true)
     stateBag:set("identifier", self.identifier, true)
     stateBag:set("license", self.license, true)
     stateBag:set("job", self.job, true)

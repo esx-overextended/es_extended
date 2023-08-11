@@ -30,6 +30,8 @@ Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
 
 Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading = 205.8 }
 
+Config.CIDPattern                  = ".1ESX1."                                          -- Patern for characters' unique id(cid) to be generated (refer to Pattern String Format found below)
+
 Config.EnablePaycheck              = true                                                -- enable paycheck
 Config.EnableSocietyPayouts        = false                                               -- pay from the society account that the player is employed at? Requirement: esx_society
 Config.EnableHud                   = true                                                -- enable the default hud? Display current job and accounts (black, bank & cash)
@@ -43,18 +45,18 @@ Config.Identity                    = true                                       
 Config.DistanceGive                = 4.0                                                 -- Max distance when giving items, weapons etc.
 
 Config.SpawnVehMaxUpgrades         = true                                                -- admin vehicles spawn with max vehicle settings
-Config.CustomAIPlates              = "ESX1OX1."                                          -- Custom plates for AI vehicles
-Config.PlatePattern                = "........"                                          -- Plate pattern for manually spawned vehicles
--- Pattern string format
---1 will lead to a random number from 0-9.
---A will lead to a random letter from A-Z.
--- . will lead to a random letter or number, with 50% probability of being either.
---^1 will lead to a literal 1 being emitted.
---^A will lead to a literal A being emitted.
---Any other character will lead to said character being emitted.
--- A string shorter than 8 characters will be padded on the right.
+Config.CustomAIPlates              = "ESX1OX1."                                          -- Custom plates for AI vehicles (maximum 8 characters)
+Config.PlatePattern                = "........"                                          -- Plate pattern for manually spawned vehicles (maximum 8 characters) (refer to Pattern String Format found below)
 
 Config.DefaultNotificationPosition = "center-right" -- "top" | "top-right" | "top-left" | "bottom" | "bottom-right" | "bottom-left" | "center-right" | "center-left"
 Config.DefaultTextUIPosition       = "left-center"  -- "right-center" | "left-center" | "top-center"
 Config.DefaultProgressBarType      = "bar"          -- "bar" or "circle"
 Config.DefaultProgressBarPosition  = "bottom"       -- "middle" or "bottom"
+
+-- #Pattern String Format#
+-- 1 will lead to a random number from 0-9.
+-- A will lead to a random letter from A-Z.
+-- . will lead to a random letter or number, with 50% probability of being either.
+-- ^1 will lead to a literal 1 being emitted.
+-- ^A will lead to a literal A being emitted.
+-- Any other character will lead to said character being emitted.
