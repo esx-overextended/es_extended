@@ -30,7 +30,7 @@ Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
 
 Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading = 205.8 }
 
-Config.CIDPattern                  = ".1ESX1."                                          -- Patern for characters' unique id(cid) to be generated (refer to Pattern String Format found below)
+Config.CIDPattern                  = ".1ESX1."                                           -- Patern for characters' unique id(cid) to be generated (refer to Pattern String Format found below)
 
 Config.EnablePaycheck              = true                                                -- enable paycheck
 Config.EnableSocietyPayouts        = false                                               -- pay from the society account that the player is employed at? Requirement: esx_society
@@ -48,10 +48,10 @@ Config.SpawnVehMaxUpgrades         = true                                       
 Config.CustomAIPlates              = "ESX1OX1."                                          -- Custom plates for AI vehicles (maximum 8 characters)
 Config.PlatePattern                = "........"                                          -- Plate pattern for manually spawned vehicles (maximum 8 characters) (refer to Pattern String Format found below)
 
-Config.DefaultNotificationPosition = "center-right" -- "top" | "top-right" | "top-left" | "bottom" | "bottom-right" | "bottom-left" | "center-right" | "center-left"
-Config.DefaultTextUIPosition       = "left-center"  -- "right-center" | "left-center" | "top-center"
-Config.DefaultProgressBarType      = "bar"          -- "bar" or "circle"
-Config.DefaultProgressBarPosition  = "bottom"       -- "middle" or "bottom"
+Config.DefaultNotificationPosition = "center-right"                                      -- "top" | "top-right" | "top-left" | "bottom" | "bottom-right" | "bottom-left" | "center-right" | "center-left"
+Config.DefaultTextUIPosition       = "left-center"                                       -- "right-center" | "left-center" | "top-center"
+Config.DefaultProgressBarType      = "bar"                                               -- "bar" or "circle"
+Config.DefaultProgressBarPosition  = "bottom"                                            -- "middle" or "bottom"
 
 -- #Pattern String Format#
 -- 1 will lead to a random number from 0-9.

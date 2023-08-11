@@ -4,7 +4,7 @@ ALTER DATABASE DEFAULT COLLATE UTF8MB4_UNICODE_CI;
 /* USER */
 CREATE TABLE IF NOT EXISTS `users` (
     `identifier` VARCHAR(60) NOT NULL,
-    `cid` VARCHAR(60) NOT NULL,
+    `cid` VARCHAR(60) NULL DEFAULT NULL,
     `accounts` LONGTEXT NULL DEFAULT NULL,
     `group` VARCHAR(50) NULL DEFAULT "user",
     `job` VARCHAR(20) NULL DEFAULT "unemployed",
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `position` LONGTEXT NULL DEFAULT NULL,
 
     PRIMARY KEY (`identifier`),
-    UNIQUE INDEX `cid` (`cid`),
+    UNIQUE INDEX `cid` (`cid`)
 ) ENGINE=InnoDB;
 
 /*
@@ -26,7 +26,7 @@ for anyone who is migrating from ESX Legacy and already have `users` table which
 ALTER TABLE `users`
     ADD COLUMN IF NOT EXISTS `job_duty` TINYINT(1) NULL DEFAULT 0 AFTER `job_grade`,
     ADD COLUMN IF NOT EXISTS `skin` LONGTEXT NULL DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS `cid` VARCHAR(60) NOT NULL AFTER `identifier`,
+    ADD COLUMN IF NOT EXISTS `cid` VARCHAR(60) NULL DEFAULT NULL AFTER `identifier`,
     ADD UNIQUE INDEX IF NOT EXISTS `cid` (`cid`);
 
 
