@@ -304,7 +304,7 @@ end
 ---@return string
 function Core.GeneratePlate()
     local generatedPlate = string.upper(ESX.GetRandomString(8, string.upper(Config.PlatePattern)))
-    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { generatedPlate }) generatedPlate or Core.GeneratePlate()
+    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { generatedPlate }) and generatedPlate or Core.GeneratePlate()
 end
 
 ---Creates a unique vehicle vin number.
