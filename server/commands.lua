@@ -66,7 +66,8 @@ end
 local function getRandomVehicleName() -- TODO: generating random must be achieved way better. Maybe should be implemented manually inside the esx's math module
     Wait(10)
     math.randomseed(os.time())
-    math.random(count) math.random(count) -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
+    math.random(count)
+    math.random(count)                    -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
     local model = arrayOfVehiclesName[math.random(count)]
     local modelType = ESX.GetVehicleData(model)?.type
     return (modelType == "automobile" or modelType == "bike") and model or getRandomVehicleName()
@@ -116,14 +117,14 @@ end, false, {
     }
 })
 
-ESX.RegisterCommand({"cardel", "dv"}, "admin", function(xPlayer, args, _)
+ESX.RegisterCommand({ "cardel", "dv" }, "admin", function(xPlayer, args, _)
     local toBoolean = { ["true"] = true, ["false"] = false }
     local playerPed = GetPlayerPed(xPlayer?.source)
     local playerCoords = GetEntityCoords(playerPed)
     local playerVehicle = GetVehiclePedIsIn(playerPed, false)
 
     args.radius = tonumber(args.radius) or 5.0
-    args.owned =  type(args.owned) == "string" and toBoolean[args.owned:lower()]
+    args.owned = type(args.owned) == "string" and toBoolean[args.owned:lower()]
 
     if playerVehicle and playerVehicle > 0 then
         return ESX.DeleteVehicle(playerVehicle)
@@ -146,7 +147,7 @@ end, false, {
     validate = false,
     arguments = {
         { name = "radius", help = _U("command_cardel_radius"), type = "number" },
-        { name = "owned", help = _U("command_cardel_owned"), type = "string" }
+        { name = "owned",  help = _U("command_cardel_owned"),  type = "string" }
     }
 })
 
@@ -364,7 +365,7 @@ ESX.RegisterCommand("job", { "user", "admin" }, function(xPlayer, _, _)
 end, true)
 
 ESX.RegisterCommand("info", { "user", "admin" }, function(xPlayer, _, _)
-    ESX.Trace(("^2ID: ^5%s^0 | ^2Name: ^5%s^0 | ^2Group: ^5%s^0 | ^2Job: ^5%s^0"):format(xPlayer.source, xPlayer.getName(), xPlayer.getGroup(), xPlayer.getJob().name), "info", true)
+    ESX.Trace(("^2ID: ^5%s^0 | ^2CID: ^5%s^0 | ^2Name: ^5%s^0 | ^2Group: ^5%s^0 | ^2Job: ^5%s^0"):format(xPlayer.source, xPlayer.cid, xPlayer.getName(), xPlayer.getGroup(), xPlayer.getJob().name), "info", true)
 end, true)
 
 ESX.RegisterCommand("coords", "admin", function(xPlayer, _, _)
