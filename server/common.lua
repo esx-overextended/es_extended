@@ -6,6 +6,7 @@ Core.UsableItemsCallbacks = {}
 Core.Pickups = {}
 Core.PickupId = 0
 Core.DatabaseConnected = false
+Core.PlayersByCid = {} --[[@type table<string, xPlayer> ]]
 Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
 Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
 Core.ResourceExport = exports[cache.resource]

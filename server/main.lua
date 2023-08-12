@@ -209,9 +209,11 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Metadata
     userData.metadata                    = (result.metadata and result.metadata ~= "") and json.decode(result.metadata) or userData.metadata
 
+    -- xPlayer object
     local xPlayer                        = CreateExtendedPlayer(userData.cid, playerId, identifier, userData.groups, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName,
         userData.metadata)
     ESX.Players[playerId]                = xPlayer
+    Core.PlayersByCid[userData.cid]      = xPlayer
     Core.PlayersByIdentifier[identifier] = xPlayer
 
     xPlayer.set("firstName", userData.firstname)
@@ -385,7 +387,11 @@ local function onPlayerLogout(source, reason, cb)
                 xPlayer.removeGroup(groupName) -- to remove principals in case they want to log back with another character
             end
 
-            Core.PlayersByIdentifier[xPlayer.identifier] = nil
+            local cid = xPlayer.cid
+            local identifier = xPlayer.identifier
+
+            Core.PlayersByCid[cid] = nil
+            Core.PlayersByIdentifier[identifier] = nil
             ESX.Players[source] = nil
 
             p:resolve()

@@ -91,6 +91,13 @@ function ESX.GetPlayerFromId(source) ---@diagnostic disable-line: duplicate-set-
     return ESX.Players[tonumber(source)]
 end
 
+---Returns an instance of xPlayer for the passed character id
+---@param cid string
+---@return xPlayer?
+function ESX.GetPlayerFromCid(cid)
+    return Core.PlayersByCid[cid]
+end
+
 ---Returns an instance of xPlayer for the passed player identifier
 ---@param identifier string
 ---@return xPlayer?
