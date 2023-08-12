@@ -311,22 +311,13 @@ end
 ---@param model string
 ---@return string
 function Core.GenerateVin(model)
-    local vehicle = ESX.GetVehicleData(model:lower())
-    local arr = {
-        math.random(1, 9),
-        vehicle.make == "" and "ESX" or vehicle.make:sub(1, 2):upper(), ---@diagnostic disable-line: param-type-mismatch
-        model:sub(1, 2):upper(),
-        ESX.GetRandomString(1, "."),
-        string.char(math.random(65, 90)),
-    }
+    local vehicleData = ESX.GetVehicleData(model:lower())
 
-    while true do
-        ---@diagnostic disable-next-line: param-type-mismatch
-        arr[6] = os.time(os.date("!*t"))
-        local vin = table.concat(arr)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local pattern = ("1%s%s.A%s"):format(vehicleData.make == "" and "ESX" or vehicleData.make:sub(1, 3), model:sub(1, 3), ESX.GetRandomNumber(10))
+    local generatedVin = string.upper(ESX.GetRandomString(17, pattern))
 
-        if not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `vin` = ?", { vin }) then return vin end
-    end
+    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `vin` = ?", { generatedVin }) and generatedVin or Core.GenerateVin(model)
 end
 
 ---Saves all vehicles for the resource and despawns them
