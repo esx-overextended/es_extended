@@ -300,86 +300,24 @@ function ESX.GetVehicles()
     return vehicles
 end
 
-local math_random = math.random
-
-local function getNumber()
-    return math_random(0, 9)
-end
-
-local function getLetter()
-    return string.char(math_random(65, 90))
-end
-
-local function getAlphanumeric()
-    return math_random(0, 1) == 1 and getLetter() or getNumber()
-end
-
-local plateFormat = string.upper(Config.PlatePattern)
-local formatLen = #plateFormat
-
 ---Creates a unique vehicle plate.
 ---@return string
 function Core.GeneratePlate()
-    local plate = table.create(8, 0)
-
-    while true do
-        local tableLen = 1
-
-        for i = 1, formatLen do
-            local char = plateFormat:sub(i, i)
-
-            if char == "1" then
-                plate[tableLen] = getNumber()
-            elseif char == "A" then
-                plate[tableLen] = getLetter()
-            elseif char == "." then
-                plate[tableLen] = getAlphanumeric()
-            elseif char == "^" then
-                i += 1
-                plate[tableLen] = plateFormat:sub(i, i)
-            else
-                plate[tableLen] = char
-            end
-
-            tableLen += 1
-
-            if tableLen == 9 then
-                break
-            end
-        end
-
-        if tableLen < 9 then
-            for i = tableLen, 8 do
-                plate[i] = " "
-            end
-        end
-
-        local str = table.concat(plate)
-
-        if not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { str }) then return str end
-    end
+    local generatedPlate = string.upper(ESX.GetRandomString(8, string.upper(Config.PlatePattern)))
+    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `plate` = ?", { generatedPlate }) and generatedPlate or Core.GeneratePlate()
 end
 
 ---Creates a unique vehicle vin number.
 ---@param model string
 ---@return string
 function Core.GenerateVin(model)
-    local vehicle = ESX.GetVehicleData(model:lower())
-    local arr = {
-        math_random(1, 9),
-        vehicle.make == "" and "ESX" or vehicle.make:sub(1, 2):upper(), ---@diagnostic disable-line: param-type-mismatch
-        model:sub(1, 2):upper(),
-        getAlphanumeric(),
-        string.char(math_random(65, 90)),
-    }
+    local vehicleData = ESX.GetVehicleData(model:lower())
 
-    while true do
-        ---@diagnostic disable-next-line: param-type-mismatch
-        arr[6] = os.time(os.date("!*t"))
-        local vin = table.concat(arr)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local pattern = ("1%s%s.A%s"):format(vehicleData.make == "" and "ESX" or vehicleData.make:sub(1, 3), model:sub(1, 3), ESX.GetRandomNumber(10))
+    local generatedVin = string.upper(ESX.GetRandomString(17, pattern))
 
-        if not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `vin` = ?", { vin }) then return vin end
-    end
+    return not MySQL.scalar.await("SELECT 1 FROM `owned_vehicles` WHERE `vin` = ?", { generatedVin }) and generatedVin or Core.GenerateVin(model)
 end
 
 ---Saves all vehicles for the resource and despawns them
@@ -394,7 +332,7 @@ function Core.SaveVehicles(resource)
 
     for _, xVehicle in pairs(Core.Vehicles) do
         if not resource or resource == xVehicle.script then
-            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it"s handled through xVehicle.delete()
+            if (xVehicle.owner or xVehicle.group) ~= false then -- TODO: might need to remove this check as I think it's handled through xVehicle.delete()
                 pSize += 1
                 parameters[pSize] = { xVehicle.stored, json.encode(xVehicle.metadata), xVehicle.id }
             end

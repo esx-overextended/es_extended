@@ -2,8 +2,8 @@ SetMapName(Config.MapName)
 SetGameType(Config.GameType)
 
 local oneSyncState = GetConvar("onesync", "off")
-local newPlayer = "INSERT INTO `users` SET `accounts` = ?, `identifier` = ?, `group` = ?"
-local loadPlayer = "SELECT `accounts`, `job`, `job_grade`, `job_duty`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`"
+local newPlayer = "INSERT INTO `users` SET `cid` = ?, `accounts` = ?, `identifier` = ?, `group` = ?"
+local loadPlayer = "SELECT `cid`, `accounts`, `job`, `job_grade`, `job_duty`, `group`, `position`, `inventory`, `skin`, `loadout`, `metadata`"
 
 if Config.Multichar then
     newPlayer = newPlayer .. ", `firstname` = ?, `lastname` = ?, `dateofbirth` = ?, `sex` = ?, `height` = ?"
@@ -15,12 +15,53 @@ end
 
 loadPlayer = loadPlayer .. " FROM `users` WHERE identifier = ?"
 
+local CID = {
+    Pattern = string.upper(Config.CIDPattern),
+    Length = 0
+}
+
+do
+    local shouldSkipLoop = false
+
+    for i = 1, #CID.Pattern do
+        if shouldSkipLoop then
+            shouldSkipLoop = false
+            goto skipLoop
+        end
+
+        if CID.Pattern:sub(i, i) == "^" then
+            shouldSkipLoop = true
+        end
+
+        CID.Length += 1
+
+        ::skipLoop::
+    end
+end
+
+local function generateCID()
+    local generatedCID = string.upper(ESX.GetRandomString(CID.Length, CID.Pattern))
+
+    return not MySQL.scalar.await("SELECT 1 FROM `users` WHERE `cid` = ?", { generatedCID }) and generatedCID or generateCID()
+end
+
 local function loadESXPlayer(identifier, playerId, isNew)
     local userData = { accounts = {}, groups = {}, inventory = {}, job = {}, loadout = {}, playerName = GetPlayerName(playerId), weight = 0, metadata = {} }
     local result = MySQL.prepare.await(loadPlayer, { identifier })
     result.groups = MySQL.prepare.await("SELECT DISTINCT * FROM `user_groups` WHERE `identifier` = ?", { identifier })
     local job, grade, duty = result.job, tostring(result.job_grade), result.job_duty and (result.job_duty == 1 and true or result.job_duty == 0 and false)
     local foundAccounts, foundItems = {}, {}
+
+    -- Citizen's unique id
+    if not result.cid or result.cid == "" then
+        local cid = generateCID()
+
+        MySQL.update.await("UPDATE `users` SET `cid` = ? WHERE `identifier` = ?", { cid, identifier })
+
+        result.cid = cid
+    end
+
+    userData.cid = result.cid
 
     -- Accounts
     if result.accounts and result.accounts ~= "" then
@@ -168,7 +209,8 @@ local function loadESXPlayer(identifier, playerId, isNew)
     -- Metadata
     userData.metadata                    = (result.metadata and result.metadata ~= "") and json.decode(result.metadata) or userData.metadata
 
-    local xPlayer                        = CreateExtendedPlayer(playerId, identifier, userData.groups, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.metadata)
+    local xPlayer                        = CreateExtendedPlayer(userData.cid, playerId, identifier, userData.groups, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName,
+        userData.metadata)
     ESX.Players[playerId]                = xPlayer
     Core.PlayersByIdentifier[identifier] = xPlayer
 
@@ -184,6 +226,7 @@ local function loadESXPlayer(identifier, playerId, isNew)
         playerId = playerId,
         xPlayerServer = xPlayer,
         xPlayerClient = {
+            cid = xPlayer.cid,
             accounts = xPlayer.getAccounts(),
             groups = xPlayer.getGroups(),
             coords = isNew and Config.DefaultSpawn or userData.coords,
@@ -226,12 +269,14 @@ local function createESXPlayer(identifier, playerId, data)
 
     if Core.IsPlayerAdmin(playerId) then ESX.Trace(("Player ^5%s^0 Has been granted %s permissions via ^5Ace Perms^7"):format(playerId, defaultGroup), "info", true) end
 
+    local cid = generateCID()
+
     if not Config.Multichar then
-        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup }, function()
+        MySQL.prepare(newPlayer, { cid, json.encode(accounts), identifier, defaultGroup }, function()
             loadESXPlayer(identifier, playerId, true)
         end)
     else
-        MySQL.prepare(newPlayer, { json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
+        MySQL.prepare(newPlayer, { cid, json.encode(accounts), identifier, defaultGroup, data.firstname, data.lastname, data.dateofbirth, data.sex, data.height }, function()
             loadESXPlayer(identifier, playerId, true)
         end)
     end
@@ -289,12 +334,14 @@ else
 
         if identifier then
             if not Config.EnableDebug and ESX.GetPlayerFromIdentifier(identifier) then
-                return deferrals.done(("[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s"):format(identifier))
+                return deferrals.done(("[ESX] There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same account.\n\nYour identifier: %s")
+                    :format(identifier))
             else
                 return deferrals.done()
             end
         else
-            return deferrals.done("[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.")
+            return deferrals.done(
+                "[ESX] There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.")
         end
     end)
 

@@ -9,6 +9,7 @@
 
 
 ---@class xPlayer
+---@field cid string
 ---@field accounts table
 ---@field groups table<string, integer | number>
 ---@field group string
