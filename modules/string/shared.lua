@@ -10,8 +10,6 @@ end
 function ESX.GetRandomString(length, stringPattern)
     if type(length) ~= "number" or length <= 0 then return "" end
 
-    math.randomseed(GetGameTimer())
-
     if type(stringPattern) == "string" then
         stringPattern = string.upper(stringPattern)
         local tableOfChars = table.create(length, 0)

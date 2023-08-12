@@ -30,7 +30,7 @@ Config.StartingAccountMoney        = { bank = 10000, money = 1000 }
 
 Config.DefaultSpawn                = { x = -269.4, y = -955.3, z = 31.2, heading = 205.8 }
 
-Config.CIDPattern                  = ".1ESX1."                                           -- Patern for characters' unique id(cid) to be generated (refer to Pattern String Format found below)
+Config.CIDPattern                  = "A.1ESX1.A"                                         -- Patern for characters' unique id(cid) to be generated (refer to Pattern String Format found below)
 
 Config.EnablePaycheck              = true                                                -- enable paycheck
 Config.EnableSocietyPayouts        = false                                               -- pay from the society account that the player is employed at? Requirement: esx_society
