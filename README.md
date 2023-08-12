@@ -29,6 +29,8 @@
 
 - Enhanced Extendability: Unlike esx-legacy, where only limited overrides were possible for player objects, the esx-overextended introduces extensive extendability. With this enhanced functionality, developers have the freedom to override existing methods, functions, and fields or even add new ones within the player class, the vehicle class, and of course the ESX object! This flexibility extends to both internal modifications, as simple as adding a new module/file within the framework, as well as external resources through cross-platform `exports`. This breakthrough allows for seamless expansion of customization options without the need to modify core code and functions, providing a more efficient and highly versatile system.
 
+- And Much More!!!
+
 ### ℹ Information
 
 ESX is the leading framework, trusted By thousands of commmunities for the highest quality roleplay servers on FiveM, a GTA V (Grand Theft Auto) modification platform.
