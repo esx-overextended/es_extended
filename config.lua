@@ -1,5 +1,5 @@
 Config                             = {}
-Config.EnableDebug                 = false -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
+Config.EnableDebug                 = true -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
 
 Config.Locale                      = GetConvar("esx:locale", "en")
 
@@ -52,6 +52,18 @@ Config.DefaultNotificationPosition = "center-right"                             
 Config.DefaultTextUIPosition       = "left-center"                                       -- "right-center" | "left-center" | "top-center"
 Config.DefaultProgressBarType      = "bar"                                               -- "bar" or "circle"
 Config.DefaultProgressBarPosition  = "bottom"                                            -- "middle" or "bottom"
+
+Config.VehicleParser               = {                                                   -- Refer to https://esx-overextended.github.io/es_extended/Commands/parseVehicles (You also need to run screenshot-basic, and to adjust the Discord VehicleImage's webhook address inside config.logs.lua for vehicle image data to be generated)
+    Position = vector4(-144.67, -593.51, 211.39, 124.72),
+    Cam = {
+        Name = "DEFAULT_SCRIPTED_CAMERA",
+        Coords = vector3(-145.2, -597.16, 212.2),
+        Rotation = vector3(0.0),
+        FOV = 75.0,
+        Active = false,
+        RotationOrder = 0
+    }
+}
 
 -- #Pattern String Format#
 -- 1 will lead to a random number from 0-9.
