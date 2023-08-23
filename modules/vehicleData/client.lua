@@ -124,8 +124,13 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
     ESX.Trace(message, "info")
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
 
+    SetEntityVisible(cache.ped, false, false)
     SetPlayerControl(cache.playerId, false, 1 << 8)
     DisplayRadar(false)
+
+    local estimatedRemaining
+    local startTime = GetGameTimer()
+    message = "Generated vehicle data for %d" .. ("/%d models\n"):format(numModels)
 
     for i = 1, numModels do
         local model = models[i]:lower()
@@ -182,25 +187,31 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
                 local cam = CreateCamWithParams(Config.VehicleParser.Cam.Name, Config.VehicleParser.Cam.Coords.x, Config.VehicleParser.Cam.Coords.y, Config.VehicleParser.Cam.Coords.z, Config.VehicleParser.Cam.Rotation.x,
                     Config.VehicleParser.Cam.Rotation.y, Config.VehicleParser.Cam.Rotation.z, Config.VehicleParser.Cam.FOV, Config.VehicleParser.Cam.Active, Config.VehicleParser.Cam.RotationOrder)
 
-                PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z)
+                PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
                 SetCamActive(cam, true)
                 RenderScriptCams(true, true, 1, true, true)
 
-                local p = promise.new()
+                local image
 
                 if GetResourceState("screenshot-basic"):find("start") then
+                    Wait(1000)
+                    CreateMobilePhone(1)
+                    CellCamActivate(true, true)
+                    Wait(1000)
+
+                    local p = promise.new()
+
                     exports["screenshot-basic"]:requestScreenshotUpload(receivedData?.webhook, "files[]", function(data)
                         local imageData = json.decode(data)
 
-                        Wait(250)
+                        DestroyMobilePhone()
+                        CellCamActivate(false, false)
 
-                        return p:resolve(imageData?.attachments and imageData.attachments[1]?.proxy_url or nil)
+                        return p:resolve(imageData?.attachments and (imageData.attachments[1]?.proxy_url or imageData.attachments[1]?.url) or "https://i.imgur.com/NHB74QX.png")
                     end)
-                else
-                    p:resolve()
-                end
 
-                local image = Citizen.Await(p)
+                    image = Citizen.Await(p)
+                end
 
                 RenderScriptCams(false, false, 1, false, false)
                 DestroyAllCams(true)
@@ -248,16 +259,21 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
                 numParsed += 1
 
                 deleteEntity(vehicle)
+
+                estimatedRemaining = (((GetGameTimer() - startTime) / 1000) / numParsed) * (numModels - numParsed)
+                estimatedRemaining = ("%s:%s"):format(string.format("%02d", math.floor(estimatedRemaining / 60)), string.format("%02d", math.floor(estimatedRemaining % 60)))
+
+                ESX.TextUI(("%s\nEstimated Time Remaining: %s"):format(message:format(numParsed), estimatedRemaining), "info")
             end
         end
     end
 
-    message = ("Generated vehicle data for %d/%d models"):format(numParsed, numModels)
-
-    ESX.Trace(message, "info")
-    ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
+    ESX.HideUI()
+    ESX.Trace(message:format(numParsed), "info")
+    ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
 
     DisplayRadar(radarState)
+    SetEntityVisible(cache.ped, true, false)
     SetPlayerControl(cache.playerId, true, 0)
     SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
 

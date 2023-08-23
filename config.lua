@@ -57,9 +57,9 @@ Config.VehicleParser               = {                                          
     Position = vector4(-144.67, -593.51, 211.39, 124.72),
     Cam = {
         Name = "DEFAULT_SCRIPTED_CAMERA",
-        Coords = vector3(-145.2, -597.16, 212.2),
+        Coords = vector3(-145.2, -598.16, 212.2),
         Rotation = vector3(0.0),
-        FOV = 75.0,
+        FOV = 65.0,
         Active = false,
         RotationOrder = 0
     }
