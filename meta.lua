@@ -78,10 +78,10 @@
 ---@field hasWeapon fun(weaponName: string): boolean
 ---@field hasItem fun(itemName: string): false | table, integer | number | nil
 ---@field getWeapon fun(weaponName: string): false | integer | number, table?
----@field getMetadata fun(index?: string, subIndex?: string | table): nil | string | table
----@field getMeta fun(index: string, subIndex?: string | table): nil | string | table
----@field setMetadata fun(index: string, value?: string | number | table, subValue?: any): boolean
----@field setMeta fun(index: string, value?: string | number | table, subValue?: any): boolean
+---@field getMetadata fun(index?: string, subIndex?: number | string | table): nil | number | string | table | boolean
+---@field getMeta fun(index?: string, subIndex?: number | string | table): nil | number | string | table | boolean
+---@field setMetadata fun(index: string, value?: number | string | table | boolean, subValue?: number | string | table | boolean): boolean
+---@field setMeta fun(index: string, value?: number | string | table | boolean, subValue?: number | string | table | boolean): boolean
 ---@field clearMetadata fun(index: string | string[]): boolean
 ---@field clearMeta fun(index: string | string[]): boolean
 
@@ -104,8 +104,8 @@
 ---@field setOwner fun(newOwner?: string)
 ---@field setGroup fun(newGroup?: string)
 ---@field setPlate fun(newPlate: string)
----@field getMetadata fun(index?: string, subIndex?: string | table): nil | string | table
----@field setMetadata fun(index: string, value?: string | number | table, subValue?: any): boolean
+---@field getMetadata fun(index?: string, subIndex?: number | string | table): nil | number | string | table | boolean
+---@field setMetadata fun(index: string, value?: number | string | table | boolean, subValue?: number | string | table | boolean): boolean
 
 
 ---@class VehicleData
@@ -120,6 +120,8 @@
 ---@field seats number
 ---@field type string
 ---@field hash number
+---@field image string
+---@field weapons? number
 
 
 ---@class TopVehicleStats

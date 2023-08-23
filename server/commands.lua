@@ -67,7 +67,7 @@ local function getRandomVehicleName() -- TODO: generating random must be achieve
     Wait(10)
     math.randomseed(os.time())
     math.random(count)
-    math.random(count)                    -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
+    math.random(count) -- To get better pseudo-random number just pop some random number before using them for really (http://lua-users.org/wiki/MathLibraryTutorial)
     local model = arrayOfVehiclesName[math.random(count)]
     local modelType = ESX.GetVehicleData(model)?.type
     return (modelType == "automobile" or modelType == "bike") and model or getRandomVehicleName()
@@ -454,7 +454,7 @@ if Config.EnableDebug then
         args.processAll = args.processAll ~= nil and toBoolean[args.processAll:lower()]
 
         ---@type table<string, VehicleData>, TopVehicleStats
-        local vehicleData, topStats = lib.callback.await("esx:generateVehicleData", xPlayer.source, args.processAll)
+        local vehicleData, topStats = ESX.TriggerClientCallback(xPlayer.source, "esx:generateVehicleData", { webhook = Config.DiscordLogs.Webhooks.VehicleImage, processAll = args.processAll })
 
         if vehicleData and next(vehicleData) then
             if not args.processAll then

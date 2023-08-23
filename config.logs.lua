@@ -4,7 +4,8 @@ Config.DiscordLogs = {
         test = "",
         Chat = "",
         UserActions = "",
-        Resources = ""
+        Resources = "",
+        VehicleImage = ""
     },
     Colors = {
         -- https://www.spycolor.com/
