@@ -120,9 +120,9 @@ local xVehicleMethods = {
     ---@param self xVehicle
     getMetadata = function(self)
         ---@param index? string
-        ---@param subIndex? string | table
-        ---@return nil | string | table
-        return function(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.getMetadata)...
+        ---@param subIndex? number | string | table
+        ---@return nil | number | string | table | boolean
+        return function(index, subIndex)
             if not index then return self.metadata end
 
             if type(index) ~= "string" then ESX.Trace("xVehicle.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
@@ -131,9 +131,9 @@ local xVehicleMethods = {
                 if subIndex and type(self.metadata[index]) == "table" then
                     local _type = type(subIndex)
 
-                    if _type == "string" then return self.metadata[index][subIndex] end
-
-                    if _type == "table" then
+                    if _type == "number" or _type == "string" then
+                        return self.metadata[index][subIndex]
+                    elseif _type == "table" then
                         local returnValues = {}
 
                         for i = 1, #subIndex do
