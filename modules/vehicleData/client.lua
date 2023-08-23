@@ -117,6 +117,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
     local numModels = #models
     local numParsed = 0
     local coords = GetEntityCoords(PlayerPedId())
+    local hudState = not IsHudHidden()
     local radarState = not IsRadarHidden()
     local vehicleData, vehicleTopStats = {}, {}
     local message = ("Generating vehicle data from models (%s models loaded)"):format(numModels)
@@ -272,6 +273,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
     ESX.Trace(message:format(numParsed), "info")
     ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
 
+    DisplayHud(hudState)
     DisplayRadar(radarState)
     SetEntityVisible(cache.ped, true, false)
     SetPlayerControl(cache.playerId, true, 0)
