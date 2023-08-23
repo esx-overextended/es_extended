@@ -965,35 +965,37 @@ local xPlayerMethods     = {
     ---@param self xPlayer
     getMetadata = function(self)
         ---@param index? string
-        ---@param subIndex? string | table
-        ---@return nil | string | table
-        return function(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases...
+        ---@param subIndex? number | string | table
+        ---@return nil | number | string | table | boolean
+        return function(index, subIndex)
             if not index then return self.metadata end
 
-            if type(index) ~= "string" then ESX.Trace("xPlayer.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
+            if type(index) ~= "string" then
+                ESX.Trace("xPlayer.getMetadata ^5index^7 should be ^5string^7!", "error", true)
+            else
+                if self.metadata[index] then
+                    if subIndex and type(self.metadata[index]) == "table" then
+                        local _type = type(subIndex)
 
-            if self.metadata[index] then
-                if subIndex and type(self.metadata[index]) == "table" then
-                    local _type = type(subIndex)
+                        if _type == "number" or _type == "string" then
+                            return self.metadata[index][subIndex]
+                        elseif _type == "table" then
+                            local returnValues = {}
 
-                    if _type == "string" then return self.metadata[index][subIndex] end
-
-                    if _type == "table" then
-                        local returnValues = {}
-
-                        for i = 1, #subIndex do
-                            if self.metadata[index][subIndex[i]] then
-                                returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
+                            for i = 1, #subIndex do
+                                if self.metadata[index][subIndex[i]] then
+                                    returnValues[subIndex[i]] = self.metadata[index][subIndex[i]]
+                                end
                             end
+
+                            return returnValues
                         end
 
-                        return returnValues
+                        return nil
                     end
 
-                    return nil
+                    return self.metadata[index]
                 end
-
-                return self.metadata[index]
             end
 
             return nil
