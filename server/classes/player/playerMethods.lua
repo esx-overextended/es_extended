@@ -1,4 +1,4 @@
-local xPlayerMethods = {
+local xPlayerMethods     = {
     ---Triggers a client event for the player
     ---@param self xPlayer
     triggerEvent = function(self)
@@ -34,7 +34,7 @@ local xPlayerMethods = {
             local coords = GetEntityCoords(playerPed)
             local heading = GetEntityHeading(playerPed)
 
-            return vector and vector4(coords.x, coords.y, coords.z, heading) or {x = coords.x, y = coords.y, z = coords.z, heading = heading}
+            return vector and vector4(coords.x, coords.y, coords.z, heading) or { x = coords.x, y = coords.y, z = coords.z, heading = heading }
         end
     end,
 
@@ -154,13 +154,13 @@ local xPlayerMethods = {
 
             lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupName, groupGrade))
 
-            self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
-            self.triggerSafeEvent("esx:addGroup", {groupName = groupName, groupGrade = groupGrade}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setGroups", { currentGroups = self.groups, lastGroups = lastGroups }, { server = true, client = true })
+            self.triggerSafeEvent("esx:addGroup", { groupName = groupName, groupGrade = groupGrade }, { server = true, client = true })
 
             if triggerRemoveGroup then
                 lib.removePrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(groupToRemove, lastGroups[groupToRemove]))
 
-                self.triggerSafeEvent("esx:removeGroup", {groupName = groupToRemove, groupGrade = lastGroups[groupToRemove]}, {server = true, client = true})
+                self.triggerSafeEvent("esx:removeGroup", { groupName = groupToRemove, groupGrade = lastGroups[groupToRemove] }, { server = true, client = true })
             end
 
             Player(self.source).state:set("groups", self.groups, true)
@@ -190,13 +190,13 @@ local xPlayerMethods = {
                 self.groups[defaultGroup], self.group = 0, defaultGroup
             end
 
-            self.triggerSafeEvent("esx:setGroups", {currentGroups = self.groups, lastGroups = lastGroups}, {server = true, client = true})
-            self.triggerSafeEvent("esx:removeGroup", {groupName = groupName, groupGrade = lastGroups[groupName]}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setGroups", { currentGroups = self.groups, lastGroups = lastGroups }, { server = true, client = true })
+            self.triggerSafeEvent("esx:removeGroup", { groupName = groupName, groupGrade = lastGroups[groupName] }, { server = true, client = true })
 
             if triggerAddGroup then
                 lib.addPrincipal(("identifier.%s"):format(self.license), ("group.%s:%s"):format(defaultGroup, self.groups[defaultGroup]))
 
-                self.triggerSafeEvent("esx:addGroup", {groupName = defaultGroup, groupGrade = self.groups[defaultGroup]}, {server = true, client = true})
+                self.triggerSafeEvent("esx:addGroup", { groupName = defaultGroup, groupGrade = self.groups[defaultGroup] }, { server = true, client = true })
             end
 
             Player(self.source).state:set("groups", self.groups, true)
@@ -331,7 +331,7 @@ local xPlayerMethods = {
             local minimalLoadout = {}
 
             for _, v in ipairs(self.loadout) do
-                minimalLoadout[v.name] = {ammo = v.ammo}
+                minimalLoadout[v.name] = { ammo = v.ammo }
                 if v.tintIndex > 0 then minimalLoadout[v.name].tintIndex = v.tintIndex end
 
                 if #v.components > 0 then
@@ -398,7 +398,7 @@ local xPlayerMethods = {
             money = account.round and ESX.Math.Round(money) or money
             self.accounts[account.index].money = money
 
-            self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = money, reason = reason}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = money, reason = reason }, { server = true, client = true })
 
             return true
         end
@@ -431,7 +431,7 @@ local xPlayerMethods = {
             self.accounts[account.index].money += money
 
             TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
-            self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
             return true
         end
@@ -464,7 +464,7 @@ local xPlayerMethods = {
             self.accounts[account.index].money = self.accounts[account.index].money - money
 
             TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
-            self.triggerSafeEvent("esx:setAccountMoney", {account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason})
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
 
             return true
         end
@@ -505,7 +505,7 @@ local xPlayerMethods = {
             self.weight += (item.weight * itemCount)
 
             TriggerEvent("esx:onAddInventoryItem", self.source, item.name, item.count)
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = item.name, itemCount = item.count})
+            self.triggerSafeEvent("esx:addInventoryItem", { itemName = item.name, itemCount = item.count })
 
             return true
         end
@@ -526,13 +526,16 @@ local xPlayerMethods = {
 
             local newCount = item.count - itemCount
 
-            if newCount < 0 then ESX.Trace(("Tried to remove non-existance count(%s) of %s item for Player ^5%s^0"):format(itemCount, itemName, self.playerId), "error", true) return false end
+            if newCount < 0 then
+                ESX.Trace(("Tried to remove non-existance count(%s) of %s item for Player ^5%s^0"):format(itemCount, itemName, self.playerId), "error", true)
+                return false
+            end
 
             item.count = newCount
             self.weight = self.weight - (item.weight * itemCount)
 
             TriggerEvent("esx:onRemoveInventoryItem", self.source, item.name, item.count)
-            self.triggerSafeEvent("esx:removeInventoryItem", {itemName = item.name, itemCount = item.count})
+            self.triggerSafeEvent("esx:removeInventoryItem", { itemName = item.name, itemCount = item.count })
 
             return true
         end
@@ -578,7 +581,7 @@ local xPlayerMethods = {
         ---@param newWeight number
         return function(newWeight)
             self.maxWeight = newWeight
-            self.triggerSafeEvent("esx:setMaxWeight", {maxWeight = newWeight}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setMaxWeight", { maxWeight = newWeight }, { server = true, client = true })
         end
     end,
 
@@ -589,7 +592,10 @@ local xPlayerMethods = {
         ---@param itemCount number
         ---@return boolean
         return function(itemName, itemCount)
-            if not ESX.Items[itemName] then ESX.Trace(("Item ^5'%s'^7 was used but does not exist!"):format(itemName), "warning", true) return false end
+            if not ESX.Items[itemName] then
+                ESX.Trace(("Item ^5'%s'^7 was used but does not exist!"):format(itemName), "warning", true)
+                return false
+            end
 
             local currentWeight, itemWeight = self.weight, ESX.Items[itemName].weight
             local newWeight = currentWeight + (itemWeight * itemCount)
@@ -636,11 +642,14 @@ local xPlayerMethods = {
         ---@param duty? boolean if not provided, it will use the job's default duty value
         ---@return boolean
         return function(job, grade, duty)
-            if not ESX.DoesJobExist(job, grade) then ESX.Trace(("Ignoring invalid ^5.setJob()^7 usage for Player ^5%s^7, Job: ^5%s^7"):format(self.source, job), "warning", true) return false end
+            if not ESX.DoesJobExist(job, grade) then
+                ESX.Trace(("Ignoring invalid ^5.setJob()^7 usage for Player ^5%s^7, Job: ^5%s^7"):format(self.source, job), "warning", true)
+                return false
+            end
 
-            grade = tostring(grade)
-            local lastJob = json.decode(json.encode(self.job))
-            local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
+            grade                         = tostring(grade)
+            local lastJob                 = json.decode(json.encode(self.job))
+            local jobObject, gradeObject  = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 
             self.job.id                   = jobObject.id
             self.job.name                 = jobObject.name
@@ -652,13 +661,13 @@ local xPlayerMethods = {
             self.job.grade_label          = gradeObject.label
             self.job.grade_salary         = gradeObject.salary
             self.job.grade_offduty_salary = gradeObject.offduty_salary
-            self.job.skin_male            = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {}     --[[@diagnostic disable-line: param-type-mismatch]]
+            self.job.skin_male            = gradeObject.skin_male and json.decode(gradeObject.skin_male) or {} --[[@diagnostic disable-line: param-type-mismatch]]
             self.job.skin_female          = gradeObject.skin_female and json.decode(gradeObject.skin_female) or {} --[[@diagnostic disable-line: param-type-mismatch]]
 
-            self.triggerSafeEvent("esx:setJob", {currentJob = self.job, lastJob = lastJob}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setJob", { currentJob = self.job, lastJob = lastJob }, { server = true, client = true })
             Player(self.source).state:set("job", self.job, true)
 
-            self.triggerSafeEvent("esx:setDuty", {duty = self.job.duty}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setDuty", { duty = self.job.duty }, { server = true, client = true })
             Player(self.source).state:set("duty", self.job.duty, true)
 
             return true
@@ -696,7 +705,7 @@ local xPlayerMethods = {
             if self.hasWeapon(weaponName) then return false end
 
             local weaponLabel = ESX.GetWeaponLabel(weaponName)
-            self.loadout[#self.loadout+1] = {
+            self.loadout[#self.loadout + 1] = {
                 name = weaponName,
                 ammo = ammo,
                 label = weaponLabel,
@@ -705,7 +714,7 @@ local xPlayerMethods = {
             }
 
             GiveWeaponToPed(GetPlayerPed(self.source), joaat(weaponName), ammo, false, false)
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponLabel, itemCount = false, showNotification = true})
+            self.triggerSafeEvent("esx:addInventoryItem", { itemName = weaponLabel, itemCount = false, showNotification = true })
 
             return true
         end
@@ -729,7 +738,7 @@ local xPlayerMethods = {
 
                     RemoveWeaponFromPed(ped, weaponHash)
                     SetPedAmmo(ped, weaponHash, 0)
-                    self.triggerSafeEvent("esx:removeInventoryItem", {itemName = v.label, itemCount = false, showNotification = true})
+                    self.triggerSafeEvent("esx:removeInventoryItem", { itemName = v.label, itemCount = false, showNotification = true })
 
                     return true
                 end
@@ -758,7 +767,7 @@ local xPlayerMethods = {
             local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
 
             GiveWeaponComponentToPed(GetPlayerPed(self.source), joaat(weaponName), componentHash)
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = component.label, itemCount = false, showNotification = true})
+            self.triggerSafeEvent("esx:addInventoryItem", { itemName = component.label, itemCount = false, showNotification = true })
 
             return true
         end
@@ -787,7 +796,7 @@ local xPlayerMethods = {
             end
 
             RemoveWeaponComponentFromPed(GetPlayerPed(self.source), joaat(weaponName), component.hash)
-            self.triggerSafeEvent("esx:removeInventoryItem", {itemName = component.label, itemCount = false, showNotification = true})
+            self.triggerSafeEvent("esx:removeInventoryItem", { itemName = component.label, itemCount = false, showNotification = true })
 
             return true
         end
@@ -864,8 +873,8 @@ local xPlayerMethods = {
 
             self.loadout[loadoutNum].tintIndex = weaponTintIndex
 
-            self.triggerSafeEvent("esx:setWeaponTint", {weaponName = weaponName, weaponTintIndex = weaponTintIndex})
-            self.triggerSafeEvent("esx:addInventoryItem", {itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true})
+            self.triggerSafeEvent("esx:setWeaponTint", { weaponName = weaponName, weaponTintIndex = weaponTintIndex })
+            self.triggerSafeEvent("esx:addInventoryItem", { itemName = weaponObject.tints[weaponTintIndex], itemCount = false, showNotification = true })
 
             return true
         end
@@ -961,7 +970,7 @@ local xPlayerMethods = {
         return function(index, subIndex) -- TODO: Get back to this as it looks like it won't work with all different cases...
             if not index then return self.metadata end
 
-            if type(index) ~= "string" then  ESX.Trace("xPlayer.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
+            if type(index) ~= "string" then ESX.Trace("xPlayer.getMetadata ^5index^7 should be ^5string^7!", "error", true) end
 
             if self.metadata[index] then
                 if subIndex and type(self.metadata[index]) == "table" then
@@ -994,35 +1003,54 @@ local xPlayerMethods = {
     ---Sets value of the specified metadata key/index of the player's.
     ---@param self xPlayer
     setMetadata = function(self)
-        ---@param index string
-        ---@param value? string | number | table
-        ---@param subValue? any
-        ---@return boolean
-        return function(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases...
-            if not index then ESX.Trace("xPlayer.setMetadata ^5index^7 is Missing!", "error", true) return false end
+        local validValueTypes = { ["nil"] = true, ["number"] = true, ["string"] = true, ["table"] = true, ["boolean"] = true }
 
-            if type(index) ~= "string" then ESX.Trace("xPlayer.setMetadata ^5index^7 should be ^5string^7!", "error", true) return false end
+        ---@param index string
+        ---@param value? number | string | table | boolean
+        ---@param subValue? number | string | table | boolean
+        ---@return boolean
+        return function(index, value, subValue)
+            if not index then
+                ESX.Trace("xPlayer.setMetadata ^5index^7 is Missing!", "error", true)
+                return false
+            end
+
+            if type(index) ~= "string" then
+                ESX.Trace("xPlayer.setMetadata ^5index^7 should be ^5string^7!", "error", true)
+                return false
+            end
 
             local _type = type(value)
             local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
             if not subValue then
-                if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                    ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value), "error", true)
+                if validValueTypes[_type] then
+                    ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(value), "error", true)
                     return false
                 end
 
                 self.metadata[index] = value
             else
-                if _type ~= "string" then
+                if _type ~= "number" and _type ~= "string" then
                     ESX.Trace(("xPlayer.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value), "error", true)
                     return false
+                end
+
+                ---@cast value number | string
+
+                if validValueTypes[type(subValue)] then
+                    ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(subValue), "error", true)
+                    return false
+                end
+
+                if not self.metadata[index] then
+                    self.metadata[index] = {}
                 end
 
                 self.metadata[index][value] = subValue
             end
 
-            self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setMetadata", { currentMetadata = self.metadata, lastMetadata = lastMetadata }, { server = true, client = true })
             Player(self.source).state:set("metadata", self.metadata, true)
 
             return true
@@ -1035,7 +1063,10 @@ local xPlayerMethods = {
         ---@param index string | string[]
         ---@return boolean
         return function(index) -- TODO: Get back to this as it looks like the return value won't work properly with all different cases...
-            if not index then ESX.Trace(("xPlayer.clearMetadata ^5%s^7 is missing!"):format(index), "error", true) return false end
+            if not index then
+                ESX.Trace(("xPlayer.clearMetadata ^5%s^7 is missing!"):format(index), "error", true)
+                return false
+            end
 
             if type(index) == "table" then
                 for _, val in pairs(index) do
@@ -1045,12 +1076,15 @@ local xPlayerMethods = {
                 return true
             end
 
-            if not self.metadata[index] then ESX.Trace(("xPlayer.clearMetadata ^5%s^7 not exist!"):format(index), "error", true) return false end
+            if not self.metadata[index] then
+                ESX.Trace(("xPlayer.clearMetadata ^5%s^7 not exist!"):format(index), "error", true)
+                return false
+            end
 
             local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
             self.metadata[index] = nil
 
-            self.triggerSafeEvent("esx:setMetadata", {currentMetadata = self.metadata, lastMetadata = lastMetadata}, {server = true, client = true})
+            self.triggerSafeEvent("esx:setMetadata", { currentMetadata = self.metadata, lastMetadata = lastMetadata }, { server = true, client = true })
             Player(self.source).state:set("metadata", self.metadata, true)
 
             return true
