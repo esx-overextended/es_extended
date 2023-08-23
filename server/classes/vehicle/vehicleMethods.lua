@@ -63,33 +63,53 @@ local xVehicleMethods = {
     ---Sets the vehicle's persistant data for the specified key to the given value which will be saved on vehicle deletion. Unlike statebag data.
     ---@param self xVehicle
     setMetadata = function(self)
-        ---@param index string
-        ---@param value? string | number | table
-        ---@param subValue? any
-        ---@return boolean
-        return function(index, value, subValue) -- TODO: Get back to this as it looks like it won't work with all different cases (it's a copy of xPlayer.setMetadata)...
-            if not index then ESX.Trace("xVehicle.setMetadata ^5index^7 is Missing!", "error", true) return false end
+        local validValueTypes = { ["nil"] = true, ["number"] = true, ["string"] = true, ["table"] = true, ["boolean"] = true }
 
-            if type(index) ~= "string" then ESX.Trace("xVehicle.setMetadata ^5index^7 should be ^5string^7!", "error", true) return false end
+        ---@param index string
+        ---@param value? number | string | table | boolean
+        ---@param subValue? number | string | table | boolean
+        ---@return boolean
+        return function(index, value, subValue)
+            if not index then
+                ESX.Trace("xVehicle.setMetadata ^5index^7 is Missing!", "error", true)
+                return false
+            end
+
+            if type(index) ~= "string" then
+                ESX.Trace("xVehicle.setMetadata ^5index^7 should be ^5string^7!", "error", true)
+                return false
+            end
 
             local _type = type(value)
 
             if not subValue then
-                if _type ~= "nil" and _type ~= "number" and _type ~= "string" and _type ~= "table" then
-                    ESX.Trace(("xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7!"):format(value), "error", true)
+                if validValueTypes[_type] then
+                    ESX.Trace(("xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(value), "error", true)
                     return false
                 end
 
                 self.metadata[index] = value
             else
-                if _type ~= "string" then
+                if _type ~= "number" and _type ~= "string" then
                     ESX.Trace(("xVehicle.setMetadata ^5value^7 should be ^5string^7 as a subIndex!"):format(value), "error", true)
                     return false
+                end
+
+                ---@cast value number | string
+
+                if validValueTypes[type(subValue)] then
+                    ESX.Trace(("xVehicle.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(subValue), "error", true)
+                    return false
+                end
+
+                if not self.metadata[index] then
+                    self.metadata[index] = {}
                 end
 
                 self.metadata[index][value] = subValue
             end
 
+            -- TODO: trigger an event to show metadata changed(like xPlayer)
             Entity(self.entity).state:set("metadata", self.metadata, true)
 
             return true
@@ -154,7 +174,7 @@ local xVehicleMethods = {
                 end
             end
 
-            Core.Vehicles[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.Vehicles[entity] = nil                -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehiclesPropertiesQueue[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
             if DoesEntityExist(entity) then DeleteEntity(entity) end
