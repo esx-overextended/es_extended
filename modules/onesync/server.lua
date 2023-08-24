@@ -55,11 +55,13 @@ end
 ---@param heading? number
 ---@param properties? table
 ---@param cb? function
+---@return number? entity, number? netId
 function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
     local typeModel = type(model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.OneSync.SpawnVehicle^7!"):format(typeModel), "error", true) return
+        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.OneSync.SpawnVehicle^7!"):format(typeModel), "error", true)
+        return
     end
 
     if typeModel == "number" or type(tonumber(model)) == "number" then
@@ -78,7 +80,8 @@ function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true) return
+        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
+        return
     end
 
     local entity = Core.SpawnVehicle(model, modelData.type, coords, heading or coords.w or coords.heading or 0.0)
@@ -88,7 +91,11 @@ function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
     Entity(entity).state:set("initVehicle", true, true)
     Entity(entity).state:set("vehicleProperties", properties, true)
 
-    return cb and cb(NetworkGetNetworkIdFromEntity(entity))
+    local netId = NetworkGetNetworkIdFromEntity(entity)
+
+    if cb then cb(netId) end
+
+    return entity, netId
 end
 
 ---@param model number | string
