@@ -1,3 +1,17 @@
+---Shows a notification to the specified source
+---@param notifyText string | table<number, string> if the type of passed value is table, the first element reflects the title and the second one reflects the message
+---@param notifyType? "success" | "error" | "inform" | "info"
+---@param notifyDuration? number | integer
+---@param notifyExtra? table ox_lib's notify related properties such as position, style, icon, and iconColor and title
+function ESX.ShowNotification(source, notifyText, notifyType, notifyDuration, notifyExtra) ---@diagnostic disable-line: duplicate-set-field
+    ESX.TriggerSafeEvent("esx:showNotification", source, {
+        message = notifyText,
+        type = notifyType,
+        duration = notifyDuration,
+        extra = notifyExtra
+    }, { client = true })
+end
+
 do
     ESX.RegisterPlayerMethodOverrides({
         ---Shows a notification to the player.

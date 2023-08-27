@@ -3,7 +3,7 @@
 ---@param notifyType? "success" | "error" | "inform" | "info"
 ---@param notifyDuration? number | integer
 ---@param notifyExtra? table ox_lib's notify related properties such as position, style, icon, and iconColor and title
-function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra)
+function ESX.ShowNotification(notifyText, notifyType, notifyDuration, notifyExtra) ---@diagnostic disable-line: duplicate-set-field
     if GetResourceState("esx_notify"):find("start") then
         return exports["esx_notify"]:Notify(notifyType == "inform" and "info", notifyDuration, type(notifyText) == "table" and notifyText[2] or notifyText)
     end
