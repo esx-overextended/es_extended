@@ -92,24 +92,9 @@ end)
 AddStateBagChangeHandler("initVehicle", "", function(bagName, key, value, _, _)
     if not value then return end
 
-    local netId = tonumber(bagName:gsub("entity:", ""), 10)
-    local doesNetIdExist, timeout = false, 0
+    local entity = ESX.OneSync.GetEntityFromStateBag(bagName)
 
-    while not doesNetIdExist and timeout < 1000 do
-        doesNetIdExist = NetworkDoesEntityExistWithNetworkId(netId)
-        timeout += 1
-        Wait(0)
-    end
-
-    if not doesNetIdExist then
-        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
-    end
-
-    Wait(500)
-
-    local entity = NetworkDoesEntityExistWithNetworkId(netId) and NetworkGetEntityFromNetworkId(netId)
-
-    if not entity or entity == 0 then return end
+    if not entity then return end
 
     if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
 
@@ -123,24 +108,9 @@ end)
 AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, _, _)
     if not value then return end
 
-    local netId = tonumber(bagName:gsub("entity:", ""), 10)
-    local doesNetIdExist, timeout = false, 0
+    local entity = ESX.OneSync.GetEntityFromStateBag(bagName)
 
-    while not doesNetIdExist and timeout < 1000 do
-        doesNetIdExist = NetworkDoesEntityExistWithNetworkId(netId)
-        timeout += 1
-        Wait(0)
-    end
-
-    if not doesNetIdExist then
-        return ESX.Trace(("Statebag (^3%s^7) timed out after waiting %s ticks for entity creation on %s!"):format(bagName, timeout, key), "warning", true)
-    end
-
-    Wait(500)
-
-    local entity = NetworkDoesEntityExistWithNetworkId(netId) and NetworkGetEntityFromNetworkId(netId)
-
-    if not entity or entity == 0 then return end
+    if not entity then return end
 
     if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
 
