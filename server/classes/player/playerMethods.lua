@@ -1026,7 +1026,7 @@ local xPlayerMethods     = {
             local lastMetadata = json.decode(json.encode(self.metadata)) -- avoid holding reference to the self.metadata table
 
             if not subValue then
-                if validValueTypes[_type] then
+                if not validValueTypes[_type] then
                     ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(value), "error", true)
                     return false
                 end
@@ -1040,7 +1040,7 @@ local xPlayerMethods     = {
 
                 ---@cast value number | string
 
-                if validValueTypes[type(subValue)] then
+                if not validValueTypes[type(subValue)] then
                     ESX.Trace(("xPlayer.setMetadata ^5%s^7 should be ^5number^7 or ^5string^7 or ^5table^7 or ^5boolean^7!"):format(subValue), "error", true)
                     return false
                 end
