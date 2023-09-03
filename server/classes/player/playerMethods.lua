@@ -114,13 +114,17 @@ local xPlayerMethods     = {
     hasGroup = function(self)
         ---@param groupName string
         ---@param groupGrade? number
-        ---@return boolean, number | nil
+        ---@return boolean, number?
         return function(groupName, groupGrade)
             if not groupName then return false end
 
-            if groupGrade ~= nil then return self.groups[groupName] == groupGrade end
+            local validGrade = self.groups[groupName] --[[@as number?]]
 
-            return self.groups[groupName] ~= nil, self.groups[groupName]
+            if groupGrade == nil then
+                return validGrade ~= nil, validGrade
+            end
+
+            return validGrade == groupGrade, validGrade
         end
     end,
 
