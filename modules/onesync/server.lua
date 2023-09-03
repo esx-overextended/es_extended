@@ -296,7 +296,7 @@ function ESX.OneSync.MakeVehicleEmptyOfPassengers(vehicleEntity, seatsToEmpty)
     local seatsToEmptyCount = #seatsToEmpty
     local p = promise.new()
 
-    Citizen.CreateThreadNow(function()
+    Citizen.CreateThread(function()
         while DoesEntityExist(vehicleEntity) do
             local freeNoSeats = 0
 
