@@ -261,6 +261,71 @@ function ESX.OneSync.GetClosestVehicle(coords, modelFilter)
     return getClosestEntity(GetAllVehicles(), coords, modelFilter)
 end
 
+---@param vehicleEntity number
+---@param seatsToEmpty? number | number[] optionally, specifies which seat(s) exclusively should get empty of passenger
+---@return boolean
+function ESX.OneSync.MakeVehicleEmptyOfPassengers(vehicleEntity, seatsToEmpty)
+    local vehicleHash = GetEntityModel(vehicleEntity)
+    local vehicleData = ESX.GetVehicleData({ hash = vehicleHash }) --[[@as table<string, table>?]]
+    local maxNoSeats  = vehicleData and vehicleData[next(vehicleData)] and vehicleData[next(vehicleData)]?.seats --[[@as number?]]
+
+    if not maxNoSeats then
+        ESX.Trace(("Vehicle hash (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(vehicleHash), "error", true)
+        return false
+    end
+
+    if seatsToEmpty then
+        local type = type(seatsToEmpty)
+
+        if type == "number" then
+            type         = "table"
+            seatsToEmpty = { seatsToEmpty }
+        end
+
+        if type ~= "table" or table.type(seatsToEmpty) ~= "array" then return false end
+    end
+
+    if not seatsToEmpty then
+        seatsToEmpty = {}
+
+        for i = 1, maxNoSeats do
+            seatsToEmpty[#seatsToEmpty + 1] = i - 2
+        end
+    end
+
+    local seatsToEmptyCount = #seatsToEmpty
+    local p = promise.new()
+
+    Citizen.CreateThreadNow(function()
+        while DoesEntityExist(vehicleEntity) do
+            local freeNoSeats = 0
+
+            for i = 1, seatsToEmptyCount do
+                local seat = seatsToEmpty[i]
+
+                local pedAtSeat = GetPedInVehicleSeat(vehicleEntity, seat)
+
+                if DoesEntityExist(pedAtSeat) then
+                    TaskLeaveVehicle(pedAtSeat, vehicleEntity, 0)
+                else
+                    freeNoSeats += 1
+                end
+            end
+
+            if freeNoSeats == seatsToEmptyCount then
+                Wait(700)
+                return p:resolve(true)
+            end
+
+            Wait(0)
+        end
+
+        p:reject(false)
+    end)
+
+    return Citizen.Await(p)
+end
+
 ESX.RegisterServerCallback("esx:Onesync:SpawnObject", function(_, cb, model, coords, heading)
     ESX.OneSync.SpawnObject(model, coords, heading, cb)
 end)

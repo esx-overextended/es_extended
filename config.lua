@@ -53,7 +53,7 @@ Config.DefaultTextUIPosition       = "left-center"                              
 Config.DefaultProgressBarType      = "bar"                                               -- "bar" or "circle"
 Config.DefaultProgressBarPosition  = "bottom"                                            -- "middle" or "bottom"
 
-Config.VehicleParser               = {                                                   -- Refer to https://esx-overextended.github.io/es_extended/Commands/parseVehicles (You also need to run screenshot-basic, and adjust the Discord VehicleImage's webhook address inside config.logs.lua for vehicle image data to be generated)
+Config.VehicleParser               = {                                                   -- Refer to https://esx-overextended.github.io/es_extended/Commands/parseVehicles (You also need to run screenshot-basic, and adjust the Discord VehicleImage's webhook address inside config.logs.lua for vehicles image data to be generated)
     Position = vector4(-144.67, -593.51, 211.39, 124.72),
     Cam = {
         Name = "DEFAULT_SCRIPTED_CAMERA",
