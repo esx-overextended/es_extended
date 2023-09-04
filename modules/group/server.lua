@@ -202,6 +202,55 @@ function ESX.GetPlayersByGroup(groupName, groupGrade)
     return xPlayers, count
 end
 
+do
+    ESX.RegisterPlayerMethodOverrides({
+        ---Checks if the player has the specified job(s) and is onDuty or has the specified group(s)
+        ---@param self xPlayer
+        canInteractWithGroup = function(self)
+            ---@param groupToCheck string | string[] | table<string, number>
+            ---@return boolean
+            return function(groupToCheck)
+                if not groupToCheck then return false end
+
+                local groupToCheckType = type(groupToCheck)
+
+                if groupToCheckType == "string" then
+                    groupToCheck = { groupToCheck }
+                    groupToCheckType = "table"
+                end
+
+                local playerGroups = self.groups
+                local currJobName  = self.job.name
+                local currJobDuty  = self.job.duty
+                local currJobGrade = self.job.grade
+
+                if groupToCheckType == "table" then
+                    if table.type(groupToCheck) == "array" then
+                        for i = 1, #groupToCheck do
+                            local groupName = groupToCheck[i]
+
+                            if groupName == currJobName and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
+
+                            if playerGroups[groupName] and not ESX.GetJob(groupName) --[[making sure the group is not a job]] then return true end
+                        end
+                    else
+                        for groupName, groupGrade in pairs(groupToCheck --[[@as table<string, number>]]) do
+                            if groupName == currJobName and groupGrade == currJobGrade and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
+
+                            if playerGroups[groupName] == groupGrade and not ESX.GetJob(groupName) --[[making sure the group is not a job]] then return true end
+                        end
+                    end
+                end
+
+                return false
+            end
+        end,
+    })
+end
+
+---@class xPlayer
+---@field canInteractWithGroup fun(groupToCheck: string | string[] | table<string, number>):boolean
+
 ESX.RegisterSafeEvent("esx:setGroups", function(value)
     TriggerEvent("esx:setGroups", value.source, value.currentGroups, value.lastGroups)
 end)
