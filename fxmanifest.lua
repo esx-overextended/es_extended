@@ -61,6 +61,7 @@ files {
 }
 
 dependencies {
-    "/native:0x6AE51D4B",
+    "/server:6683",
+    "/gameBuild:2944",
     "oxmysql"
 }

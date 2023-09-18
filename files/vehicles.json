@@ -344,6 +344,36 @@
         "type": "plane",
         "weapons": 1
     },
+    "avenger3": {
+        "acceleration": 8.82,
+        "braking": 8.4657,
+        "class": 16,
+        "doors": 3,
+        "handling": 8.82,
+        "hash": -426933872,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199293822406758/screenshot.jpg",
+        "make": "Mammoth",
+        "name": "Avenger",
+        "seats": 3,
+        "speed": 95.9834,
+        "type": "plane",
+        "weapons": 1
+    },
+    "avenger4": {
+        "acceleration": 8.82,
+        "braking": 8.4657,
+        "class": 16,
+        "doors": 3,
+        "handling": 8.82,
+        "hash": -69293006,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199304840839218/screenshot.jpg",
+        "make": "Mammoth",
+        "name": "Avenger",
+        "seats": 3,
+        "speed": 95.9834,
+        "type": "plane",
+        "weapons": 1
+    },
     "avisa": {
         "acceleration": 10.5,
         "braking": 0.4,
@@ -1110,6 +1140,20 @@
         "speed": 32.8303,
         "type": "automobile"
     },
+    "brigham": {
+        "acceleration": 0.21,
+        "braking": 0.38,
+        "class": 4,
+        "doors": 6,
+        "handling": 0.59,
+        "hash": -654498607,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199172363763813/screenshot.jpg",
+        "make": "Albany",
+        "name": "Brigham",
+        "seats": 4,
+        "speed": 38.7112,
+        "type": "automobile"
+    },
     "brioso": {
         "acceleration": 0.29,
         "braking": 0.6,
@@ -1374,6 +1418,20 @@
         "name": "Buffalo STX",
         "seats": 4,
         "speed": 48.308,
+        "type": "automobile"
+    },
+    "buffalo5": {
+        "acceleration": 0.382,
+        "braking": 0.985,
+        "class": 4,
+        "doors": 4,
+        "handling": 0.842,
+        "hash": 165968051,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199161194328134/screenshot.jpg",
+        "make": "Bravado",
+        "name": "Buffalo EVX",
+        "seats": 2,
+        "speed": 49.8737,
         "type": "automobile"
     },
     "bulldozer": {
@@ -1981,6 +2039,20 @@
         "speed": 45.9981,
         "type": "automobile"
     },
+    "clique2": {
+        "acceleration": 0.198,
+        "braking": 0.35,
+        "class": 4,
+        "doors": 5,
+        "handling": 0.578,
+        "hash": -979292575,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199271315787816/screenshot.jpg",
+        "make": "Vapid",
+        "name": "Clique Wagon",
+        "seats": 2,
+        "speed": 33.1878,
+        "type": "automobile"
+    },
     "club": {
         "acceleration": 0.2375,
         "braking": 0.72,
@@ -2177,6 +2249,21 @@
         "speed": 62.169,
         "type": "heli"
     },
+    "conada2": {
+        "acceleration": 5.684,
+        "braking": 3.4855,
+        "class": 15,
+        "doors": 2,
+        "handling": 5.684,
+        "hash": -1659004814,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199326634459196/screenshot.jpg",
+        "make": "Buckingham",
+        "name": "Weaponized Conada",
+        "seats": 2,
+        "speed": 61.3214,
+        "type": "heli",
+        "weapons": 1
+    },
     "contender": {
         "acceleration": 0.26,
         "braking": 0.6,
@@ -2259,6 +2346,20 @@
         "name": "Corsita",
         "seats": 2,
         "speed": 52.2801,
+        "type": "automobile"
+    },
+    "coureur": {
+        "acceleration": 0.37,
+        "braking": 0.8,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.81,
+        "hash": 610429990,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199149995532308/screenshot.jpg",
+        "make": "Penaud",
+        "name": "La Coureuse",
+        "seats": 2,
+        "speed": 46.6167,
         "type": "automobile"
     },
     "cruiser": {
@@ -3889,6 +3990,20 @@
         "speed": 48.2968,
         "type": "automobile"
     },
+    "gauntlet6": {
+        "acceleration": 0.3668,
+        "braking": 0.935,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.7467,
+        "hash": 1336514315,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199204764754011/screenshot.jpg",
+        "make": "Bravado",
+        "name": "Hotring Hellfire",
+        "seats": 2,
+        "speed": 48.9926,
+        "type": "automobile"
+    },
     "gb200": {
         "acceleration": 0.315,
         "braking": 1.0,
@@ -4461,6 +4576,34 @@
         "seats": 2,
         "speed": 48.5751,
         "type": "automobile"
+    },
+    "inductor": {
+        "acceleration": 0.112,
+        "braking": 3.1,
+        "class": 13,
+        "doors": 1,
+        "handling": 0.492,
+        "hash": -897824023,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199236901519390/screenshot.jpg",
+        "make": "",
+        "name": "Inductor",
+        "seats": 1,
+        "speed": 10.7824,
+        "type": "bicycle"
+    },
+    "inductor2": {
+        "acceleration": 0.112,
+        "braking": 3.1,
+        "class": 13,
+        "doors": 1,
+        "handling": 0.492,
+        "hash": -1983622024,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199226189267056/screenshot.jpg",
+        "make": "",
+        "name": "Junk Energy Inductor",
+        "seats": 1,
+        "speed": 10.7824,
+        "type": "bicycle"
     },
     "infernus": {
         "acceleration": 0.34,
@@ -5080,6 +5223,20 @@
         "name": "Kuruma (Armored)",
         "seats": 4,
         "speed": 45.9285,
+        "type": "automobile"
+    },
+    "l35": {
+        "acceleration": 0.236,
+        "braking": 0.32,
+        "class": 9,
+        "doors": 4,
+        "handling": 0.616,
+        "hash": -1763675285,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199183306698822/screenshot.jpg",
+        "make": "Declasse",
+        "name": "Walton L35",
+        "seats": 2,
+        "speed": 39.0963,
         "type": "automobile"
     },
     "landstalker": {
@@ -5727,6 +5884,20 @@
         "name": "Nightmare Sasquatch",
         "seats": 2,
         "speed": 38.3787,
+        "type": "automobile"
+    },
+    "monstrociti": {
+        "acceleration": 0.2735,
+        "braking": 0.369,
+        "class": 9,
+        "doors": 4,
+        "handling": 0.7135,
+        "hash": 802856453,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199194014760980/screenshot.jpg",
+        "make": "Maibatsu",
+        "name": "MonstroCiti",
+        "seats": 2,
+        "speed": 41.3981,
         "type": "automobile"
     },
     "moonbeam": {
@@ -6952,6 +7123,21 @@
         "speed": 38.0616,
         "type": "automobile"
     },
+    "raiju": {
+        "acceleration": 21.56,
+        "braking": 22.417,
+        "class": 16,
+        "doors": 1,
+        "handling": 21.56,
+        "hash": 239897677,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199248976924733/screenshot.jpg",
+        "make": "",
+        "name": "F-160 Raiju",
+        "seats": 1,
+        "speed": 103.975,
+        "type": "plane",
+        "weapons": 1
+    },
     "raketrailer": {
         "class": 11,
         "doors": 0,
@@ -7073,6 +7259,20 @@
         "seats": 2,
         "speed": 36.8722,
         "type": "bike"
+    },
+    "ratel": {
+        "acceleration": 0.342,
+        "braking": 0.32,
+        "class": 9,
+        "doors": 2,
+        "handling": 0.722,
+        "hash": -536105557,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199215200182303/screenshot.jpg",
+        "make": "Vapid",
+        "name": "Ratel",
+        "seats": 2,
+        "speed": 43.8756,
+        "type": "automobile"
     },
     "ratloader": {
         "acceleration": 0.22,
@@ -8479,6 +8679,20 @@
         "speed": 42.7284,
         "type": "automobile"
     },
+    "speedo5": {
+        "acceleration": 0.2,
+        "braking": 0.65,
+        "class": 12,
+        "doors": 5,
+        "handling": 0.58,
+        "hash": -44799464,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199315628609597/screenshot.jpg",
+        "make": "Vapid",
+        "name": "Speedo Custom",
+        "seats": 4,
+        "speed": 42.7284,
+        "type": "automobile"
+    },
     "squaddie": {
         "acceleration": 0.2,
         "braking": 0.315,
@@ -8606,6 +8820,20 @@
         "speed": 45.1953,
         "type": "automobile"
     },
+    "stingertt": {
+        "acceleration": 0.398,
+        "braking": 0.98,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.858,
+        "hash": 1447690049,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199260125380678/screenshot.jpg",
+        "make": "Grotti",
+        "name": "Itali GTO Stinger TT",
+        "seats": 2,
+        "speed": 52.2722,
+        "type": "automobile"
+    },
     "stockade": {
         "acceleration": 0.12,
         "braking": 0.25,
@@ -8647,6 +8875,20 @@
         "seats": 4,
         "speed": 41.6589,
         "type": "automobile"
+    },
+    "streamer216": {
+        "acceleration": 7.84,
+        "braking": 6.013,
+        "class": 16,
+        "doors": 3,
+        "handling": 7.84,
+        "hash": 191916658,
+        "image": "https://media.discordapp.net/attachments/809584377054363649/1153199282367758336/screenshot.jpg",
+        "make": "Mammoth",
+        "name": "Streamer216",
+        "seats": 4,
+        "speed": 76.6965,
+        "type": "plane"
     },
     "streiter": {
         "acceleration": 0.2125,
