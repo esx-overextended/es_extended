@@ -248,9 +248,12 @@ local xPlayerMethods     = {
     set = function(self)
         ---@param key string
         ---@param value any
-        return function(key, value) -- TODO: sync with client using safe event
+        ---@param syncWithStatebag? boolean
+        return function(key, value, syncWithStatebag) -- TODO: sync with client using safe event
             self.variables[key] = value
-            Player(self.source).state:set(key, value, true)
+            if syncWithStatebag ~= false then
+                Player(self.source).state:set(key, value, true)
+            end
         end
     end,
 

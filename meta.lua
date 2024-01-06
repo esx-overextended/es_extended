@@ -41,7 +41,7 @@
 ---@field getGroups fun(): table<string, integer | number>
 ---@field setGroup fun(newGroup?: string): boolean
 ---@field getGroup fun(): string
----@field set fun(key: string, value: any)
+---@field set fun(key: string, value: any, syncWithStatebag?: boolean)
 ---@field get fun(key?: string): any
 ---@field getAccounts fun(minimal?: boolean): table
 ---@field getAccount fun(accountName?: string): table?
