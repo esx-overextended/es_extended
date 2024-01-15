@@ -249,8 +249,9 @@ local xPlayerMethods     = {
         ---@param key string
         ---@param value any
         ---@param syncWithStatebag? boolean
-        return function(key, value, syncWithStatebag) -- TODO: sync with client using safe event
+        return function(key, value, syncWithStatebag)
             self.variables[key] = value
+
             if syncWithStatebag ~= false then
                 Player(self.source).state:set(key, value, true)
             end
