@@ -95,7 +95,7 @@ end
 ---@param cid string
 ---@return xPlayer?
 function ESX.GetPlayerFromCid(cid)
-    return Core.PlayersByCid[cid]
+    return Core.PlayersByCid[cid:upper()]
 end
 
 ---Returns an instance of xPlayer for the passed player identifier
