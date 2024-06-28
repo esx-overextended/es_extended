@@ -153,3 +153,10 @@ function ESX.RefreshContext(elements, position)
     ESX.CloseContext() Wait(10)
     ESX.OpenContext(nil, elements or _contextData.eles, _contextData.onSelect, _contextData.onClose, _contextData.canClose)
 end
+
+-- Backward compatibility for exports["esx_context"]:Refresh()
+AddEventHandler("__cfx_export_esx_context_Refresh", function(cb)
+    if not GetResourceState("esx_context"):find("start") then
+        cb(ESX.RefreshContext)
+    end
+end)
