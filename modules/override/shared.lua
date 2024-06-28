@@ -29,6 +29,8 @@ function ESX.SetField(fieldName, value)
 
     ESX.Trace(("Setting field (^2%s^7) for ^2ESX^7 through ^5ESX.SetField^7 in ^3%s^7."):format(fieldName, lib.context), "info", true)
 
+    TriggerEvent("esx:sharedObjectUpdated")
+
     return true
 end
 
