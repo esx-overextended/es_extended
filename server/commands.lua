@@ -450,11 +450,21 @@ end, true)
 
 if Config.EnableDebug then
     ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args, _)
+        if not GetResourceState("screenshot-basic"):find("start") then
+            ESX.Trace("The resource 'screenshot-basic' MUST be started so vehicles image can be generated in vehicles data!", "error")
+            return ESX.Trace("You can download the 'screenshot-basic' from <<https://github.com/citizenfx/screenshot-basic>>", "info")
+        end
+
+        local webhook = Config.DiscordLogs.Webhooks.VehicleImage
+        if not webhook or webhook == "" then
+            return ESX.Trace("Discord webhook for 'Config.DiscordLogs.Webhooks.VehicleImage' must be present for generating vehicles image!", "error")
+        end
+
         local toBoolean = { ["false"] = false, ["true"] = true }
         args.processAll = args.processAll ~= nil and toBoolean[args.processAll:lower()]
 
         ---@type table<string, VehicleData>, TopVehicleStats
-        local vehicleData, topStats = ESX.TriggerClientCallback(xPlayer.source, "esx:generateVehicleData", { webhook = Config.DiscordLogs.Webhooks.VehicleImage, processAll = args.processAll })
+        local vehicleData, topStats = ESX.TriggerClientCallback(xPlayer.source, "esx:generateVehicleData", { webhook = webhook, processAll = args.processAll })
 
         if vehicleData and next(vehicleData) then
             if not args.processAll then
@@ -491,7 +501,7 @@ if Config.EnableDebug then
         help = "Generate and save vehicle data for available models on the client",
         validate = false,
         arguments = {
-            { name = "processAll", help = "Include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
+            { name = "processAll", help = "true/false >> Whether the parsing process should include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
         }
     })
 end

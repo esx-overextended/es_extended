@@ -113,6 +113,11 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
 end
 
 ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
+    if not GetResourceState("screenshot-basic"):find("start") then
+        ESX.Trace("The resource 'screenshot-basic' MUST be started so vehicles image can be generated in vehicles data!", "error")
+        return ESX.Trace("You can download the 'screenshot-basic' from <<https://github.com/citizenfx/screenshot-basic>>", "info")
+    end
+
     local models = GetAllVehicleModels()
     local numModels = #models
     local numParsed = 0
@@ -120,7 +125,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
     local hudState = not IsHudHidden()
     local radarState = not IsRadarHidden()
     local vehicleData, vehicleTopStats = {}, {}
-    local message = ("Generating vehicle data from models (%s models loaded)"):format(numModels)
+    local message = ("Generating data from vehicle models (%s models loaded)"):format(numModels)
 
     ESX.Trace(message, "info")
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
@@ -131,7 +136,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
 
     local estimatedRemaining
     local startTime = GetGameTimer()
-    message = "Generated vehicle data for %d" .. ("/%d models\n"):format(numModels)
+    message = "Generated vehicle data for %d" .. ("/%d models  \n"):format(numModels)
 
     for i = 1, numModels do
         local model = models[i]:lower()
@@ -191,28 +196,23 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
                 PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
                 SetCamActive(cam, true)
                 RenderScriptCams(true, true, 1, true, true)
+                Wait(1000)
+                CreateMobilePhone(1)
+                CellCamActivate(true, true)
+                Wait(1000)
 
-                local image
+                local p = promise.new()
 
-                if GetResourceState("screenshot-basic"):find("start") then
-                    Wait(1000)
-                    CreateMobilePhone(1)
-                    CellCamActivate(true, true)
-                    Wait(1000)
+                exports["screenshot-basic"]:requestScreenshotUpload(receivedData?.webhook, "files[]", function(data)
+                    local imageData = json.decode(data)
 
-                    local p = promise.new()
+                    DestroyMobilePhone()
+                    CellCamActivate(false, false)
 
-                    exports["screenshot-basic"]:requestScreenshotUpload(receivedData?.webhook, "files[]", function(data)
-                        local imageData = json.decode(data)
+                    return p:resolve(imageData?.attachments and (imageData.attachments[1]?.proxy_url or imageData.attachments[1]?.url) or "https://i.imgur.com/NHB74QX.png")
+                end)
 
-                        DestroyMobilePhone()
-                        CellCamActivate(false, false)
-
-                        return p:resolve(imageData?.attachments and (imageData.attachments[1]?.proxy_url or imageData.attachments[1]?.url) or "https://i.imgur.com/NHB74QX.png")
-                    end)
-
-                    image = Citizen.Await(p)
-                end
+                local image = Citizen.Await(p)
 
                 RenderScriptCams(false, false, 1, false, false)
                 DestroyAllCams(true)
@@ -264,7 +264,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
                 estimatedRemaining = (((GetGameTimer() - startTime) / 1000) / numParsed) * (numModels - numParsed)
                 estimatedRemaining = ("%s:%s"):format(string.format("%02d", math.floor(estimatedRemaining / 60)), string.format("%02d", math.floor(estimatedRemaining % 60)))
 
-                ESX.TextUI(("%s\nEstimated Time Remaining: %s"):format(message:format(numParsed), estimatedRemaining), "info")
+                ESX.TextUI(("%sEstimated time remaining: %s"):format(message:format(numParsed), estimatedRemaining), "info")
             end
         end
     end
