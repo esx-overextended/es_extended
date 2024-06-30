@@ -110,6 +110,8 @@ local function getVehicleTypeFromModel(modelName, modelType)
         return "car"
     elseif modelType == "quadbike" then
         return "bike"
+    elseif modelType == "heli" then
+        return "helicopter"
     end
 
     return modelType
