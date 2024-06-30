@@ -112,12 +112,7 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
     return vehicleEntity
 end
 
-ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
-    if not GetResourceState("screenshot-basic"):find("start") then
-        ESX.Trace("The resource 'screenshot-basic' MUST be started so vehicles image can be generated in vehicles data!", "error")
-        return ESX.Trace("You can download the 'screenshot-basic' from <<https://github.com/citizenfx/screenshot-basic>>", "info")
-    end
-
+ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     local models = GetAllVehicleModels()
     local numModels = #models
     local numParsed = 0
@@ -126,6 +121,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
     local radarState = not IsRadarHidden()
     local vehicleData, vehicleTopStats = {}, {}
     local message = ("Generating data from vehicle models (%s models loaded)"):format(numModels)
+    local specifiedModel = params.model and params.model:lower()
 
     ESX.Trace(message, "info")
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
@@ -140,8 +136,9 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
 
     for i = 1, numModels do
         local model = models[i]:lower()
+        local isThisModelSpecified = specifiedModel == model
 
-        if receivedData?.processAll or not ESX.GetVehicleData(model) then
+        if isThisModelSpecified or params?.processAll or not ESX.GetVehicleData(model) then
             spinner(true, ("Loading %s"):format(model))
             local hash = lib.requestModel(model, 1000000)
             spinner(false)
@@ -203,7 +200,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
 
                 local p = promise.new()
 
-                exports["screenshot-basic"]:requestScreenshotUpload(receivedData?.webhook, "files[]", function(data)
+                exports["screenshot-basic"]:requestScreenshotUpload(params?.webhook, "files[]", function(data)
                     local imageData = json.decode(data)
 
                     DestroyMobilePhone()
@@ -260,6 +257,10 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, receivedData)
                 numParsed += 1
 
                 deleteEntity(vehicle)
+
+                if isThisModelSpecified and not params.processAll then -- Server requests to generate data of only 1 specified model
+                    break
+                end
 
                 estimatedRemaining = (((GetGameTimer() - startTime) / 1000) / numParsed) * (numModels - numParsed)
                 estimatedRemaining = ("%s:%s"):format(string.format("%02d", math.floor(estimatedRemaining / 60)), string.format("%02d", math.floor(estimatedRemaining % 60)))
