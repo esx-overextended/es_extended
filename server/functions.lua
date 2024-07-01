@@ -1,18 +1,20 @@
 ESX.GetPlayers = GetPlayers
 
----Gets a player id rockstar"s license identifier without "license:" prefix
+---Gets a player identifier and optionally gets the identifier by a specific type (without the "identifier:" prefix)
 ---@param playerId integer
+---@param byType string? "steam" | "license" | "license2" | "xbl" | "ip" | "discord" | "live"  | "fivem"
 ---@return string | nil
-function ESX.GetIdentifier(playerId)
+function ESX.GetIdentifier(playerId, byType)
     if Config.EnableDebug or GetConvarInt("sv_fxdkMode", 0) == 1 then
         return ("ESX-DEBUG-LICENSE%s"):format(playerId and ("-ID(%s)"):format(playerId) or "")
     end
 
-    local identifier = nil
+    local identifier
+    byType = byType or ("%s:"):format(Config.Identifier:lower())
 
     for _, v in ipairs(GetPlayerIdentifiers(playerId)) do
-        if string.match(v, "license:") then
-            identifier = string.gsub(v, "license:", "")
+        if string.match(v, byType) then
+            identifier = string.gsub(v, byType, "")
             break
         end
     end

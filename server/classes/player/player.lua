@@ -23,7 +23,7 @@ function CreateExtendedPlayer(cid, playerId, playerIdentifier, playerGroups, pla
     self.groups = playerGroups
     self.group = playerGroup
     self.identifier = playerIdentifier
-    self.license = string.format("license:%s", Config.Multichar and playerIdentifier:sub(playerIdentifier:find(":") + 1, playerIdentifier:len()) or playerIdentifier)
+    self.license = string.format("license:%s", ESX.GetIdentifier(playerId, "license"))
     self.inventory = playerInventory
     self.job = playerJob
     self.loadout = playerLoadout

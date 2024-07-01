@@ -1,10 +1,11 @@
 Config                             = {}
 Config.EnableDebug                 = false -- Use Debug options? (Keep in mind only set this to true when *not* running on production/live server as multiple accounts with similar rockstar license can join the server)
 
-Config.Locale                      = GetConvar("esx:locale", "en")
-
 Config.MapName                     = "Los Santos"
 Config.GameType                    = "ESX Overextended"
+
+Config.Locale                      = GetConvar("esx:locale", "en")
+Config.Identifier                  = GetConvar("esx:identifier", "license")
 
 Config.Accounts                    = {
     bank = {
