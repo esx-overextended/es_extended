@@ -100,23 +100,6 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     return xVehicle
 end
 
----Gets a vehicle model type based on esx-legacy (used in DB column to keep backward-compatibility)
----@param modelName string
----@param modelType? string
-local function getVehicleTypeFromModel(modelName, modelType)
-    modelType = modelType or ESX.GetVehicleData(modelName)?.type --[[@as string]]
-
-    if modelType == "automobile" then
-        return "car"
-    elseif modelType == "quadbike" then
-        return "bike"
-    elseif modelType == "heli" then
-        return "helicopter"
-    end
-
-    return modelType
-end
-
 ---@param modelName string
 ---@param modelType string
 ---@param coordinates vector3
@@ -212,8 +195,9 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
                 return
             end
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
+            MySQL.prepare.await("UPDATE `owned_vehicles` SET `vin` = ?, `type` = ?, `model` = ?, `class` = ?, `metadata` = ? WHERE `id` = ?", {
                 vehicle.vin or Core.GenerateVin(vehicleData.model),
+                vehicleData.data?.type,
                 vehicle.model or vehicleData.model,
                 vehicle.class or vehicleData.data?.class,
                 vehicle.metadata and json.encode(vehicle.metadata) or "{}",
@@ -272,7 +256,7 @@ function ESX.CreateVehicle(data, coords, heading, forceSpawn)
     vehicleProperties.model = modelData.hash -- backward compatibility with esx-legacy
 
     local vehicleId = (owner or group) and MySQL.prepare.await("INSERT INTO `owned_vehicles` (`owner`, `plate`, `vin`, `vehicle`, `type`, `job`, `model`, `class`, `metadata`, `stored`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", {
-        owner or nil, plate, vin, json.encode(vehicleProperties), getVehicleTypeFromModel(model, modelData.type), group or nil, model, modelData.class, json.encode(metadata), stored
+        owner or nil, plate, vin, json.encode(vehicleProperties), modelData.type, group or nil, model, modelData.class, json.encode(metadata), stored
     }) or nil
 
     if stored then
