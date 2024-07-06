@@ -213,11 +213,13 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                 RenderScriptCams(true, true, 1, true, true)
                 CreateMobilePhone(1)
                 CellCamActivate(true, true)
-                Wait(1000)
+                Wait(2000)
 
                 local p = promise.new()
 
                 exports["screenshot-basic"]:requestScreenshotUpload(params?.webhook, "files[]", function(data)
+                    repeat Wait(10) until data
+
                     local imageData = json.decode(data)
 
                     DestroyMobilePhone()
