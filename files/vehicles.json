@@ -1,7 +1,7 @@
 {
     "adder": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7,
@@ -100,7 +100,7 @@
     },
     "alpha": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -123,7 +123,7 @@
         "make": "Buckingham",
         "name": "Alpha-Z1",
         "seats": 1,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "ambulance": {
@@ -330,7 +330,7 @@
     },
     "avarus": {
         "acceleration": 0.27,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.65,
@@ -413,7 +413,7 @@
         "make": "Kraken",
         "name": "Avisa",
         "seats": 4,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "bagger": {
@@ -465,7 +465,7 @@
         "make": "Gallivanter",
         "name": "Baller",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller3": {
@@ -479,7 +479,7 @@
         "make": "Gallivanter",
         "name": "Baller LE",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller4": {
@@ -493,7 +493,7 @@
         "make": "Gallivanter",
         "name": "Baller LE LWB",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller5": {
@@ -507,7 +507,7 @@
         "make": "Gallivanter",
         "name": "Baller LE (Armored)",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller6": {
@@ -521,7 +521,7 @@
         "make": "Gallivanter",
         "name": "Baller LE LWB (Armored)",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller7": {
@@ -554,7 +554,7 @@
     },
     "banshee": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.82,
@@ -568,7 +568,7 @@
     },
     "banshee2": {
         "acceleration": 0.3475,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7275,
@@ -596,7 +596,7 @@
     },
     "barracks2": {
         "acceleration": 0.23,
-        "braking": 1.0,
+        "braking": 1,
         "class": 19,
         "doors": 3,
         "handling": 0.61,
@@ -709,7 +709,7 @@
     },
     "bestiagts": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.7,
@@ -849,7 +849,7 @@
     },
     "blazer": {
         "acceleration": 0.2,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.58,
@@ -877,7 +877,7 @@
     },
     "blazer3": {
         "acceleration": 0.2,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.58,
@@ -891,7 +891,7 @@
     },
     "blazer4": {
         "acceleration": 0.25,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.63,
@@ -905,7 +905,7 @@
     },
     "blazer5": {
         "acceleration": 0.272,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.652,
@@ -929,7 +929,7 @@
         "make": "",
         "name": "Atomic Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blimp2": {
@@ -943,7 +943,7 @@
         "make": "",
         "name": "Xero Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blimp3": {
@@ -957,7 +957,7 @@
         "make": "",
         "name": "Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blista": {
@@ -1004,7 +1004,7 @@
     },
     "bmx": {
         "acceleration": 0.16,
-        "braking": 3.0,
+        "braking": 3,
         "class": 13,
         "doors": 1,
         "handling": 0.54,
@@ -1409,7 +1409,7 @@
         "make": "Albany",
         "name": "Fränken Stange",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "btype3": {
@@ -1484,7 +1484,7 @@
     },
     "buffalo3": {
         "acceleration": 0.31,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 6,
         "handling": 0.69,
@@ -1535,7 +1535,7 @@
         "make": "HVY",
         "name": "Dozer",
         "seats": 1,
-        "speed": 5.0,
+        "speed": 5,
         "type": "automobile"
     },
     "bullet": {
@@ -2061,7 +2061,7 @@
     },
     "chimera": {
         "acceleration": 0.275,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 0,
         "handling": 0.655,
@@ -2477,7 +2477,7 @@
         "make": "",
         "name": "Cruiser",
         "seats": 1,
-        "speed": 15.0,
+        "speed": 15,
         "type": "bicycle"
     },
     "crusader": {
@@ -2543,7 +2543,7 @@
         "doors": 4,
         "handling": 0.706,
         "hash": 1755697647,
-        "image": "https://media.discordapp.net/attachments/1256025994347675648/1257077182379982948/screenshot.jpg?ex=668317db&is=6681c65b&hm=11851ef9783e0558018ddcff1347c8369431838c5a7e5da6a67a42015f0f98f3&",
+        "image": "https://cdn.discordapp.com/attachments/1256025994347675648/1258973223622676501/screenshot.jpg?ex=6689fdaf&is=6688ac2f&hm=3fdf37223cbab52f19ebabe84bb59cf71e7af482213c5b723a3ad9a1799a6170&",
         "make": "Ubermacht",
         "name": "Cypher",
         "seats": 2,
@@ -2664,7 +2664,7 @@
     },
     "deveste": {
         "acceleration": 0.42,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.85,
@@ -2747,7 +2747,7 @@
         "type": "automobile"
     },
     "dinghy": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2762,7 +2762,7 @@
         "weapons": 1
     },
     "dinghy2": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2776,7 +2776,7 @@
         "type": "boat"
     },
     "dinghy3": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2791,7 +2791,7 @@
         "weapons": 1
     },
     "dinghy4": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2806,7 +2806,7 @@
         "weapons": 1
     },
     "dinghy5": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2897,7 +2897,7 @@
         "make": "Vapid",
         "name": "Pisswasser Dominator",
         "seats": 2,
-        "speed": 49.0,
+        "speed": 49,
         "type": "automobile"
     },
     "dominator3": {
@@ -3028,7 +3028,7 @@
     },
     "drafter": {
         "acceleration": 0.342,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.722,
@@ -3309,7 +3309,7 @@
     },
     "dune4": {
         "acceleration": 0.324,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.704,
@@ -3323,7 +3323,7 @@
     },
     "dune5": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.7,
@@ -3365,7 +3365,7 @@
     },
     "elegy": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -3477,7 +3477,7 @@
     },
     "entity2": {
         "acceleration": 0.355,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.735,
@@ -3491,7 +3491,7 @@
     },
     "entity3": {
         "acceleration": 0.3545,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.7845,
@@ -3856,7 +3856,7 @@
     },
     "flashgt": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.7,
@@ -3907,7 +3907,7 @@
         "make": "HVY",
         "name": "Forklift",
         "seats": 1,
-        "speed": 10.0,
+        "speed": 10,
         "type": "automobile"
     },
     "formula": {
@@ -4106,7 +4106,7 @@
     },
     "furia": {
         "acceleration": 0.365,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.745,
@@ -4120,7 +4120,7 @@
     },
     "furoregt": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.715,
@@ -4157,7 +4157,7 @@
         "make": "Karin",
         "name": "Futo",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "futo2": {
@@ -4274,7 +4274,7 @@
     },
     "gb200": {
         "acceleration": 0.315,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.695,
@@ -4607,7 +4607,7 @@
     },
     "hexer": {
         "acceleration": 0.26,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.64,
@@ -4658,7 +4658,7 @@
         "make": "Buckingham",
         "name": "Howard NX-25",
         "seats": 1,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "hunter": {
@@ -4721,7 +4721,7 @@
     },
     "ignus": {
         "acceleration": 0.3835,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.7635,
@@ -4945,7 +4945,7 @@
     },
     "innovation": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.7,
@@ -4954,7 +4954,7 @@
         "make": "LCC",
         "name": "Innovation",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "bike"
     },
     "insurgent": {
@@ -5087,7 +5087,7 @@
     },
     "issi7": {
         "acceleration": 0.305,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.685,
@@ -5208,7 +5208,7 @@
         "make": "Dewbauchee",
         "name": "JB 700",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "jb7002": {
@@ -5222,7 +5222,7 @@
         "make": "Dewbauchee",
         "name": "JB 700W",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "jester": {
@@ -5296,7 +5296,7 @@
         "type": "plane"
     },
     "jetmax": {
-        "acceleration": 17.0,
+        "acceleration": 17,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -5306,7 +5306,7 @@
         "make": "Shitzu",
         "name": "Jetmax",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "boat"
     },
     "journey": {
@@ -5367,7 +5367,7 @@
     },
     "kalahari": {
         "acceleration": 0.26,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 4,
         "handling": 0.64,
@@ -5475,7 +5475,7 @@
         "make": "RUNE",
         "name": "Kosatka",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine",
         "weapons": 1
     },
@@ -5651,7 +5651,7 @@
     },
     "locust": {
         "acceleration": 0.334,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.714,
@@ -5664,7 +5664,7 @@
         "type": "automobile"
     },
     "longfin": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -5721,7 +5721,7 @@
     },
     "lynx": {
         "acceleration": 0.315,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.695,
@@ -5842,7 +5842,7 @@
         "make": "Dinka",
         "name": "Marquis",
         "seats": 4,
-        "speed": 10.0,
+        "speed": 10,
         "type": "boat"
     },
     "marshall": {
@@ -6123,7 +6123,7 @@
         "make": "Pegassi",
         "name": "Monroe",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "monster": {
@@ -6366,12 +6366,12 @@
     },
     "nero": {
         "acceleration": 0.3375,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7175,
         "hash": 1034187331,
-        "image": "https://media.discordapp.net/attachments/1256025994347675648/1257073687362928743/screenshot.jpg?ex=6683149a&is=6681c31a&hm=8c6a4c3505b19f64cf8d8529a24ef8c173068ed8d7ed35a36167dbabaf2a8b6b&",
+        "image": "https://cdn.discordapp.com/attachments/1256025994347675648/1258973074070700063/screenshot.jpg?ex=6689fd8b&is=6688ac0b&hm=4baa30c669e7dd0ad2939a2d41efbcd11b135ebdc9710f1295ae695c4cdcd381&",
         "make": "Truffade",
         "name": "Nero",
         "seats": 2,
@@ -6385,7 +6385,7 @@
         "doors": 2,
         "handling": 0.7201,
         "hash": 1093792632,
-        "image": "https://media.discordapp.net/attachments/1256025994347675648/1257077234913644627/screenshot.jpg?ex=668317e8&is=6681c668&hm=a83fd736862eaaf21919271be735d400dfda24c5c6b934ce32c28042835be91c&",
+        "image": "https://cdn.discordapp.com/attachments/1256025994347675648/1258973095041961994/screenshot.jpg?ex=6689fd90&is=6688ac10&hm=ab99ade988c1c72a8cd4961cd92eace408ef64889c130b222ba3f6783364d2da&",
         "make": "Truffade",
         "name": "Nero Custom",
         "seats": 2,
@@ -6451,7 +6451,7 @@
     },
     "ninef": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -6465,7 +6465,7 @@
     },
     "ninef2": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.71,
@@ -6508,7 +6508,7 @@
     },
     "omnis": {
         "acceleration": 0.305,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.685,
@@ -6522,7 +6522,7 @@
     },
     "omnisegt": {
         "acceleration": 0.58,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 6,
         "handling": 0.96,
@@ -6706,7 +6706,7 @@
     },
     "paragon": {
         "acceleration": 0.329,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.709,
@@ -6735,7 +6735,7 @@
     },
     "pariah": {
         "acceleration": 0.321,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.701,
@@ -6800,7 +6800,7 @@
         "make": "",
         "name": "Kurtz 31 Patrol Boat",
         "seats": 4,
-        "speed": 40.0,
+        "speed": 40,
         "type": "boat",
         "weapons": 1
     },
@@ -7049,7 +7049,7 @@
         "doors": 4,
         "handling": 0.742,
         "hash": -1233767450,
-        "image": "https://media.discordapp.net/attachments/1256025994347675648/1257079540258439189/screenshot.jpg?ex=66831a0d&is=6681c88d&hm=e4bb5b43485d426886ce988839f4172ca6b33ab6b60cce820ff22c3cbd48d208&",
+        "image": "https://cdn.discordapp.com/attachments/1256025994347675648/1258972328365264966/screenshot.jpg?ex=6689fcd9&is=6688ab59&hm=8a2052008e30e68b8ff56f7a56e245feadcd912d2959d6155cb343a668046fcd&",
         "make": "Bravado",
         "name": "Gauntlet Interceptor",
         "seats": 2,
@@ -7310,7 +7310,7 @@
         "type": "automobile"
     },
     "predator": {
-        "acceleration": 14.0,
+        "acceleration": 14,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -7320,7 +7320,7 @@
         "make": "",
         "name": "Police Predator",
         "seats": 4,
-        "speed": 40.0,
+        "speed": 40,
         "type": "boat",
         "weapons": 1
     },
@@ -7415,7 +7415,7 @@
         "make": "Buckingham",
         "name": "Pyro",
         "seats": 2,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane",
         "weapons": 1
     },
@@ -7530,7 +7530,7 @@
     },
     "rapidgt": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.74,
@@ -7544,7 +7544,7 @@
     },
     "rapidgt2": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.74,
@@ -7872,7 +7872,7 @@
         "doors": 4,
         "handling": 0.5,
         "hash": -1205689942,
-        "image": "https://media.discordapp.net/attachments/1256025994347675648/1257070788499210250/screenshot.jpg?ex=668311e7&is=6681c067&hm=b1e12431998fd25c43fb35d75930b1fa1fd0912e64e96c48e9a5ac11a9dab95e&",
+        "image": "https://cdn.discordapp.com/attachments/1256025994347675648/1258972511396433992/screenshot.jpg?ex=6689fd05&is=6688ab85&hm=bfa8caf01bc649ba8f729ecba1a6cbec1eeaca77e13e6d143d990c60d93207c9&",
         "make": "",
         "name": "Police Riot",
         "seats": 8,
@@ -7933,7 +7933,7 @@
         "make": "Western",
         "name": "Rogue",
         "seats": 2,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "romero": {
@@ -7952,7 +7952,7 @@
     },
     "rrocket": {
         "acceleration": 0.382,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 0,
         "handling": 0.762,
@@ -7966,7 +7966,7 @@
     },
     "rt3000": {
         "acceleration": 0.312,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.692,
@@ -8022,7 +8022,7 @@
     },
     "ruiner2": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 4,
         "doors": 4,
         "handling": 0.71,
@@ -8219,7 +8219,7 @@
     },
     "sanctus": {
         "acceleration": 0.405,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.785,
@@ -8369,7 +8369,7 @@
         "make": "Benefactor",
         "name": "Schafter V12",
         "seats": 4,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "schafter4": {
@@ -8397,7 +8397,7 @@
         "make": "Benefactor",
         "name": "Schafter V12 (Armored)",
         "seats": 4,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "schafter6": {
@@ -8683,7 +8683,7 @@
     },
     "seven70": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.715,
@@ -8711,7 +8711,7 @@
     },
     "sheava": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.71,
@@ -8921,7 +8921,7 @@
     },
     "specter": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 2,
         "handling": 0.7,
@@ -8948,7 +8948,7 @@
         "type": "automobile"
     },
     "speeder": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -8962,7 +8962,7 @@
         "type": "boat"
     },
     "speeder2": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -9273,7 +9273,7 @@
     },
     "stromberg": {
         "acceleration": 0.29,
-        "braking": 1.0,
+        "braking": 1,
         "class": 5,
         "doors": 2,
         "handling": 0.67,
@@ -9315,7 +9315,7 @@
         "type": "plane"
     },
     "submersible": {
-        "acceleration": 8.0,
+        "acceleration": 8,
         "braking": 0.4,
         "class": 14,
         "doors": 1,
@@ -9325,11 +9325,11 @@
         "make": "",
         "name": "Submersible",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "submersible2": {
-        "acceleration": 10.0,
+        "acceleration": 10,
         "braking": 0.4,
         "class": 14,
         "doors": 1,
@@ -9339,7 +9339,7 @@
         "make": "",
         "name": "Kraken",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "sugoi": {
@@ -9400,7 +9400,7 @@
     },
     "sultanrs": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.71,
@@ -9470,7 +9470,7 @@
     },
     "surano": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.72,
@@ -9652,7 +9652,7 @@
     },
     "taipan": {
         "acceleration": 0.357,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.737,
@@ -9798,7 +9798,7 @@
     },
     "tempesta": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.74,
@@ -9981,7 +9981,7 @@
     },
     "toreador": {
         "acceleration": 0.3,
-        "braking": 1.0,
+        "braking": 1,
         "class": 5,
         "doors": 4,
         "handling": 0.68,
@@ -10107,7 +10107,7 @@
         "type": "automobile"
     },
     "toro": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10121,7 +10121,7 @@
         "type": "boat"
     },
     "toro2": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10173,7 +10173,7 @@
         "make": "",
         "name": "Tow Truck",
         "seats": 2,
-        "speed": 35.0,
+        "speed": 35,
         "type": "automobile"
     },
     "towtruck2": {
@@ -10431,7 +10431,7 @@
         "make": "",
         "name": "Whippet Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "tribike2": {
@@ -10445,7 +10445,7 @@
         "make": "",
         "name": "Endurex Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "tribike3": {
@@ -10459,7 +10459,7 @@
         "make": "",
         "name": "Tri-Cycles Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "trophytruck": {
@@ -10491,7 +10491,7 @@
         "type": "automobile"
     },
     "tropic": {
-        "acceleration": 13.0,
+        "acceleration": 13,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10505,7 +10505,7 @@
         "type": "boat"
     },
     "tropic2": {
-        "acceleration": 13.0,
+        "acceleration": 13,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10543,7 +10543,7 @@
         "make": "",
         "name": "Tug",
         "seats": 1,
-        "speed": 6.0,
+        "speed": 6,
         "type": "boat"
     },
     "tula": {
@@ -10653,7 +10653,7 @@
     },
     "tyrant": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.72,
@@ -10723,7 +10723,7 @@
     },
     "vacca": {
         "acceleration": 0.3,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.68,
@@ -10865,7 +10865,7 @@
     },
     "verlierer2": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.715,
@@ -10874,7 +10874,7 @@
         "make": "Bravado",
         "name": "Verlierer",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "verus": {
@@ -10930,7 +10930,7 @@
         "make": "Dinka",
         "name": "Veto Classic",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "automobile"
     },
     "veto2": {
@@ -11147,7 +11147,7 @@
     },
     "voltic": {
         "acceleration": 0.18,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.56,
@@ -11161,7 +11161,7 @@
     },
     "voltic2": {
         "acceleration": 0.18,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.56,
@@ -11352,7 +11352,7 @@
         "make": "Vapid",
         "name": "Winky",
         "seats": 3,
-        "speed": 30.0,
+        "speed": 30,
         "type": "automobile"
     },
     "wolfsbane": {
@@ -11394,7 +11394,7 @@
         "make": "Benefactor",
         "name": "XLS",
         "seats": 4,
-        "speed": 44.0,
+        "speed": 44,
         "type": "automobile"
     },
     "xls2": {
@@ -11408,7 +11408,7 @@
         "make": "Benefactor",
         "name": "XLS (Armored)",
         "seats": 4,
-        "speed": 44.0,
+        "speed": 44,
         "type": "automobile"
     },
     "yosemite": {
@@ -11539,7 +11539,7 @@
     },
     "zentorno": {
         "acceleration": 0.354,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.734,

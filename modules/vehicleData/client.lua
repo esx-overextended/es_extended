@@ -6,8 +6,7 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local typeModel = type(model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel), "error", true)
-        return
+        return ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel), "error", true)
     end
 
     if typeModel == "number" or type(tonumber(model)) == "number" then
@@ -26,13 +25,13 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
+        return ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
     end
 
     return cb and cb(modelData?.type) or modelData?.type
 end
 
-if not Config.EnableDebug then return end
+-- if not Config.EnableDebug then return end
 
 ---@param entity? number
 ---@return boolean
@@ -113,6 +112,8 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
 end
 
 ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
+    if not ESX.TriggerServerCallback("esx:isUserAdmin") then return end
+
     local models = GetAllVehicleModels()
     local numModels = #models
     local numParsed = 0
@@ -206,7 +207,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                     DestroyMobilePhone()
                     CellCamActivate(false, false)
 
-                    return p:resolve(imageData?.attachments and (imageData.attachments[1]?.proxy_url or imageData.attachments[1]?.url) or "https://i.imgur.com/NHB74QX.png")
+                    return p:resolve(imageData?.attachments and (imageData.attachments[1]?.url or imageData.attachments[1]?.proxy_url) or "https://i.imgur.com/NHB74QX.png")
                 end)
 
                 local image = Citizen.Await(p)

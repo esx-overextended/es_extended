@@ -448,76 +448,78 @@ ESX.RegisterCommand("players", "admin", function(_, _, _)
     end
 end, true)
 
-if Config.EnableDebug then
-    local function requestDataGenerationFromPlayer(playerId, args)
-        if not GetResourceState("screenshot-basic"):find("start") then
-            ESX.Trace("The resource 'screenshot-basic' MUST be started so vehicles image can be generated in vehicles data!", "error")
-            return ESX.Trace("You can download the 'screenshot-basic' from <<https://github.com/citizenfx/screenshot-basic>>", "info")
-        end
+-- if not Config.EnableDebug then return end
 
-        local webhook = Config.DiscordLogs.Webhooks.VehicleImage
-        if not webhook or webhook == "" then
-            return ESX.Trace("Discord webhook for 'Config.DiscordLogs.Webhooks.VehicleImage' must be present for generating vehicles image!", "error")
-        end
-
-        ---@type table<string, VehicleData>, TopVehicleStats
-        local vehicleData, topStats = ESX.TriggerClientCallback(playerId, "esx:generateVehicleData", { webhook = webhook, processAll = args.processAll, model = args.model })
-
-        if vehicleData and next(vehicleData) then
-            if not args.processAll then
-                for k, v in pairs(ESX.GetVehicleData()) do
-                    if not vehicleData[k] or args.model ~= k then
-                        vehicleData[k] = v
-                    end
-                end
-            end
-
-            local topVehicleStats = ESX.GetTopVehicleStats() or {}
-
-            if topVehicleStats then
-                for vtype, data in pairs(topVehicleStats) do
-                    if not topStats[vtype] then topStats[vtype] = {} end
-
-                    for stat, value in pairs(data) do
-                        local newValue = topStats[vtype][stat]
-
-                        if newValue and newValue > value then
-                            topVehicleStats[vtype][stat] = newValue
-                        end
-                    end
-                end
-            end
-
-            SaveResourceFile(cache.resource, "files/vehicles.json", json.encode(vehicleData, {
-                indent = true, sort_keys = true, indent_count = 4
-            }), -1)
-
-            SaveResourceFile(cache.resource, "files/topVehicleStats.json", json.encode(topVehicleStats, {
-                indent = true, sort_keys = true, indent_count = 4
-            }), -1)
-        end
+local function requestDataGenerationFromPlayer(playerId, args)
+    if not GetResourceState("screenshot-basic"):find("start") then
+        ESX.Trace("The resource 'screenshot-basic' MUST be started so vehicles image can be generated in vehicles data!", "error")
+        return ESX.Trace("You can download the 'screenshot-basic' from <<https://github.com/citizenfx/screenshot-basic>>", "info")
     end
 
-    ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args)
-        local toBoolean = { ["false"] = false, ["true"] = true }
-        args.processAll = toBoolean[args.processAll:lower()] --[[@as boolean]]
+    local webhook = Config.DiscordLogs.Webhooks.VehicleImage
+    if not webhook or webhook == "" then
+        return ESX.Trace("Discord webhook for 'Config.DiscordLogs.Webhooks.VehicleImage' must be present for generating vehicles image!", "error")
+    end
 
-        requestDataGenerationFromPlayer(xPlayer.source, args)
-    end, false, {
-        help = "Generate and save vehicle data for available models on the client",
-        validate = true,
-        arguments = {
-            { name = "processAll", help = "true/false >> Whether the parsing process should include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
-        }
-    })
+    ---@type table<string, VehicleData>, TopVehicleStats
+    local vehicleData, topStats = ESX.TriggerClientCallback(playerId, "esx:generateVehicleData", { webhook = webhook, processAll = args.processAll, model = args.model })
 
-    ESX.RegisterCommand("parsevehicle", "superadmin", function(xPlayer, args)
-        requestDataGenerationFromPlayer(xPlayer.source, args)
-    end, false, {
-        help = "Generate and save vehicle data for a specifid model on the client",
-        validate = true,
-        arguments = {
-            { name = "model", help = "The specified model to generate its data", type = "string" }
-        }
-    })
+    if vehicleData and next(vehicleData) then
+        if not args.processAll then
+            for k, v in pairs(ESX.GetVehicleData()) do
+                if not vehicleData[k] or args.model ~= k then
+                    vehicleData[k] = v
+                end
+            end
+        end
+
+        local topVehicleStats = ESX.GetTopVehicleStats() or {}
+
+        if topVehicleStats then
+            for vtype, data in pairs(topVehicleStats) do
+                if not topStats[vtype] then topStats[vtype] = {} end
+
+                for stat, value in pairs(data) do
+                    local newValue = topStats[vtype][stat]
+
+                    if newValue and newValue > value then
+                        topVehicleStats[vtype][stat] = newValue
+                    end
+                end
+            end
+        end
+
+        SaveResourceFile(cache.resource, "files/vehicles.json", json.encode(vehicleData, {
+            indent = true, sort_keys = true, indent_count = 4
+        }), -1)
+
+        SaveResourceFile(cache.resource, "files/topVehicleStats.json", json.encode(topVehicleStats, {
+            indent = true, sort_keys = true, indent_count = 4
+        }), -1)
+
+        Core.RefreshVehicleData()
+    end
 end
+
+ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args)
+    local toBoolean = { ["false"] = false, ["true"] = true }
+    args.processAll = toBoolean[args.processAll:lower()] --[[@as boolean]]
+
+    requestDataGenerationFromPlayer(xPlayer.source, args)
+end, false, {
+    help = "Generate and save vehicle data for available models on the client",
+    validate = true,
+    arguments = {
+        { name = "processAll", help = "true/false >> Whether the parsing process should include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
+    }
+})
+
+ESX.RegisterCommand("parsevehicle", "superadmin", function(xPlayer, args)
+    requestDataGenerationFromPlayer(xPlayer.source, args)
+end, false, {
+    help = "Generate and save vehicle data for a specifid model on the client",
+    validate = true,
+    arguments = {
+        { name = "model", help = "The specified model to generate its data", type = "string" }
+    }
+})
