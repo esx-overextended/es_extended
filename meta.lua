@@ -21,10 +21,10 @@
 ---@field name string
 ---@field playerId integer | number
 ---@field source integer | number
----@field variables table
+---@field variables table<string | integer | number, any>
 ---@field weight integer | number
 ---@field maxWeight integer | number
----@field metadata table<string, any>
+---@field metadata table<string, number | string | table | boolean>
 ---@field triggerEvent fun(eventName: string, ...)
 ---@field setCoords fun(coords: vector3 | vector4 | table)
 ---@field getCoords fun(vector?: boolean): vector4 | table
@@ -97,6 +97,8 @@
 ---@field vin string
 ---@field script string
 ---@field stored? boolean
+---@field variables table<string | integer | number, any>
+---@field metadata table<string, number | string | table | boolean>
 ---@field set fun(key: string, value: any)
 ---@field get fun(key?: string): any
 ---@field delete fun(removeFromDb?: boolean)

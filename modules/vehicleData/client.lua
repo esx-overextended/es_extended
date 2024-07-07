@@ -6,8 +6,7 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local typeModel = type(model)
 
     if typeModel ~= "string" and typeModel ~= "number" then
-        ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel), "error", true)
-        return
+        return ESX.Trace(("Invalid type of model (^1%s^7) in ^5ESX.GetVehicleType^7!"):format(typeModel), "error", true)
     end
 
     if typeModel == "number" or type(tonumber(model)) == "number" then
@@ -26,13 +25,11 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     local modelData = ESX.GetVehicleData(model) --[[@as VehicleData]]
 
     if not modelData then
-        ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
+        return ESX.Trace(("Vehicle model (^1%s^7) is invalid \nEnsure vehicle exists in ^2'@es_extended/files/vehicles.json'^7"):format(model), "error", true)
     end
 
     return cb and cb(modelData?.type) or modelData?.type
 end
-
-if not Config.EnableDebug then return end
 
 ---@param entity? number
 ---@return boolean
@@ -62,7 +59,7 @@ local function freezeEntity(state, entity, atCoords)
 
         while not hasCollisionLoadedAroundEntity(entity) do
             RequestCollisionAtCoord(atCoords.x, atCoords.y, atCoords.z)
-            Wait(100)
+            Wait(0)
         end
     end
 end
@@ -97,14 +94,30 @@ local function deleteEntity(entity)
     return true
 end
 
----@param vehicleModel string | number
+---@param vehicleModel string
+---@return number
+local function loadModel(vehicleModel)
+    local hash = joaat(vehicleModel)
+
+    while not HasModelLoaded(hash) do
+        spinner(true, ("Loading %s"):format(vehicleModel))
+        RequestModel(hash)
+        Wait(0)
+    end
+
+    spinner(false)
+
+    return hash
+end
+
+---@param vehicleModel number
 ---@param atCoords any
 ---@return number
 local function spawnPreviewVehicle(vehicleModel, atCoords)
-    vehicleModel = type(vehicleModel) == "string" and joaat(vehicleModel) or vehicleModel
     local vehicleEntity = CreateVehicle(vehicleModel, atCoords.x, atCoords.y, atCoords.z, atCoords.w, false, false)
 
-    SetModelAsNoLongerNeeded(vehicleModel)
+    while not DoesEntityExist(vehicleEntity) do Wait(0) end
+
     SetVehRadioStation(vehicleEntity, "OFF")
     SetVehicleNeedsToBeHotwired(vehicleEntity, false)
     freezeEntity(true, vehicleEntity, atCoords)
@@ -112,36 +125,55 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
     return vehicleEntity
 end
 
+---@param vehicleEntity number
+local function setPedIntoVehicle(vehicleEntity)
+    while IsVehicleSeatFree(vehicleEntity, -1) do
+        Wait(0)
+        SetPedIntoVehicle(cache.ped, vehicleEntity, -1)
+    end
+end
+
 ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
+    if not ESX.TriggerServerCallback("esx:isUserAdmin") then return end
+
     local models = GetAllVehicleModels()
     local numModels = #models
     local numParsed = 0
-    local coords = GetEntityCoords(PlayerPedId())
-    local hudState = not IsHudHidden()
+    local coords = GetEntityCoords(cache.ped)
     local radarState = not IsRadarHidden()
     local vehicleData, vehicleTopStats = {}, {}
     local message = ("Generating data from vehicle models (%s models loaded)"):format(numModels)
     local specifiedModel = params.model and params.model:lower()
 
-    ESX.Trace(message, "info")
+    ESX.Trace(message, "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
 
+    DisplayRadar(false)
     SetEntityVisible(cache.ped, false, false)
     SetPlayerControl(cache.playerId, false, 1 << 8)
-    DisplayRadar(false)
+
+    freezeEntity(true, cache.ped, Config.VehicleParser.Position)
 
     local estimatedRemaining
     local startTime = GetGameTimer()
     message = "Generated vehicle data for %d" .. ("/%d models  \n"):format(numModels)
+
+    local cam = CreateCamWithParams(Config.VehicleParser.Cam.Name, Config.VehicleParser.Cam.Coords.x, Config.VehicleParser.Cam.Coords.y, Config.VehicleParser.Cam.Coords.z, Config.VehicleParser.Cam.Rotation.x,
+        Config.VehicleParser.Cam.Rotation.y, Config.VehicleParser.Cam.Rotation.z, Config.VehicleParser.Cam.FOV, Config.VehicleParser.Cam.Active, Config.VehicleParser.Cam.RotationOrder)
+
+    PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
+    SetCamActive(cam, true)
+    RenderScriptCams(true, true, 1, true, true)
+    CreateMobilePhone(1)
+    CellCamActivate(true, true)
+    Wait(2000)
 
     for i = 1, numModels do
         local model = models[i]:lower()
         local isThisModelSpecified = specifiedModel == model
 
         if isThisModelSpecified or params?.processAll or not ESX.GetVehicleData(model) then
-            spinner(true, ("Loading %s"):format(model))
-            local hash = lib.requestModel(model, 1000000)
-            spinner(false)
+            local hash = loadModel(model)
 
             if hash then
                 local vehicle = spawnPreviewVehicle(hash, Config.VehicleParser.Position)
@@ -158,7 +190,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                     end
                 end
 
-                SetPedIntoVehicle(cache.ped, vehicle, -1)
+                setPedIntoVehicle(vehicle)
 
                 local class = GetVehicleClass(vehicle)
                 local vType
@@ -187,34 +219,13 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                     vType = (class == 5 and "submarinecar") or (class == 14 and "submarine") or (class == 16 and "blimp") or "trailer"
                 end
 
-                local cam = CreateCamWithParams(Config.VehicleParser.Cam.Name, Config.VehicleParser.Cam.Coords.x, Config.VehicleParser.Cam.Coords.y, Config.VehicleParser.Cam.Coords.z, Config.VehicleParser.Cam.Rotation.x,
-                    Config.VehicleParser.Cam.Rotation.y, Config.VehicleParser.Cam.Rotation.z, Config.VehicleParser.Cam.FOV, Config.VehicleParser.Cam.Active, Config.VehicleParser.Cam.RotationOrder)
-
-                PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
-                SetCamActive(cam, true)
-                RenderScriptCams(true, true, 1, true, true)
-                Wait(1000)
-                CreateMobilePhone(1)
-                CellCamActivate(true, true)
-                Wait(1000)
-
                 local p = promise.new()
 
-                exports["screenshot-basic"]:requestScreenshotUpload(params?.webhook, "files[]", function(data)
-                    local imageData = json.decode(data)
-
-                    DestroyMobilePhone()
-                    CellCamActivate(false, false)
-
-                    return p:resolve(imageData?.attachments and (imageData.attachments[1]?.proxy_url or imageData.attachments[1]?.url) or "https://i.imgur.com/NHB74QX.png")
-                end)
+                ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", function(imageUrl)
+                    return p:resolve(imageUrl or "")
+                end, model)
 
                 local image = Citizen.Await(p)
-
-                RenderScriptCams(false, false, 1, false, false)
-                DestroyAllCams(true)
-                ClearFocus()
-                SetCamActive(cam, false)
 
                 local data = {
                     name = GetLabelText(GetDisplayNameFromVehicleModel(hash)),
@@ -270,15 +281,23 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
         end
     end
 
+    DestroyMobilePhone()
+    CellCamActivate(false, false)
+    RenderScriptCams(false, false, 1, false, false)
+    DestroyAllCams(true)
+    ClearFocus()
+    SetCamActive(cam, false)
+
     ESX.HideUI()
-    ESX.Trace(message:format(numParsed), "info")
+    ESX.Trace(message:format(numParsed), "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
 
-    DisplayHud(hudState)
     DisplayRadar(radarState)
     SetEntityVisible(cache.ped, true, false)
     SetPlayerControl(cache.playerId, true, 0)
     SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
+
+    freezeEntity(false, cache.ped)
 
     return cb(vehicleData, vehicleTopStats)
 end)

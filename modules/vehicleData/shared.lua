@@ -25,7 +25,24 @@ end
 local topStats = loadJson("files/topVehicleStats.json")
 
 ---@type table<string, VehicleData>
-local vehicleList = loadJson("files/vehicles.json")
+local vehicleData = loadJson("files/vehicles.json")
+
+AddStateBagChangeHandler("esx:vehicleStats", "global", function(_, _, value)
+    topStats = value
+end)
+
+AddStateBagChangeHandler("esx:vehicleData", "global", function(_, _, value)
+    vehicleData = value
+end)
+
+if IsDuplicityVersion() then
+    function Core.RefreshVehicleData()
+        GlobalState:set("esx:vehicleStats", loadJson("files/topVehicleStats.json"), true)
+        GlobalState:set("esx:vehicleData", loadJson("files/vehicles.json"), true)
+    end
+
+    do Core.RefreshVehicleData() end
+end
 
 local function filterData(model, data, filter)
     if filter.model and not model:find(filter.model) then return end
@@ -40,7 +57,7 @@ local function filterData(model, data, filter)
     return true
 end
 
----@param filter "land" | "air" | "sea" | nil
+---@param filter? "land" | "air" | "sea"
 ---@return TopVehicleStats?
 function ESX.GetTopVehicleStats(filter)
     if filter then
@@ -50,7 +67,7 @@ function ESX.GetTopVehicleStats(filter)
     return topStats
 end
 
----@param filter string | string[] | table<string, string | number> | nil
+---@param filter? string | string[] | table<string, string | number>
 function ESX.GetVehicleData(filter)
     if filter then
         if type(filter) == "table" then
@@ -59,10 +76,10 @@ function ESX.GetVehicleData(filter)
             if table.type(filter) == "array" then
                 for i = 1, #filter do
                     local model = filter[i]
-                    rv[model] = vehicleList[model]
+                    rv[model] = vehicleData[model]
                 end
             else
-                for model, data in pairs(vehicleList) do
+                for model, data in pairs(vehicleData) do
                     if filterData(model, data, filter) then
                         rv[model] = data
                     end
@@ -72,8 +89,8 @@ function ESX.GetVehicleData(filter)
             return rv
         end
 
-        return vehicleList[filter]
+        return vehicleData[filter]
     end
 
-    return vehicleList
+    return vehicleData
 end
