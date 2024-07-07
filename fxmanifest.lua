@@ -47,6 +47,7 @@ files {
     "locale.js",
 
     "files/*.*",
+    "files/vehicle-images/*.*",
 
     "html/ui.html",
     "html/css/app.css",

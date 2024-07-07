@@ -5,7 +5,6 @@ Config.DiscordLogs = {
         Chat = "",
         UserActions = "",
         Resources = "",
-        VehicleImage = ""
     },
     Colors = {
         -- https://www.spycolor.com/

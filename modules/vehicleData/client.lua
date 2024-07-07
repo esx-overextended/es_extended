@@ -31,8 +31,6 @@ function ESX.GetVehicleType(model, cb) ---@diagnostic disable-line: duplicate-se
     return cb and cb(modelData?.type) or modelData?.type
 end
 
--- if not Config.EnableDebug then return end
-
 ---@param entity? number
 ---@return boolean
 local function hasCollisionLoadedAroundEntity(entity)
@@ -127,6 +125,20 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
     return vehicleEntity
 end
 
+local isForceShowing = false
+local function forceShowVehicleNameHud(state)
+    if state == isForceShowing then return end
+
+    isForceShowing = state
+
+    CreateThread(function()
+        while isForceShowing do
+            Wait(0)
+            ShowHudComponentThisFrame(6)
+        end
+    end)
+end
+
 ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     if not ESX.TriggerServerCallback("esx:isUserAdmin") then return end
 
@@ -148,6 +160,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     SetEntityVisible(cache.ped, false, false)
     SetPlayerControl(cache.playerId, false, 1 << 8)
 
+    forceShowVehicleNameHud(true)
     freezeEntity(true, cache.ped, Config.VehicleParser.Position)
 
     local estimatedRemaining
@@ -217,16 +230,12 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
 
                 local p = promise.new()
 
-                exports["screenshot-basic"]:requestScreenshotUpload(params?.webhook, "files[]", function(data)
-                    repeat Wait(10) until data
-
-                    local imageData = json.decode(data)
-
+                ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", function(imageUrl)
                     DestroyMobilePhone()
                     CellCamActivate(false, false)
 
-                    return p:resolve(imageData?.attachments and (imageData.attachments[1]?.url or imageData.attachments[1]?.proxy_url) or "https://i.imgur.com/NHB74QX.png")
-                end)
+                    return p:resolve(imageUrl or "")
+                end, model)
 
                 local image = Citizen.Await(p)
 
@@ -293,13 +302,14 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     ESX.Trace(message:format(numParsed), "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
 
-    freezeEntity(false, cache.ped)
-
     DisplayHud(hudState)
     DisplayRadar(radarState)
     SetEntityVisible(cache.ped, true, false)
     SetPlayerControl(cache.playerId, true, 0)
     SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
+
+    forceShowVehicleNameHud(false)
+    freezeEntity(false, cache.ped)
 
     return cb(vehicleData, vehicleTopStats)
 end)
