@@ -13,6 +13,10 @@ exports("getSharedObject", function()
     return ESX
 end)
 
+exports("getReference", function(index)
+    return ESX[index]
+end)
+
 function ESX.GetConfig() ---@diagnostic disable-line: duplicate-set-field
     return Config
 end

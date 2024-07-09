@@ -19,6 +19,10 @@ exports("getSharedObject", function()
     return ESX
 end)
 
+exports("getReference", function(index)
+    return ESX[index]
+end)
+
 local function startDBSync()
     CreateThread(function()
         while true do
