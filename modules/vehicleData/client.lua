@@ -172,7 +172,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
         local model = models[i]:lower()
         local isThisModelSpecified = specifiedModel == model
 
-        if isThisModelSpecified or params?.processAll or not ESX.GetVehicleData(model) then
+        if isThisModelSpecified or params?.processAll or (not specifiedModel and not params?.processAll and not ESX.GetVehicleData(model)) then
             local hash = loadModel(model)
 
             if hash then
