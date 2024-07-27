@@ -1901,6 +1901,20 @@
         "speed": 50.3333,
         "type": "automobile"
     },
+    "castigator": {
+        "acceleration": 0.2905,
+        "braking": 0.76,
+        "class": 2,
+        "doors": 6,
+        "handling": 0.6705,
+        "hash": 1307736079,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/castigator.jpg",
+        "make": "Canis",
+        "name": "Castigator",
+        "seats": 4,
+        "speed": 49.2117,
+        "type": "automobile"
+    },
     "cavalcade": {
         "acceleration": 0.2,
         "braking": 0.6,
@@ -2438,6 +2452,20 @@
         "speed": 48.8621,
         "type": "automobile"
     },
+    "coquette5": {
+        "acceleration": 0.278,
+        "braking": 0.6,
+        "class": 5,
+        "doors": 4,
+        "handling": 0.658,
+        "hash": -1958428933,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/coquette5.jpg",
+        "make": "Invetero",
+        "name": "Coquette D1",
+        "seats": 2,
+        "speed": 47.3099,
+        "type": "automobile"
+    },
     "corsita": {
         "acceleration": 0.4,
         "braking": 1.3,
@@ -2886,6 +2914,20 @@
         "speed": 48.3333,
         "type": "automobile"
     },
+    "dominator10": {
+        "acceleration": 0.3,
+        "braking": 0.69,
+        "class": 4,
+        "doors": 4,
+        "handling": 0.68,
+        "hash": 1579902654,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/dominator10.jpg",
+        "make": "Vapid",
+        "name": "Dominator FX",
+        "seats": 2,
+        "speed": 49.296,
+        "type": "automobile"
+    },
     "dominator2": {
         "acceleration": 0.31,
         "braking": 0.9,
@@ -3054,6 +3096,20 @@
         "speed": 43.84,
         "type": "automobile"
     },
+    "driftcypher": {
+        "acceleration": 0.7075,
+        "braking": 0.83,
+        "class": 6,
+        "doors": 4,
+        "handling": 1.0875,
+        "hash": 258105345,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftcypher.jpg",
+        "make": "Ubermacht",
+        "name": "Cypher",
+        "seats": 2,
+        "speed": 44.4167,
+        "type": "automobile"
+    },
     "drifteuros": {
         "acceleration": 0.711,
         "braking": 0.85,
@@ -3110,6 +3166,20 @@
         "speed": 44.1667,
         "type": "automobile"
     },
+    "driftnebula": {
+        "acceleration": 0.725,
+        "braking": 0.74,
+        "class": 5,
+        "doors": 4,
+        "handling": 1.105,
+        "hash": 1690421418,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftnebula.jpg",
+        "make": "Vulcar",
+        "name": "Nebula Turbo",
+        "seats": 2,
+        "speed": 45.2667,
+        "type": "automobile"
+    },
     "driftremus": {
         "acceleration": 0.712,
         "braking": 0.87,
@@ -3124,6 +3194,20 @@
         "speed": 46.2667,
         "type": "automobile"
     },
+    "driftsentinel": {
+        "acceleration": 0.716,
+        "braking": 0.85,
+        "class": 6,
+        "doors": 4,
+        "handling": 1.096,
+        "hash": -986656474,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftsentinel.jpg",
+        "make": "Ubermacht",
+        "name": "Sentinel Classic Widebody",
+        "seats": 2,
+        "speed": 44.6667,
+        "type": "automobile"
+    },
     "drifttampa": {
         "acceleration": 0.712,
         "braking": 0.8,
@@ -3136,6 +3220,20 @@
         "name": "Drift Tampa",
         "seats": 2,
         "speed": 46.3333,
+        "type": "automobile"
+    },
+    "driftvorschlag": {
+        "acceleration": 0.7085,
+        "braking": 0.725,
+        "class": 1,
+        "doors": 6,
+        "handling": 1.0885,
+        "hash": -143587026,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftvorschlag.jpg",
+        "make": "Benefactor",
+        "name": "Vorschlaghammer",
+        "seats": 4,
+        "speed": 45.0667,
         "type": "automobile"
     },
     "driftyosemite": {
@@ -3517,6 +3615,20 @@
         "speed": 50.9358,
         "type": "automobile"
     },
+    "envisage": {
+        "acceleration": 0.175,
+        "braking": 0.82,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.555,
+        "hash": 1121330119,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/envisage.jpg",
+        "make": "Bollokan",
+        "name": "Envisage",
+        "seats": 2,
+        "speed": 33.3943,
+        "type": "automobile"
+    },
     "esskey": {
         "acceleration": 0.295,
         "braking": 1.2,
@@ -3557,6 +3669,20 @@
         "name": "Euros",
         "seats": 2,
         "speed": 47.3475,
+        "type": "automobile"
+    },
+    "eurosx32": {
+        "acceleration": 0.28,
+        "braking": 0.8,
+        "class": 3,
+        "doors": 4,
+        "handling": 0.71,
+        "hash": -999594302,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/eurosx32.jpg",
+        "make": "Annis",
+        "name": "Euros X32",
+        "seats": 2,
+        "speed": 44.1427,
         "type": "automobile"
     },
     "everon": {
@@ -4806,7 +4932,7 @@
     "impaler5": {
         "acceleration": 0.2537,
         "braking": 0.865,
-        "class": 1,
+        "class": 4,
         "doors": 6,
         "handling": 0.6338,
         "hash": -478639183,
@@ -6477,6 +6603,20 @@
         "speed": 48.6724,
         "type": "automobile"
     },
+    "niobe": {
+        "acceleration": 0.3805,
+        "braking": 0.76,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.8405,
+        "hash": 1881415402,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/niobe.jpg",
+        "make": "Ubermacht",
+        "name": "Niobe",
+        "seats": 2,
+        "speed": 50.7465,
+        "type": "automobile"
+    },
     "nokota": {
         "acceleration": 14.7,
         "braking": 12.8928,
@@ -6732,6 +6872,20 @@
         "speed": 44.828,
         "type": "automobile",
         "weapons": 1
+    },
+    "paragon3": {
+        "acceleration": 0.33,
+        "braking": 1.1,
+        "class": 6,
+        "doors": 4,
+        "handling": 0.71,
+        "hash": -946047670,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/paragon3.jpg",
+        "make": "Enus",
+        "name": "Paragon S",
+        "seats": 2,
+        "speed": 47.4585,
+        "type": "automobile"
     },
     "pariah": {
         "acceleration": 0.321,
@@ -7042,6 +7196,62 @@
         "speed": 49.6667,
         "type": "automobile"
     },
+    "pipistrello": {
+        "acceleration": 0.224,
+        "braking": 0.92,
+        "class": 7,
+        "doors": 2,
+        "handling": 0.604,
+        "hash": -223461503,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/pipistrello.jpg",
+        "make": "Overflod",
+        "name": "Pipistrello",
+        "seats": 2,
+        "speed": 35.3852,
+        "type": "automobile"
+    },
+    "pizzaboy": {
+        "acceleration": 0.12,
+        "braking": 0.33,
+        "class": 8,
+        "doors": 1,
+        "handling": 0.5,
+        "hash": 1968807591,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/pizzaboy.jpg",
+        "make": "Pegassi",
+        "name": "Pizza Boy",
+        "seats": 1,
+        "speed": 27.152,
+        "type": "bike"
+    },
+    "poldominator10": {
+        "acceleration": 0.3,
+        "braking": 0.69,
+        "class": 18,
+        "doors": 4,
+        "handling": 0.68,
+        "hash": -773802025,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/poldominator10.jpg",
+        "make": "Vapid",
+        "name": "Dominator FX Interceptor",
+        "seats": 2,
+        "speed": 49.296,
+        "type": "automobile"
+    },
+    "poldorado": {
+        "acceleration": 0.2168,
+        "braking": 0.5,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.5968,
+        "hash": -1628000569,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/poldorado.jpg",
+        "make": "Bravado",
+        "name": "Dorado Cruiser",
+        "seats": 4,
+        "speed": 42.173,
+        "type": "automobile"
+    },
     "polgauntlet": {
         "acceleration": 0.362,
         "braking": 0.9,
@@ -7054,6 +7264,20 @@
         "name": "Gauntlet Interceptor",
         "seats": 2,
         "speed": 49.1011,
+        "type": "automobile"
+    },
+    "polgreenwood": {
+        "acceleration": 0.282,
+        "braking": 0.7,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.662,
+        "hash": 1737348074,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/polgreenwood.jpg",
+        "make": "Bravado",
+        "name": "Greenwood Cruiser",
+        "seats": 4,
+        "speed": 47.6667,
         "type": "automobile"
     },
     "police": {
@@ -7180,6 +7404,48 @@
         "name": "Police Transporter",
         "seats": 4,
         "speed": 36.9472,
+        "type": "automobile"
+    },
+    "policet3": {
+        "acceleration": 0.195,
+        "braking": 0.6,
+        "class": 18,
+        "doors": 5,
+        "handling": 0.575,
+        "hash": -1444856003,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/policet3.jpg",
+        "make": "",
+        "name": "Burrito (Bail Enforcement)",
+        "seats": 6,
+        "speed": 42.0369,
+        "type": "automobile"
+    },
+    "polimpaler5": {
+        "acceleration": 0.2537,
+        "braking": 0.865,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.6338,
+        "hash": 1249425552,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/polimpaler5.jpg",
+        "make": "Declasse",
+        "name": "Impaler SZ Cruiser",
+        "seats": 4,
+        "speed": 47.5449,
+        "type": "automobile"
+    },
+    "polimpaler6": {
+        "acceleration": 0.3,
+        "braking": 0.7,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.68,
+        "hash": 1452003510,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/polimpaler6.jpg",
+        "make": "Declasse",
+        "name": "Impaler LX Cruiser",
+        "seats": 4,
+        "speed": 47.0182,
         "type": "automobile"
     },
     "polmav": {
@@ -11201,6 +11467,20 @@
         "speed": 38.4494,
         "type": "automobile"
     },
+    "vorschlaghammer": {
+        "acceleration": 0.265,
+        "braking": 0.625,
+        "class": 1,
+        "doors": 6,
+        "handling": 0.645,
+        "hash": -1240172147,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/vorschlaghammer.jpg",
+        "make": "Benefactor",
+        "name": "Vorschlaghammer",
+        "seats": 4,
+        "speed": 43.4501,
+        "type": "automobile"
+    },
     "vortex": {
         "acceleration": 0.4025,
         "braking": 1.2,
@@ -11423,6 +11703,20 @@
         "name": "Yosemite",
         "seats": 2,
         "speed": 41.6363,
+        "type": "automobile"
+    },
+    "yosemite1500": {
+        "acceleration": 0.2335,
+        "braking": 0.53,
+        "class": 9,
+        "doors": 4,
+        "handling": 0.6135,
+        "hash": -1896488056,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/yosemite1500.jpg",
+        "make": "Declasse",
+        "name": "Yosemite 1500",
+        "seats": 2,
+        "speed": 42.8304,
         "type": "automobile"
     },
     "yosemite2": {
