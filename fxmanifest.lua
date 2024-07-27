@@ -3,7 +3,7 @@ game "gta5"
 lua54 "yes"
 
 description "ESX Overextended"
-version "0.4.0"
+version "0.4.1"
 
 shared_scripts {
     "@ox_lib/init.lua",
@@ -62,7 +62,7 @@ files {
 }
 
 dependencies {
-    "/server:8695",
-    "/gameBuild:3095",
+    "/server:9073",
+    "/gameBuild:3258",
     "oxmysql"
 }
