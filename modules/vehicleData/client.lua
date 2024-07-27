@@ -94,18 +94,28 @@ local function deleteEntity(entity)
     return true
 end
 
+local MAX_TRY_COUNT = 1000
+
 ---@param vehicleModel string
----@return number
+---@return number | false
 local function loadModel(vehicleModel)
     local hash = joaat(vehicleModel)
+    local tryCount, hasModelLoaded = 0, false
 
-    while not HasModelLoaded(hash) do
+    ESX.Trace("Trying to load vehicle model " .. vehicleModel, nil) ---@diagnostic disable-line: param-type-mismatch
+
+    while tryCount < MAX_TRY_COUNT and not hasModelLoaded do
         spinner(true, ("Loading %s"):format(vehicleModel))
         RequestModel(hash)
         Wait(0)
+        tryCount, hasModelLoaded = tryCount + 1, HasModelLoaded(hash)
     end
 
     spinner(false)
+
+    if not hasModelLoaded then
+        return false, ESX.Trace(("^1Waited %s-frames for vehicle model ^5%s ^1to load, but it did not!^7"):format(MAX_TRY_COUNT, vehicleModel), "warning", true)
+    end
 
     return hash
 end
@@ -219,13 +229,7 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                     vType = (class == 5 and "submarinecar") or (class == 14 and "submarine") or (class == 16 and "blimp") or "trailer"
                 end
 
-                local p = promise.new()
-
-                ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", function(imageUrl)
-                    return p:resolve(imageUrl or "")
-                end, model)
-
-                local image = Citizen.Await(p)
+                local image = ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", model) or ""
 
                 local data = {
                     name = GetLabelText(GetDisplayNameFromVehicleModel(hash)),
