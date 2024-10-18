@@ -106,18 +106,16 @@ end
 ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args)
     -- Convert "true/false" string to boolean
     local toBoolean = { ["false"] = false, ["true"] = true }
-
+    -- Convert processAll argument to boolean
+    args.processAll = toBoolean[args.processAll:lower()]
+    
     -- Check if the user input is a valid "true" or "false"
-    if toBoolean[args.processAll:lower()] ~= nil then
-        -- Convert processAll argument to boolean
-        args.processAll = toBoolean[args.processAll:lower()]
-
-        -- Call requestDataGenerationFromPlayer function with converted argument
-        requestDataGenerationFromPlayer(xPlayer.source, args)
-    else
+    if args.processAll == nil then
         -- Notify the player if the input is invalid
-        xPlayer.showNotification("Invalid value for processAll. Please use true or false.")
+        return xPlayer.showNotification("Invalid value passed in parsevehicles command! Please write true or false...", "error")
     end
+
+    requestDataGenerationFromPlayer(xPlayer.source, args)
 end, false, {
     help = "Generate and save vehicle data for available models on the client",
     validate = true,
@@ -125,7 +123,6 @@ end, false, {
         { name = "processAll", help = "true/false >> Whether the parsing process should include vehicles with existing data (in the event of updated vehicle stats)", type = "string" }
     }
 })
-
 
 ESX.RegisterCommand("parsevehicle", "superadmin", function(xPlayer, args)
     requestDataGenerationFromPlayer(xPlayer.source, args)
