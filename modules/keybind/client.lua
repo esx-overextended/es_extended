@@ -9,11 +9,34 @@ function ESX.HashString(str)
 end
 
 function ESX.RegisterInput(command_name, label, input_group, key, on_press, on_release)
-    RegisterCommand(on_release ~= nil and "+" .. command_name or command_name, on_press, false)
+    -- Check if the command is already registered
+    if Core.Inputs[command_name] then
+        return ESX.Trace(("Command '%s' is already registered! Skipping registration..."):format(command_name), "warning", true)
+    end
 
-    Core.Inputs[command_name] = on_release ~= nil and ESX.HashString("+" .. command_name) or ESX.HashString(command_name) -- TODO: check why is this happening (also consider swapping it to ox_lib's')
+    -- Convert the command name for press and release
+    local is_release = on_release ~= nil
+    local command_key = is_release and "+" .. command_name or command_name
 
-    if on_release then RegisterCommand("-" .. command_name, on_release, false) end
+    local keyHash = ESX.HashString(command_key)
 
-    RegisterKeyMapping(on_release ~= nil and "+" .. command_name or command_name, label, input_group, key)
+    -- Check if the key mapping is already registered
+    for _, storedKeyHash in pairs(Core.Inputs) do
+        if storedKeyHash == keyHash then
+            return ESX.Trace(("Key mapping for the command '%s' is already registered! Skipping registration..."):format(command_name), "warning", true)
+        end
+    end
+
+    Core.Inputs[command_name] = keyHash
+
+    -- Register the command for key press
+    RegisterCommand(command_key, on_press, false)
+
+    -- If on_release is provided, register the command for key release
+    if is_release then
+        RegisterCommand("-" .. command_name, on_release, false)
+    end
+
+    -- Map the key to the command
+    RegisterKeyMapping(command_key, label, input_group, key)
 end

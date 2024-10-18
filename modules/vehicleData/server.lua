@@ -104,8 +104,16 @@ local function requestDataGenerationFromPlayer(playerId, args)
 end
 
 ESX.RegisterCommand("parsevehicles", "superadmin", function(xPlayer, args)
+    -- Convert "true/false" string to boolean
     local toBoolean = { ["false"] = false, ["true"] = true }
-    args.processAll = toBoolean[args.processAll:lower()] --[[@as boolean]]
+    -- Convert processAll argument to boolean
+    args.processAll = toBoolean[args.processAll:lower()]
+    
+    -- Check if the user input is a valid "true" or "false"
+    if args.processAll == nil then
+        -- Notify the player if the input is invalid
+        return xPlayer.showNotification("Invalid value passed in parsevehicles command! Please write true or false...", "error")
+    end
 
     requestDataGenerationFromPlayer(xPlayer.source, args)
 end, false, {
