@@ -83,12 +83,11 @@ function StartPayCheck()
 
                 if salary > 0 then
                     local isUnemployed = job.name == "unemployed"
-                    local message      = isUnemployed and _U("received_help", salary) or _U("received_salary", salary)
 
                     if Config.EnableSocietyPayouts and not isUnemployed then
                         processSocietyPaycheck(xPlayer, job.name, salary)
                     else
-                        processPaycheck(xPlayer, salary, message)
+                        processPaycheck(xPlayer, salary, isUnemployed and _U("received_help", salary) or _U("received_salary", salary))
                     end
                 end
             end
@@ -98,10 +97,12 @@ function StartPayCheck()
     end)
 end
 
+---Enables the built-in paycheck system
 exports("enablePaycheck", function()
     paycheckState(true)
 end)
 
+---Disables the built-in paycheck system
 exports("disablePaycheck", function()
     paycheckState(false)
 end)
