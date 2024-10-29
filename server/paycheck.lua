@@ -1,53 +1,72 @@
-function StartPayCheck()
-    local function ProcessPayCheck(xPlayer, salary, message)
-        xPlayer.addAccountMoney("bank", salary, message)
-        xPlayer.triggerSafeEvent("esx:showAdvancedNotification", {
-            sender = _U("bank"),
-            subject = _U("received_paycheck"),
-            message = message,
-            textureDict = "CHAR_BANK_MAZE",
-            iconType = 9,
-        })
-    end
+---Sends notification to the specified player
+---@param xPlayer xPlayer
+---@param subject? string
+---@param message string
+---@param iconType number
+local function notifyPlayer(xPlayer, subject, message, iconType)
+    xPlayer.triggerSafeEvent("esx:showAdvancedNotification", {
+        sender = _U("bank"),
+        subject = subject or "",
+        message = message,
+        textureDict = "CHAR_BANK_MAZE",
+        iconType = iconType,
+    })
+end
 
+---Adds paycheck to the specified player
+---@param xPlayer xPlayer
+---@param salary number
+---@param message string
+local function processPaycheck(xPlayer, salary, message)
+    if xPlayer.addAccountMoney("bank", salary, message) then
+        notifyPlayer(xPlayer, _U("received_paycheck"), message, 9)
+    else
+        ESX.Trace(("Could not add paycheck for Player ^5%s^0!"):format(xPlayer.playerId), "error", true)
+    end
+end
+
+---Adds paycheck to the specified player from its organization's account balance
+---@param xPlayer xPlayer
+---@param jobName string
+---@param salary number
+local function processSocietyPaycheck(xPlayer, jobName, salary)
+    TriggerEvent("esx_society:getSociety", jobName, function(society)
+        if not society then
+            return processPaycheck(xPlayer, salary, _U("received_salary", salary))
+        end
+
+        TriggerEvent("esx_addonaccount:getSharedAccount", society.account, function(account)
+            if account and account.money >= salary then
+                account.removeMoney(salary)
+                processPaycheck(xPlayer, salary, _U("received_salary", salary))
+            else
+                notifyPlayer(xPlayer, nil, _U("company_nomoney"), 1)
+            end
+        end)
+    end)
+end
+
+function StartPayCheck()
     CreateThread(function()
         while true do
-            local interval = Config.PaycheckInterval or 60000
-            Wait(interval)
+            Wait(Config.PaycheckInterval or 60000)
 
             for _, xPlayer in pairs(ESX.Players) do
-                local job = xPlayer.job.name
-                local salary = xPlayer.job.grade_salary
-                local offduty_salary = xPlayer.job.grade_offduty_salary
-                local duty = xPlayer.job.duty
+                local job = xPlayer.job
+                local salary = job.duty and job.grade_salary or job.grade_offduty_salary
 
-                if duty and salary > 0 then
-                    if not Config.EnableSocietyPayouts then
-                        ProcessPayCheck(xPlayer, salary, job == "unemployed" and _U("received_help", salary) or _U("received_salary", salary))
+                if salary > 0 then
+                    local message = job.name == "unemployed" and _U("received_help", salary) or _U("received_salary", salary)
+
+                    if job.duty then
+                        if Config.EnableSocietyPayouts then
+                            processSocietyPaycheck(xPlayer, job.name, salary)
+                        else
+                            processPaycheck(xPlayer, salary, message)
+                        end
                     else
-                        TriggerEvent("esx_society:getSociety", job, function(society)
-                            if society then
-                                TriggerEvent("esx_addonaccount:getSharedAccount", society.account, function(account)
-                                    if account.money >= salary then
-                                        ProcessPayCheck(xPlayer, salary, _U("received_salary", salary))
-                                        account.removeMoney(salary)
-                                    else
-                                        xPlayer.triggerSafeEvent("esx:showAdvancedNotification", {
-                                            sender = _U("bank"),
-                                            subject = "",
-                                            message = _U("company_nomoney"),
-                                            textureDict = "CHAR_BANK_MAZE",
-                                            iconType = 1,
-                                        })
-                                    end
-                                end)
-                            else
-                                ProcessPayCheck(xPlayer, salary, job == "unemployed" and _U("received_help", salary) or _U("received_salary", salary))
-                            end
-                        end)
+                        processPaycheck(xPlayer, salary, message)
                     end
-                elseif not duty and offduty_salary > 0 then
-                    ProcessPayCheck(xPlayer, offduty_salary, job == "unemployed" and _U("received_help", offduty_salary) or _U("received_salary", offduty_salary))
                 end
             end
         end
