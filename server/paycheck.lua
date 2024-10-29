@@ -46,6 +46,7 @@ local function processSocietyPaycheck(xPlayer, jobName, salary)
     end)
 end
 
+---Starts the paycheck processing thread
 function StartPayCheck()
     CreateThread(function()
         while true do
@@ -56,14 +57,11 @@ function StartPayCheck()
                 local salary = job.duty and job.grade_salary or job.grade_offduty_salary
 
                 if salary > 0 then
-                    local message = job.name == "unemployed" and _U("received_help", salary) or _U("received_salary", salary)
+                    local isUnemployed = job.name == "unemployed"
+                    local message      = isUnemployed and _U("received_help", salary) or _U("received_salary", salary)
 
-                    if job.duty then
-                        if Config.EnableSocietyPayouts then
-                            processSocietyPaycheck(xPlayer, job.name, salary)
-                        else
-                            processPaycheck(xPlayer, salary, message)
-                        end
+                    if Config.EnableSocietyPayouts and not isUnemployed then
+                        processSocietyPaycheck(xPlayer, job.name, salary)
                     else
                         processPaycheck(xPlayer, salary, message)
                     end
