@@ -2,10 +2,9 @@ ESX.Paycheck = Config.EnablePaycheck
 
 ---Modifies the paycheck status dynamically on runtime. Whether paychecks should be processed or not
 ---@param state boolean
-local function paycheckState(state)
-    if ESX.Paycheck ~= state then
-        ESX.SetField("Paycheck", state)
-    end
+---@return boolean indicates whether the action was successful or not
+local function togglePaycheck(state)
+    return ESX.Paycheck ~= state and ESX.SetField("Paycheck", state) or false
 end
 
 ---Sends notification to the specified player
@@ -97,12 +96,7 @@ function StartPayCheck()
     end)
 end
 
----Enables the built-in paycheck system
-exports("enablePaycheck", function()
-    paycheckState(true)
-end)
-
----Disables the built-in paycheck system
-exports("disablePaycheck", function()
-    paycheckState(false)
+---Enables/Disables the built-in paycheck system
+exports("togglePaycheck", function(state)
+    return type(state) == "boolean" and togglePaycheck(state)
 end)
