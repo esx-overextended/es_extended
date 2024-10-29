@@ -1,3 +1,13 @@
+ESX.Paycheck = Config.EnablePaycheck
+
+---Modifies the paycheck status dynamically on runtime. Whether paychecks should be processed or not
+---@param state boolean
+local function paycheckState(state)
+    if ESX.Paycheck ~= state then
+        ESX.SetField("Paycheck", state)
+    end
+end
+
 ---Sends notification to the specified player
 ---@param xPlayer xPlayer
 ---@param subject? string
@@ -46,11 +56,26 @@ local function processSocietyPaycheck(xPlayer, jobName, salary)
     end)
 end
 
+local isThreadActive = false
+
 ---Starts the paycheck processing thread
 function StartPayCheck()
+    if isThreadActive then
+        return ESX.Trace("Paycheck thread has already started, but it was called again. Nothing to worry, but it shouldn't have happenned!", "warning", true)
+    end
+
+    isThreadActive = true
+
     CreateThread(function()
+        local minute = 60000
+
         while true do
-            Wait(Config.PaycheckInterval or 60000)
+            if not ESX.Paycheck then
+                Wait(minute)
+                goto skipLoop
+            end
+
+            Wait(Config.PaycheckInterval or minute)
 
             for _, xPlayer in pairs(ESX.Players) do
                 local job = xPlayer.job
@@ -67,6 +92,16 @@ function StartPayCheck()
                     end
                 end
             end
+
+            ::skipLoop::
         end
     end)
 end
+
+exports("enablePaycheck", function()
+    paycheckState(true)
+end)
+
+exports("disablePaycheck", function()
+    paycheckState(false)
+end)

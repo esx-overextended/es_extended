@@ -38,7 +38,7 @@ Config.EnableSocietyPayouts        = false                                      
 Config.EnableHud                   = true                                                -- enable the default hud? Display current job and accounts (black, bank & cash)
 Config.HudButton                   = "GRAVE"                                             -- button to show/hide hud. Only works if Config.EnableHud is true (https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard)
 Config.MaxWeight                   = 30                                                  -- the max inventory weight without backpack
-Config.PaycheckInterval            = 7 * 60000                                           -- how often to recieve pay checks in milliseconds
+Config.PaycheckInterval            = 15 * 60000                                          -- how often to recieve pay checks in milliseconds (defaults to every 15 minutes)
 Config.EnableDefaultInventory      = true                                                -- Display the default Inventory ( F2 )
 
 Config.Multichar                   = GetResourceState("esx_multicharacter") ~= "missing" -- Automatically detects if multicharacter is available to use or not
