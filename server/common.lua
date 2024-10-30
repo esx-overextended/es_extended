@@ -65,8 +65,6 @@ MySQL.ready(function()
 
     startDBSync()
 
-    StartPayCheck()
-
     Core.DatabaseConnected = true
 end)
 

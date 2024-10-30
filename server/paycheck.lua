@@ -1,12 +1,5 @@
 ESX.Paycheck = Config.EnablePaycheck
 
----Modifies the paycheck status dynamically on runtime. Whether paychecks should be processed or not
----@param state boolean
----@return boolean indicates whether the action was successful or not
-local function togglePaycheck(state)
-    return ESX.Paycheck ~= state and ESX.SetField("Paycheck", state) or false
-end
-
 ---Sends notification to the specified player
 ---@param xPlayer xPlayer
 ---@param subject? string
@@ -58,23 +51,16 @@ end
 local isThreadActive = false
 
 ---Starts the paycheck processing thread
-function StartPayCheck()
-    if isThreadActive then
-        return ESX.Trace("Paycheck thread has already started, but it was called again. Nothing to worry, but it shouldn't have happenned!", "warning", true)
-    end
+local function startPaycheck()
+    if isThreadActive then return end
 
     isThreadActive = true
 
     CreateThread(function()
-        local minute = 60000
+        while ESX.Paycheck do
+            Wait(Config.PaycheckInterval or 60000)
 
-        while true do
-            if not ESX.Paycheck then
-                Wait(minute)
-                goto skipLoop
-            end
-
-            Wait(Config.PaycheckInterval or minute)
+            if not ESX.Paycheck then break end -- safety check in case the system was toggled off while the loop is waiting for its interval
 
             for _, xPlayer in pairs(ESX.Players) do
                 local job = xPlayer.job
@@ -90,13 +76,35 @@ function StartPayCheck()
                     end
                 end
             end
-
-            ::skipLoop::
         end
+
+        isThreadActive = false
     end)
 end
 
+---Modifies the paycheck status dynamically on runtime. Whether paychecks should be processed or not
+---@param state boolean
+---@return boolean (indicates whether the action was successful or not)
+local function togglePaycheck(state)
+    local isSuccessful = false
+
+    if ESX.Paycheck ~= state then
+        isSuccessful = ESX.SetField("Paycheck", state)
+
+        if state and isSuccessful then startPaycheck() end
+    end
+
+    return isSuccessful
+end
+
 ---Enables/Disables the built-in paycheck system
+---Returns true/false whether the toggle was successful or not
 exports("togglePaycheck", function(state)
     return type(state) == "boolean" and togglePaycheck(state)
 end)
+
+---Returns true/false whether the built-in paycheck system is running or not
+exports("isPaycheckToggled", function() return ESX.Paycheck end)
+
+---Starts the built-in paycheck system on resource start if Config.EnablePaycheck is set to true
+do if ESX.Paycheck then startPaycheck() end end
