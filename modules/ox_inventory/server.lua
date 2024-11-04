@@ -49,65 +49,113 @@ ESX.RegisterPlayerMethodOverrides({
         end
     end,
 
+    ---Sets money for the specified account of the player.
+    ---@param self xPlayer
     setAccountMoney = function(self)
+        ---@param accountName string
+        ---@param money number
+        ---@param reason? string
+        ---@return boolean
         return function(accountName, money, reason)
+            money = tonumber(money) --[[@as number]]
             reason = reason or "Unknown"
-            if money >= 0 then
-                local account = self.getAccount(accountName)
 
-                if account then
-                    money = account.round and ESX.Math.Round(money) or money
-                    self.accounts[account.index].money = money
-
-                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = money, reason = reason }, { server = true, client = true })
-
-                    if Inventory.accounts[accountName] then
-                        Inventory.SetItem(self.source, accountName, money)
-                    end
-                end
+            if not money or money < 0 then
+                ESX.Trace(("Tried to set account ^5%s^0 for Player ^5%s^0 to with invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
+                return false
             end
+
+            local account = self.getAccount(accountName)
+
+            if not account then
+                ESX.Trace(("Tried to set money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
+                return false
+            end
+
+            money = account.round and ESX.Math.Round(money) or money
+            self.accounts[account.index].money = money
+
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = money, reason = reason }, { server = true, client = true })
+
+            if Inventory.accounts[accountName] then
+                return Inventory.SetItem(self.source, accountName, money)
+            end
+
+            return true
         end
     end,
 
+    ---Adds money to the specified account of the player.
+    ---@param self xPlayer
     addAccountMoney = function(self)
+        ---@param accountName string
+        ---@param money number
+        ---@param reason? string
+        ---@return boolean
         return function(accountName, money, reason)
+            money = tonumber(money) --[[@as number]]
             reason = reason or "Unknown"
-            if money > 0 then
-                local account = self.getAccount(accountName)
 
-                if account then
-                    money = account.round and ESX.Math.Round(money) or money
-                    self.accounts[account.index].money += money
-
-                    TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
-
-                    if Inventory.accounts[accountName] then
-                        Inventory.AddItem(self.source, accountName, money)
-                    end
-                end
+            if not money or money <= 0 then
+                ESX.Trace(("Tried to add account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
+                return false
             end
+
+            local account = self.getAccount(accountName)
+
+            if not account then
+                ESX.Trace(("Tried to add money to an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
+                return false
+            end
+
+            money = account.round and ESX.Math.Round(money) or money
+            self.accounts[account.index].money += money
+
+            TriggerEvent("esx:addAccountMoney", self.source, accountName, money, reason)
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
+
+            if Inventory.accounts[accountName] then
+                return Inventory.AddItem(self.source, accountName, money)
+            end
+
+            return true
         end
     end,
 
+    ---Removes money from the specified account of the player.
+    ---@param self xPlayer
     removeAccountMoney = function(self)
+        ---@param accountName string
+        ---@param money number
+        ---@param reason? string
+        ---@return boolean
         return function(accountName, money, reason)
+            money = tonumber(money) --[[@as number]]
             reason = reason or "Unknown"
-            if money > 0 then
-                local account = self.getAccount(accountName)
 
-                if account then
-                    money = account.round and ESX.Math.Round(money) or money
-                    self.accounts[account.index].money = self.accounts[account.index].money - money
-
-                    TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
-                    self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
-
-                    if Inventory.accounts[accountName] then
-                        Inventory.RemoveItem(self.source, accountName, money)
-                    end
-                end
+            if not money or money <= 0 then
+                ESX.Trace(("Tried to remove account ^5%s^0 for Player ^5%s^0 with an invalid value -> ^5%s^7"):format(accountName, self.playerId, money), "error", true)
+                return false
             end
+
+            local account = self.getAccount(accountName)
+
+            if not account then
+                ESX.Trace(("Tried to remove money from an invalid account ^5%s^0 for Player ^5%s^0"):format(accountName, self.playerId), "error", true)
+                return false
+            end
+
+            money = account.round and ESX.Math.Round(money) or money
+            self.accounts[account.index].money = self.accounts[account.index].money - money
+
+            TriggerEvent("esx:removeAccountMoney", self.source, accountName, money, reason)
+            self.triggerSafeEvent("esx:setAccountMoney", { account = account, accountName = accountName, money = self.accounts[account.index].money, reason = reason })
+
+            if Inventory.accounts[accountName] then
+                return Inventory.RemoveItem(self.source, accountName, money)
+            end
+
+            return true
         end
     end,
 
