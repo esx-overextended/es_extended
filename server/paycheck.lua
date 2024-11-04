@@ -106,6 +106,19 @@ end)
 ---Returns true/false whether the built-in paycheck system is running or not
 exports("isPaycheckToggled", function() return ESX.Paycheck end)
 
+---Sets the paycheck interval in millisecond
+exports("setPaycheckInterval", function(interval)
+    local isSuccessful = false
+    interval = tonumber(interval)
+
+    if interval then
+        isSuccessful = true
+        Config.PaycheckInterval = ESX.Math.Round(interval)
+    end
+
+    return isSuccessful
+end)
+
 ---Starts the built-in paycheck system on resource start if Config.EnablePaycheck is set to true
 do if ESX.Paycheck then startPaycheck() end end
 
