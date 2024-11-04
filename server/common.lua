@@ -65,10 +65,6 @@ MySQL.ready(function()
 
     startDBSync()
 
-    if Config.EnablePaycheck then
-        StartPayCheck()
-    end
-
     Core.DatabaseConnected = true
 end)
 
