@@ -23,7 +23,7 @@ local function processPaycheck(xPlayer, salary, message)
     if xPlayer.addAccountMoney("bank", salary, message) then
         notifyPlayer(xPlayer, _U("received_paycheck"), message, 9)
     else
-        ESX.Trace(("Could not add paycheck for Player ^5%s^0!"):format(xPlayer.playerId), "error", true)
+        ESX.Trace(("Could not add paycheck to Player ^5%s^0!"):format(xPlayer.playerId), "error", true)
     end
 end
 
@@ -108,3 +108,30 @@ exports("isPaycheckToggled", function() return ESX.Paycheck end)
 
 ---Starts the built-in paycheck system on resource start if Config.EnablePaycheck is set to true
 do if ESX.Paycheck then startPaycheck() end end
+
+ESX.RegisterCommand("togglePaycheck", "superadmin", function(xPlayer, args)
+    -- Convert "true/false" string to boolean
+    local toBoolean = { ["false"] = false, ["true"] = true }
+    -- Convert processAll argument to boolean
+    args.toggle = toBoolean[args.toggle:lower()]
+
+    -- Check if the user input is a valid "true" or "false"
+    if args.toggle == nil then
+        -- Notify the player if the input is invalid
+        local message = "Invalid value passed in togglePaycheck command! Please write true or false..."
+        return xPlayer and xPlayer.showNotification(message, "error") or ESX.Trace(message, "error", true)
+    end
+
+    Core.ResourceExport:togglePaycheck(args.toggle)
+
+    local message = ("The Framework's Built-in Paycheck System is %s"):format(ESX.Paycheck and "On" or "Off")
+
+    ESX.Trace(message, "info", true)
+    if xPlayer then xPlayer.showNotification(message, "info") end
+end, false, {
+    help = "Toggles the Framework's Built-in Paycheck System On/Off",
+    validate = true,
+    arguments = {
+        { name = "toggle", help = "true/false", type = "string" }
+    }
+})
