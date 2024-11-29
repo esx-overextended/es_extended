@@ -104,14 +104,17 @@ AddEventHandler("esx:restoreLoadout", function()
 end)
 
 AddEventHandler("esx:setAccountMoney", function(account)
+    local accounts = {} -- creating a new table to remove references to ESX.PlayerData.accounts is required for ESX.SetPlayerData to send the old value through its event properly
+
     for i = 1, #(ESX.PlayerData.accounts) do
         if ESX.PlayerData.accounts[i].name == account.name then
-            ESX.PlayerData.accounts[i] = account
-            break
+            accounts[i] = account
+        else
+            accounts[i] = table.clone(ESX.PlayerData.accounts[i])
         end
     end
 
-    ESX.SetPlayerData("accounts", ESX.PlayerData.accounts)
+    ESX.SetPlayerData("accounts", accounts)
 end)
 
 AddEventHandler("esx:setMetadata", function(metadata)
