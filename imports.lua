@@ -15,30 +15,44 @@ if not _VERSION:find("5.4") then
     return ESX.Trace("^1Lua 5.4 must be enabled in the resource manifest!^7", "error", true)
 end
 
+local getInvokingResource = GetInvokingResource
+
+---@param eventName string
+---@param cb function
+local function eventHandler(eventName, cb)
+    AddEventHandler(eventName, function(...)
+        local invokingResource = getInvokingResource()
+
+        if invokingResource == es_extended then
+            return cb(...)
+        end
+
+        ESX.Trace(("Event (%s) was triggered, but not from the framework! Invoked from (%s)"):format(eventName, invokingResource), "error", true)
+    end)
+end
+
 if not IsDuplicityVersion() then -- Client
-    AddEventHandler("esx:setPlayerData", function(key, val, last)
-        if GetInvokingResource() == es_extended then
-            ESX.PlayerData[key] = val
+    eventHandler("esx:setPlayerData", function(key, val, last)
+        ESX.PlayerData[key] = val
 
-            local onPlayerData = _G.OnPlayerData --[[@as function?]]
+        local onPlayerData = _G.OnPlayerData --[[@as function?]]
 
-            if onPlayerData then
-                onPlayerData(key, val, last)
-            end
+        if onPlayerData then
+            onPlayerData(key, val, last)
         end
     end)
 
-    AddEventHandler("esx:playerLoaded", function(xPlayer)
+    eventHandler("esx:playerLoaded", function(xPlayer)
         ESX.PlayerData = xPlayer
         ESX.PlayerLoaded = true
     end)
 
-    AddEventHandler("esx:onPlayerLogout", function()
+    eventHandler("esx:onPlayerLogout", function()
         ESX.PlayerLoaded = false
         ESX.PlayerData = {}
     end)
 
-    AddEventHandler("esx:sharedObjectUpdated", function()
+    eventHandler("esx:sharedObjectUpdated", function()
         ESX = setmetatable({}, esxMT)
 
         collectgarbage("collect")
@@ -87,7 +101,6 @@ else -- Server
         local _GetPlayerFromId = ESX.GetPlayerFromId
 
         ESX.Jobs = setmetatable({}, jobsMT)
-
         ESX.Groups = setmetatable({}, groupsMT)
 
         function ESX.GetPlayerFromId(playerId) ---@diagnostic disable-line: duplicate-set-field
@@ -105,19 +118,19 @@ else -- Server
 
     do setupESX() end
 
-    AddEventHandler("esx:jobsObjectRefreshed", function()
+    eventHandler("esx:jobsObjectRefreshed", function()
         if ESX and ESX.Jobs and next(ESX.Jobs) then -- check to see if ESX.Jobs is being used in this external resource or not
             ESX.Jobs = setmetatable(ESX.GetJobs(), jobsMT)
         end
     end)
 
-    AddEventHandler("esx:groupsObjectRefreshed", function()
+    eventHandler("esx:groupsObjectRefreshed", function()
         if ESX and ESX.Groups and next(ESX.Groups) then -- check to see if ESX.Groups is being used in this external resource or not
             ESX.Groups = setmetatable(ESX.GetJobs(), groupsMT)
         end
     end)
 
-    AddEventHandler("esx:sharedObjectUpdated", function()
+    eventHandler("esx:sharedObjectUpdated", function()
         ESX = setmetatable({}, esxMT)
 
         do setupESX() end
@@ -125,3 +138,5 @@ else -- Server
         collectgarbage("collect")
     end)
 end
+
+return ESX
