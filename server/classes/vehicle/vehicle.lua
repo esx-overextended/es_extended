@@ -395,26 +395,6 @@ function ESX.SetVehicleProperties(vehicleEntity, properties)
     end
 end
 
-AddStateBagChangeHandler("initVehicle", "", function(bagName, _, value, _, _)
-    if value ~= nil then return end
-
-    local entity = GetEntityFromStateBagName(bagName)
-
-    if not entity or entity == 0 then return end
-
-    -- workaround for server-vehicles that exist in traffic randomly creating peds
-    -- https://forum.cfx.re/t/sometimes-an-npc-spawns-inside-an-vehicle-spawned-with-createvehicleserversetter-or-create-automobile/4947251
-    for i = -1, 0 do
-        if DoesEntityExist(entity) then
-            local ped = GetPedInVehicleSeat(entity, i)
-
-            if not IsPedAPlayer(ped) then
-                DeleteEntity(ped)
-            end
-        end
-    end
-end)
-
 AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, _, _)
     if value ~= nil then return end
 
