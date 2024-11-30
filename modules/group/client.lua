@@ -33,15 +33,15 @@ function ESX.CanInteractWithGroup(groupToCheck)
             for i = 1, #groupToCheck do
                 local groupName = groupToCheck[i]
 
-                if groupName == currJobName and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
+                if currJobName == groupName and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
 
                 if playerGroups[groupName] and not ESX.GetJob(groupName) --[[making sure the group is not a job]] then return true end
             end
         else
             for groupName, groupGrade in pairs(groupToCheck --[[@as table<string, number>]]) do
-                if groupName == currJobName and groupGrade == currJobGrade and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
+                if currJobName == groupName and currJobGrade >= groupGrade and currJobDuty --[[making sure the duty is on if the job matches]] then return true end
 
-                if playerGroups[groupName] == groupGrade and not ESX.GetJob(groupName) --[[making sure the group is not a job]] then return true end
+                if playerGroups[groupName] and playerGroups[groupName] >= groupGrade and not ESX.GetJob(groupName) --[[making sure the group is not a job]] then return true end
             end
         end
     end
