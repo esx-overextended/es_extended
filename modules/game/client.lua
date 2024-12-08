@@ -298,7 +298,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
     end
 
     local extras = {}
-    for extraId = 0, 12 do
+    for extraId = 0, 20 do
         if DoesExtraExist(vehicle, extraId) then
             extras[tostring(extraId)] = IsVehicleExtraTurnedOn(vehicle, extraId)
         end
@@ -321,6 +321,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
     end
 
     for windowId = 0, 7 do -- 13
+        RollUpWindow(vehicle, windowId)
         windowsBroken[tostring(windowId)] = not IsVehicleWindowIntact(vehicle, windowId)
     end
 
@@ -336,6 +337,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
         doorsBroken = doorsBroken,
         windowsBroken = windowsBroken,
         tyreBurst = tyreBurst,
+        tyresCanBurst = GetVehicleTyresCanBurst(vehicle),
         plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle)),
         plateIndex = GetVehicleNumberPlateTextIndex(vehicle),
 
@@ -378,6 +380,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
         modFender = GetVehicleMod(vehicle, 8),
         modRightFender = GetVehicleMod(vehicle, 9),
         modRoof = GetVehicleMod(vehicle, 10),
+        modRoofLivery = GetVehicleRoofLivery(vehicle),
 
         modEngine = GetVehicleMod(vehicle, 11),
         modBrakes = GetVehicleMod(vehicle, 12),
@@ -391,7 +394,9 @@ function ESX.Game.GetVehicleProperties(vehicle)
         modXenon = IsToggleModOn(vehicle, 22),
 
         modFrontWheels = GetVehicleMod(vehicle, 23),
+        modCustomFrontWheels = GetVehicleModVariation(vehicle, 23),
         modBackWheels = GetVehicleMod(vehicle, 24),
+        modCustomBackWheels = GetVehicleModVariation(vehicle, 24),
 
         modPlateHolder = GetVehicleMod(vehicle, 25),
         modVanityPlate = GetVehicleMod(vehicle, 26),
@@ -414,6 +419,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
         modAerials = GetVehicleMod(vehicle, 43),
         modTrimB = GetVehicleMod(vehicle, 44),
         modTank = GetVehicleMod(vehicle, 45),
+        modWindows = GetVehicleMod(vehicle, 46),
         modDoorR = GetVehicleMod(vehicle, 47),
         modLivery = GetVehicleMod(vehicle, 48) == -1 and GetVehicleLivery(vehicle) or GetVehicleMod(vehicle, 48),
         modLightbar = GetVehicleMod(vehicle, 49)
@@ -435,6 +441,10 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
     local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
 
     SetVehicleModKit(vehicle, 0)
+
+    if props.tyresCanBurst ~= nil then
+        SetVehicleTyresCanBurst(vehicle, props.tyresCanBurst)
+    end
 
     if props.plate ~= nil then
         SetVehicleNumberPlateText(vehicle, props.plate)
@@ -500,7 +510,7 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
 
     if props.extras ~= nil then
         for extraId, enabled in pairs(props.extras) do
-            SetVehicleExtra(vehicle, tonumber(extraId) --[[@as number]], enabled and 0 or 1 --[[@as boolean]])
+            SetVehicleExtra(vehicle, tonumber(extraId) --[[@as number]], not enabled --[[@as boolean]])
         end
     end
 
@@ -511,8 +521,7 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
         SetVehicleXenonLightsColor(vehicle, props.xenonColor)
     end
     if props.customXenonColor ~= nil then
-        SetVehicleXenonLightsCustomColor(vehicle, props.customXenonColor[1], props.customXenonColor[2],
-            props.customXenonColor[3])
+        SetVehicleXenonLightsCustomColor(vehicle, props.customXenonColor[1], props.customXenonColor[2], props.customXenonColor[3])
     end
     if props.modSmokeEnabled ~= nil then
         ToggleVehicleMod(vehicle, 20, true)
@@ -553,6 +562,9 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
     if props.modRoof ~= nil then
         SetVehicleMod(vehicle, 10, props.modRoof, false)
     end
+    if props.modRoofLivery ~= nil then
+        SetVehicleRoofLivery(vehicle, props.modRoofLivery)
+    end
     if props.modEngine ~= nil then
         SetVehicleMod(vehicle, 11, props.modEngine, false)
     end
@@ -578,10 +590,10 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
         ToggleVehicleMod(vehicle, 22, props.modXenon)
     end
     if props.modFrontWheels ~= nil then
-        SetVehicleMod(vehicle, 23, props.modFrontWheels, false)
+        SetVehicleMod(vehicle, 23, props.modFrontWheels, props.modCustomFrontWheels)
     end
     if props.modBackWheels ~= nil then
-        SetVehicleMod(vehicle, 24, props.modBackWheels, false)
+        SetVehicleMod(vehicle, 24, props.modBackWheels, props.modCustomBackWheels)
     end
     if props.modPlateHolder ~= nil then
         SetVehicleMod(vehicle, 25, props.modPlateHolder, false)
@@ -649,6 +661,9 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
     if props.modWindows ~= nil then
         SetVehicleMod(vehicle, 46, props.modWindows, false)
     end
+    if props.modDoorR ~= nil then
+        SetVehicleMod(vehicle, 47, props.modDoorR, false)
+    end
 
     if props.modLivery ~= nil then
         SetVehicleMod(vehicle, 48, props.modLivery, false)
@@ -658,7 +673,7 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
     if props.windowsBroken ~= nil then
         for k, v in pairs(props.windowsBroken) do
             if v then
-                SmashVehicleWindow(vehicle, tonumber(k) --[[@as number]])
+                RemoveVehicleWindow(vehicle, tonumber(k) --[[@as number]])
             end
         end
     end

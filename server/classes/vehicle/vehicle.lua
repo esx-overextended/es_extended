@@ -161,7 +161,7 @@ function Core.RegisterVehiclePropertiesEvent(vehicleEntity)
 
         xVehicle.setProperties(receivedProperties, false)
 
-        ESX.Trace(("Updated Vehicle (vehicleId: %s - entityId: %s - networkId: %s) Properties"):format(xVehicle.id, xVehicle.entity, xVehicle.netId), "trace", true)
+        ESX.Trace(("Updated Vehicle Properties (vehicleId: %s - entityId: %s - networkId: %s)"):format(xVehicle.id, xVehicle.entity, xVehicle.netId), "trace", true)
     end)
 end
 
