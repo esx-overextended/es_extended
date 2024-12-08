@@ -108,13 +108,14 @@ end)
 AddStateBagChangeHandler("vehicleProperties", "", function(bagName, key, value, _, _)
     if not value then return end
 
-    local entity = ESX.OneSync.GetEntityFromStateBag(bagName)
+    local entity, netId = ESX.OneSync.GetEntityFromStateBag(bagName)
 
     if not entity then return end
 
-    if NetworkGetEntityOwner(entity) ~= cache.playerId then return end
-
     if not ESX.Game.SetVehicleProperties(entity, value) then return end
 
-    Entity(entity).state:set(key, nil, true)
+    local entityState = Entity(entity).state
+
+    entityState:set(key, nil, true)
+    TriggerServerEvent(("esx:updateVehicleNetId%sProperties"):format(netId), entityState.id, ESX.Game.GetVehicleProperties(entity))
 end)

@@ -16,6 +16,9 @@ local xVehicleMethods = lib.require("server.classes.vehicle.vehicleMethods")
 ---@type table<entityId, table<number, table>>
 Core.VehiclesPropertiesQueue = {}
 
+---@type table<number, { key: number, name: string }>
+Core.RegisteredVehiclePropertiesEvent = {}
+
 ---Creates an xVehicle object
 ---@param vehicleId? integer | number
 ---@param vehicleOwner? string | boolean
@@ -27,8 +30,9 @@ Core.VehiclesPropertiesQueue = {}
 ---@param vehicleVin string
 ---@param vehicleScript string
 ---@param vehicleMetadata table
+---@param vehicleProperties table
 ---@return xVehicle
-local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehicleNetId, vehicleEntity, vehicleModel, vehiclePlate, vehicleVin, vehicleScript, vehicleMetadata)
+local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehicleNetId, vehicleEntity, vehicleModel, vehiclePlate, vehicleVin, vehicleScript, vehicleMetadata, vehicleProperties)
     ---@type xVehicle
     local self = {} ---@diagnostic disable-line: missing-fields
 
@@ -44,6 +48,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     self.stored = nil
     self.variables = {}
     self.metadata = vehicleMetadata or {}
+    self.properties = vehicleProperties
 
     local stateBag = Entity(self.entity).state
 
@@ -54,6 +59,7 @@ local function createExtendedVehicle(vehicleId, vehicleOwner, vehicleGroup, vehi
     stateBag:set("plate", self.plate, true)
     stateBag:set("vin", self.vin, true)
     stateBag:set("metadata", self.metadata, true)
+    stateBag:set("properties", self.properties, true)
 
     for fnName, fn in pairs(xVehicleMethods) do
         self[fnName] = fn(self)
@@ -83,9 +89,10 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     if not entity then return end
 
-    local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata)
+    local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata, properties)
 
     Core.Vehicles[xVehicle.entity] = xVehicle
+    Core.RegisterVehiclePropertiesEvent(xVehicle.entity)
 
     Core.TriggerEventHooks("onVehicleCreate", { xVehicle = xVehicle })
 
@@ -122,6 +129,50 @@ function Core.SpawnVehicle(modelName, modelType, coordinates, heading)
     TriggerEvent("entityCreated", entity)
 
     return entity
+end
+
+---@param vehicleEntity number
+function Core.RegisterVehiclePropertiesEvent(vehicleEntity)
+    if Core.RegisteredVehiclePropertiesEvent[vehicleEntity] then
+        return ESX.Trace(("Tried to register properties listener for vehicle entity Id of %s, but it's been already registered!"):format(vehicleEntity), "warning", true)
+    end
+
+    local xVehicle = Core.Vehicles[vehicleEntity]
+    local vehicleModelHash = joaat(xVehicle.model)
+
+    Core.RegisteredVehiclePropertiesEvent[vehicleEntity] = RegisterNetEvent(("esx:updateVehicleNetId%sProperties"):format(xVehicle.netId), function(receivedVehicleId, receivedProperties)
+        if xVehicle.id ~= receivedVehicleId then
+            return ESX.Trace(("Player Id %s requested to update vehicle properties. Expected '%s', Received '%s'"):format(source, xVehicle.id, receivedVehicleId), "error", true)
+        end
+
+        if NetworkGetEntityOwner(vehicleEntity) ~= source then return end
+
+        local typeProperties = type(receivedProperties)
+
+        if typeProperties ~= "table" or table.type(receivedProperties) ~= "hash" then
+            return ESX.Trace(("Invalid vehicle properties to update received. Expected 'table-hash', Received '%s'"):format(source, typeProperties == "table" and ("table-%s"):format(table.type(receivedProperties)) or typeProperties), "error", true)
+        end
+
+        if receivedProperties.model then
+            if vehicleModelHash ~= receivedProperties.model then
+                return ESX.Trace(("Player Id %s sent an unexpected vehicle model. Expected '%s', Received '%s'"):format(source, vehicleModelHash, receivedProperties.model), "error", true)
+            end
+        end
+
+        xVehicle.setProperties(receivedProperties, false)
+
+        ESX.Trace(("Updated Vehicle (vehicleId: %s - entityId: %s - networkId: %s) Properties"):format(xVehicle.id, xVehicle.entity, xVehicle.netId), "trace", true)
+    end)
+end
+
+---@param vehicleEntity number
+function Core.UnregisterVehiclePropertiesEvent(vehicleEntity)
+    if not Core.RegisteredVehiclePropertiesEvent[vehicleEntity] then
+        return ESX.Trace(("Tried to unregister properties listener for vehicle entity Id of %s, but it does not even exist!"):format(vehicleEntity), "warning", true)
+    end
+
+    RemoveEventHandler(Core.RegisteredVehiclePropertiesEvent[vehicleEntity])
+    Core.RegisteredVehiclePropertiesEvent[vehicleEntity] = nil
 end
 
 ---Loads a vehicle from the database by id, or creates a new vehicle using provided data.
@@ -362,6 +413,7 @@ function ESX.DeleteVehicle(vehicleEntity)
     else
         DeleteEntity(vehicleEntity)
         Core.VehiclesPropertiesQueue[vehicleEntity] = nil
+        Core.UnregisterVehiclePropertiesEvent(vehicleEntity)
     end
 end
 

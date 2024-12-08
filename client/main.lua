@@ -497,3 +497,38 @@ lib.onCache("ped", function(value)
     ESX.SetPlayerData("ped", value)
     TriggerEvent("esx:restoreLoadout")
 end)
+
+local vehicleDbId, vehicleEntity, vehicleNetId
+local isMonitorVehiclePropertiesThreadActive = false
+
+local function syncVehicleProperties()
+    TriggerServerEvent(("esx:updateVehicleNetId%sProperties"):format(vehicleNetId), vehicleDbId, ESX.Game.GetVehicleProperties(vehicleEntity))
+end
+
+local function monitorVehiclePropertiesThread()
+    if isMonitorVehiclePropertiesThreadActive then return end
+
+    isMonitorVehiclePropertiesThreadActive = true
+
+    CreateThread(function()
+        while cache.vehicle == vehicleEntity and cache.seat == -1 do
+            syncVehicleProperties()
+            Wait(10000)
+        end
+
+        isMonitorVehiclePropertiesThreadActive = false
+    end)
+end
+
+lib.onCache("seat", function(newSeat)
+    if newSeat == -1 then
+        vehicleEntity = cache.vehicle
+        vehicleDbId   = Entity(vehicleEntity).state.id
+        vehicleNetId  = NetworkGetNetworkIdFromEntity(vehicleEntity)
+
+        monitorVehiclePropertiesThread()
+    elseif cache.seat == -1 then
+        syncVehicleProperties()
+        vehicleDbId, vehicleEntity, vehicleNetId = nil, nil, nil
+    end
+end)
