@@ -98,7 +98,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
 
     Entity(entity).state:set("initVehicle", true, true)
 
-    ESX.SetVehicleProperties(entity, properties)
+    ESX.SetVehicleProperties(entity, xVehicle.properties)
 
     if owner or group then xVehicle.setStored(false) end
 
@@ -153,10 +153,8 @@ function Core.RegisterVehiclePropertiesEvent(vehicleEntity)
             return ESX.Trace(("Invalid vehicle properties to update received. Expected 'table-hash', Received '%s'"):format(source, typeProperties == "table" and ("table-%s"):format(table.type(receivedProperties)) or typeProperties), "error", true)
         end
 
-        if receivedProperties.model then
-            if vehicleModelHash ~= receivedProperties.model then
-                return ESX.Trace(("Player Id %s sent an unexpected vehicle model. Expected '%s', Received '%s'"):format(source, vehicleModelHash, receivedProperties.model), "error", true)
-            end
+        if vehicleModelHash ~= receivedProperties.model then
+            return ESX.Trace(("Player Id %s sent an unexpected vehicle model. Expected '%s', Received '%s'"):format(source, vehicleModelHash, receivedProperties.model), "error", true)
         end
 
         xVehicle.setProperties(receivedProperties, false)

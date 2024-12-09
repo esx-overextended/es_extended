@@ -270,7 +270,7 @@ end
 
 function ESX.Game.GetVehicleProperties(vehicle)
     if not DoesEntityExist(vehicle) then
-        ESX.Trace(("Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", true)
+        ESX.Trace(("Unable to get vehicle properties from entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", Config.EnableDebug)
         return
     end
 
@@ -428,12 +428,12 @@ end
 
 function ESX.Game.SetVehicleProperties(vehicle, props)
     if not DoesEntityExist(vehicle) then
-        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", true)
+        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (entity does not exist)"):format(vehicle), "error", Config.EnableDebug)
         return false
     end
 
     if NetworkGetEntityIsNetworked(vehicle) and NetworkGetEntityOwner(vehicle) ~= cache.playerId then
-        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle), "error", true)
+        ESX.Trace(("Unable to set vehicle properties for entity (^1%s^7) (client is not entity owner)"):format(vehicle), "error", Config.EnableDebug)
         return false
     end
 
