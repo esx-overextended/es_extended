@@ -139,7 +139,6 @@ local function onResourceStop(resource)
 end
 
 AddEventHandler("onResourceStop", onResourceStop)
-AddEventHandler("onServerResourceStop", onResourceStop)
 
 do
     ESX.RegisterPlayerMethodOverrides({
@@ -154,10 +153,18 @@ do
                 local valueType = type(value)
                 local isValueValid = (valueType == "number" or valueType == "string" or valueType == "boolean" or (valueType == "table" and not value?.__cfx_functionReference)) and true or false
 
-                if fieldNameType ~= "string" then ESX.Trace(("The field name (^3%s^7) passed in ^5player(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.source), "error", true) return false
-                elseif not isValueValid then ESX.Trace(("The value passed in ^5player(%s)'s setField()^7 does not have a valid type!"):format(self.source), "error", true) return false end
+                if fieldNameType ~= "string" then
+                    ESX.Trace(("The field name (^3%s^7) passed in ^5player(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.source), "error", true)
+                    return false
+                elseif not isValueValid then
+                    ESX.Trace(("The value passed in ^5player(%s)'s setField()^7 does not have a valid type!"):format(self.source), "error", true)
+                    return false
+                end
 
-                if fieldName == "setField" or fieldName == "setMethod" then ESX.Trace(("Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName), "error", true) return false end
+                if fieldName == "setField" or fieldName == "setMethod" then
+                    ESX.Trace(("Field ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fieldName), "error", true)
+                    return false
+                end
 
                 self[fieldName] = value
 
@@ -178,10 +185,18 @@ do
                 local fnType = type(fn)
                 local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-                if fnNameType ~= "string" then ESX.Trace(("The method name (^3%s^7) passed in ^5player(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.source), "error", true) return false
-                elseif not isFnValid then ESX.Trace(("The function passed in ^5player(%s)'s setMethod()^7 is not a valid function!"):format(self.source), "error", true) return false end
+                if fnNameType ~= "string" then
+                    ESX.Trace(("The method name (^3%s^7) passed in ^5player(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.source), "error", true)
+                    return false
+                elseif not isFnValid then
+                    ESX.Trace(("The function passed in ^5player(%s)'s setMethod()^7 is not a valid function!"):format(self.source), "error", true)
+                    return false
+                end
 
-                if fnName == "setMethod" or fnName == "setField" then ESX.Trace(("Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName), "error", true) return false end
+                if fnName == "setMethod" or fnName == "setField" then
+                    ESX.Trace(("Method ^2%s^7 of xPlayer ^1cannot^7 be overrided!"):format(fnName), "error", true)
+                    return false
+                end
 
                 self[fnName] = fn(self)
 
@@ -204,10 +219,18 @@ do
                 local valueType = type(value)
                 local isValueValid = (valueType == "number" or valueType == "string" or valueType == "boolean" or (valueType == "table" and not value?.__cfx_functionReference)) and true or false
 
-                if fieldNameType ~= "string" then ESX.Trace(("The field name (^3%s^7) passed in ^5vehicle(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.entity), "error", true) return false
-                elseif not isValueValid then ESX.Trace(("The value passed in ^5vehicle(%s)'s setField()^7 does not have a valid type!"):format(self.entity), "error", true) return false end
+                if fieldNameType ~= "string" then
+                    ESX.Trace(("The field name (^3%s^7) passed in ^5vehicle(%s)'s setField()^7 is not a valid string!"):format(fieldName, self.entity), "error", true)
+                    return false
+                elseif not isValueValid then
+                    ESX.Trace(("The value passed in ^5vehicle(%s)'s setField()^7 does not have a valid type!"):format(self.entity), "error", true)
+                    return false
+                end
 
-                if fieldName == "setField" or fieldName == "setMethod" then ESX.Trace(("Field ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fieldName), "error", true) return false end
+                if fieldName == "setField" or fieldName == "setMethod" then
+                    ESX.Trace(("Field ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fieldName), "error", true)
+                    return false
+                end
 
                 self[fieldName] = value
 
@@ -228,10 +251,18 @@ do
                 local fnType = type(fn)
                 local isFnValid = (fnType == "function" or (fnType == "table" and fn?.__cfx_functionReference and true)) or false
 
-                if fnNameType ~= "string" then ESX.Trace(("The method name (^3%s^7) passed in ^5vehicle(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.entity), "error", true) return false
-                elseif not isFnValid then ESX.Trace(("The function passed in ^5vehicle(%s)'s setMethod()^7 is not a valid function!"):format(self.entity), "error", true) return false end
+                if fnNameType ~= "string" then
+                    ESX.Trace(("The method name (^3%s^7) passed in ^5vehicle(%s)'s setMethod()^7 is not a valid string!"):format(fnName, self.entity), "error", true)
+                    return false
+                elseif not isFnValid then
+                    ESX.Trace(("The function passed in ^5vehicle(%s)'s setMethod()^7 is not a valid function!"):format(self.entity), "error", true)
+                    return false
+                end
 
-                if fnName == "setMethod" or fnName == "setField" then ESX.Trace(("Method ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fnName), "error", true) return false end
+                if fnName == "setMethod" or fnName == "setField" then
+                    ESX.Trace(("Method ^2%s^7 of xVehicle ^1cannot^7 be overrided!"):format(fnName), "error", true)
+                    return false
+                end
 
                 self[fnName] = fn(self)
 

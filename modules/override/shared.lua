@@ -89,4 +89,3 @@ local function onResourceStop(resource)
 end
 
 AddEventHandler("onResourceStop", onResourceStop)
-AddEventHandler(("on%sResourceStop"):format(lib.context:gsub("^%l", string.upper)), onResourceStop)

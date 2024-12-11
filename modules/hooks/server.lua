@@ -61,7 +61,6 @@ local function removeResourceHooks(resource, id)
 end
 
 AddEventHandler("onResourceStop", removeResourceHooks)
-AddEventHandler("onServerResourceStop", removeResourceHooks)
 
 ---@param id? number
 function api.removeHooks(id)
