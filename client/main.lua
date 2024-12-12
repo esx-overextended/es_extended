@@ -511,7 +511,7 @@ local function monitorVehiclePropertiesThread()
     isMonitorVehiclePropertiesThreadActive = true
 
     CreateThread(function()
-        while cache.vehicle == vehicleEntity and cache.seat == -1 do
+        while cache.seat == -1 do
             syncVehicleProperties()
             Wait(10000)
         end
