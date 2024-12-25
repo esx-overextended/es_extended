@@ -502,6 +502,8 @@ local vehicleDbId, vehicleEntity, vehicleNetId
 local isMonitorVehiclePropertiesThreadActive = false
 
 local function syncVehicleProperties()
+    if not vehicleDbId then return end -- not a persistent vehicle spawned by the framework
+
     TriggerServerEvent(("esx:updateVehicleNetId%sProperties"):format(vehicleNetId), vehicleDbId, ESX.Game.GetVehicleProperties(vehicleEntity))
 end
 
