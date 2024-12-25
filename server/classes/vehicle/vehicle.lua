@@ -126,6 +126,7 @@ function Core.SpawnVehicle(modelName, modelType, coordinates, heading)
 
     if not DoesEntityExist(entity) then return ESX.Trace(("Failed to spawn vehicle (^4%s^7)"):format(modelName), "error", true) end
 
+    SetEntityOrphanMode(entity, 2)
     TriggerEvent("entityCreated", entity)
 
     return entity
