@@ -10,7 +10,7 @@ function ESX.GetIdentifier(playerId, byType)
     end
 
     local identifier
-    byType = byType or ("%s:"):format(Config.Identifier:lower())
+    byType = ("%s:"):format(byType or Config.Identifier:lower())
 
     for _, v in ipairs(GetPlayerIdentifiers(playerId)) do
         if string.match(v, byType) then
