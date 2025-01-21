@@ -97,7 +97,7 @@ function ESX.TriggerSafeEvent(eventName, source, eventData, eventOptions)
     eventData.__esx_triggerClient = eventOptions?.client == nil and false or eventOptions?.client
     eventData.__esx_hash          = generateHash() -- to make sure the eventData is unique & different everytime calling GlobalState, because if it isn't, the change handlers won't be triggered
 
-    local bagName = ("player:%s->%s"):format(source, eventName)
+    local bagName                 = ("player:%s->%s"):format(source, eventName)
 
     GlobalState:set(bagName, eventData, true)
     GlobalState:set(bagName, nil, true)
@@ -118,7 +118,6 @@ local function onResourceStop(resource)
 end
 
 AddEventHandler("onResourceStop", onResourceStop)
-AddEventHandler("onServerResourceStop", onResourceStop)
 
 do
     ESX.RegisterPlayerMethodOverrides({
@@ -129,7 +128,7 @@ do
             ---@param eventData? table -- data to send through the safe event
             ---@param eventOptions? CEventOptions data to define whether server, client, or both should be triggered (defaults to {server = false, client = true})
             return function(eventName, eventData, eventOptions)
-                ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or {server = false, client = true})
+                ESX.TriggerSafeEvent(eventName, self.source, eventData, eventOptions or { server = false, client = true })
             end
         end
     })

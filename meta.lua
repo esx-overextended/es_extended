@@ -99,6 +99,7 @@
 ---@field stored? boolean
 ---@field variables table<string | integer | number, any>
 ---@field metadata table<string, number | string | table | boolean>
+---@field properties table<string, any>
 ---@field set fun(key: string, value: any)
 ---@field get fun(key?: string): any
 ---@field delete fun(removeFromDb?: boolean)
@@ -108,6 +109,7 @@
 ---@field setPlate fun(newPlate: string)
 ---@field getMetadata fun(index?: string, subIndex?: number | string | table): nil | number | string | table | boolean
 ---@field setMetadata fun(index: string, value?: number | string | table | boolean, subValue?: number | string | table | boolean): boolean
+---@field setProperties fun(newProperties: table<string, any>, updateInClient?: boolean): boolean
 
 
 ---@class VehicleData

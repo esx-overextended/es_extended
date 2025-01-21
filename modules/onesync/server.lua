@@ -88,8 +88,10 @@ function ESX.OneSync.SpawnVehicle(model, coords, heading, properties, cb)
 
     if not entity then return end
 
-    Entity(entity).state:set("initVehicle", true, true)
-    Entity(entity).state:set("vehicleProperties", properties, true)
+    local entityStatebag = Entity(entity).state
+
+    entityStatebag:set("initVehicle", true, true)
+    entityStatebag:set("vehicleProperties", properties, true)
 
     local netId = NetworkGetNetworkIdFromEntity(entity)
 

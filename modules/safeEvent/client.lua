@@ -62,4 +62,3 @@ local function onResourceStop(resource)
 end
 
 AddEventHandler("onResourceStop", onResourceStop)
-AddEventHandler("onClientResourceStop", onResourceStop)

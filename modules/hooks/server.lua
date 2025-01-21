@@ -21,8 +21,10 @@ local api = setmetatable({}, {
     end
 })
 
+---@alias functionReference table
+
 ---@param event string
----@param cb function
+---@param cb function | functionReference
 ---@param options? table
 function api.registerHook(event, cb, options)
     if not eventHooks[event] then eventHooks[event] = {} end
@@ -59,7 +61,6 @@ local function removeResourceHooks(resource, id)
 end
 
 AddEventHandler("onResourceStop", removeResourceHooks)
-AddEventHandler("onServerResourceStop", removeResourceHooks)
 
 ---@param id? number
 function api.removeHooks(id)

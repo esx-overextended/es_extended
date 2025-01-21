@@ -413,7 +413,7 @@ AddEventHandler("esx:playerLogout", function(source, cb)
     onPlayerLogout(source, "Logged out of character", cb)
 end)
 
-AddEventHandler("onServerResourceStop", function(resource)
+AddEventHandler("onServerResourceStart", function(resource)
     if resource ~= cache.resource or Config.OxInventory then return end
 
     RegisterServerEvent("esx:updateWeaponAmmo", function(weaponName, ammoCount)
@@ -720,7 +720,7 @@ end)
 local function onResourceStop(resource)
     Core.SaveVehicles(resource)
 
-    if resource ~= GetCurrentResourceName() then return end
+    if resource ~= cache.resource then return end
 
     Core.SavePlayers()
 end

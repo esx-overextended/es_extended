@@ -170,12 +170,13 @@ local xVehicleMethods = {
                 if removeFromDb then
                     MySQL.prepare("DELETE FROM `owned_vehicles` WHERE `id` = ?", { self.id })
                 else
-                    MySQL.prepare("UPDATE `owned_vehicles` SET `stored` = ?, `metadata` = ? WHERE `id` = ?", { self.stored, json.encode(self.metadata), self.id })
+                    MySQL.prepare("UPDATE `owned_vehicles` SET `vehicle` = ?, `stored` = ?, `metadata` = ? WHERE `id` = ?", { json.encode(self.properties), self.stored, json.encode(self.metadata), self.id })
                 end
             end
 
-            Core.Vehicles[entity] = nil                -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
-            Core.VehiclesPropertiesQueue[entity] = nil -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.Vehicles[entity] = nil                   -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehiclesPropertiesQueue[entity] = nil    -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.UnregisterVehiclePropertiesEvent(entity) -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
             if DoesEntityExist(entity) then DeleteEntity(entity) end
 
@@ -236,6 +237,26 @@ local xVehicleMethods = {
             MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
 
             Entity(self.entity).state:set("plate", self.plate, true)
+        end
+    end,
+
+    ---Sets the vehicle's properties
+    ---@param self xVehicle
+    setProperties = function(self)
+        ---@param newProperties table<string, any>
+        ---@param updateInClient? boolean (defaults to true if not provided and nil)
+        return function(newProperties, updateInClient)
+            updateInClient = updateInClient == nil and true or updateInClient
+
+            for key, value in pairs(newProperties) do
+                self.properties[key] = value
+            end
+
+            if updateInClient then
+                ESX.SetVehicleProperties(self.entity, self.properties)
+            end
+
+            Entity(self.entity).state:set("properties", self.properties, true)
         end
     end
 }
