@@ -290,3 +290,89 @@ AddEventHandler("esx:playerLoaded", function(source, xPlayer, isNew)
 
     xPlayer.setMoney(Config.StartingAccountMoney.money)
 end)
+
+-- removes dependecy error that ox_inventory throws (by injecting modified code into external resources following newer and recent FiveM security updates)
+-- line below must be executed in server cfg: **important**
+-- add_filesystem_permission es_extended write ox_inventory
+CreateThread(function()
+    local textToAdd = "author 'Overextended'"
+    local resourceName = "ox_inventory"
+    local fileName = "modules/bridge/esx/server.lua"
+    local targetLine = "lib.checkDependency('es_extended', '1.6.0', true)"
+
+    local function askToRestart(message)
+        while true do
+            Wait(5000)
+            ESX.Trace(("^1** RESTART THE SERVER **^7 %s ^1** RESTART THE SERVER **^7"):format(message or ""), "warning", true)
+        end
+    end
+
+    ESX.Trace(("Scanning %s/%s"):format(resourceName, fileName), "trace")
+
+    -- Load file content
+    local content = LoadResourceFile(resourceName, fileName)
+    if not content then
+        return ESX.Trace(("Failed to load %s/%s"):format(resourceName, fileName), "error", true)
+    end
+
+    local lineCount = 0
+    local found = false
+
+    -- Check each line individually
+    for line in string.gmatch(content, "[^\r\n]+") do
+        lineCount += 1
+
+        -- Check if the target line matches, ignoring leading and trailing spaces
+        local trimmedLine = line:match("^%s*(.-)%s*$")
+        if trimmedLine == targetLine then
+            ESX.Trace(("Target line found at line %d in %s/%s"):format(lineCount, resourceName, fileName), "trace")
+            found = true
+            break
+        end
+    end
+
+    if not found then
+        ESX.Trace(("Target line not found in %s/%s"):format(resourceName, fileName), "trace")
+        return ESX.Trace(("No changes needed in %s/%s"):format(resourceName, fileName), "trace")
+    end
+
+    local manifestContent = LoadResourceFile(cache.resource, "fxmanifest.lua")
+    local isTextInManifest = manifestContent:find(textToAdd)
+
+    -- Check if the target line is already commented (allowing for spaces)
+    local commentedTargetLinePattern = "%-%-%s*" .. targetLine
+
+    if content:match(commentedTargetLinePattern) then
+        if isTextInManifest then
+            -- TODO: instead of removing characters from right side, remove by dynamic occurances of the substring
+            SaveResourceFile(cache.resource, "fxmanifest.lua", string.sub(manifestContent, 1, (#textToAdd + 2) * -1), -1) -- removing textToAdd content from manifest if it's been added
+        end
+
+        ESX.Trace(("Target line is already commented in %s/%s"):format(resourceName, fileName), "trace", true)
+        return ESX.Trace(("No changes needed in %s/%s"):format(resourceName, fileName), "trace", true)
+    end
+
+    if not isTextInManifest then
+        SaveResourceFile(cache.resource, "fxmanifest.lua", manifestContent .. "\n" .. textToAdd, -1)
+
+        askToRestart()
+    end
+
+    -- Escape special characters in the target line for gsub
+    local escapedTargetLine = targetLine:gsub("([%p])", "%%%1")
+
+    -- Comment out the target line
+    local newContent = content:gsub(escapedTargetLine, "-- " .. targetLine)
+    local success = SaveResourceFile(resourceName, fileName, newContent, -1)
+
+    if not success then
+        return ESX.Trace(("Failed to save file after modifying: %s/%s"):format(resourceName, fileName), "error", true)
+    end
+
+    -- TODO: instead of removing characters from right side, remove by dynamic occurances of the substring
+    SaveResourceFile(cache.resource, "fxmanifest.lua", string.sub(manifestContent, 1, (#textToAdd + 2) * -1), -1) -- removing textToAdd content from manifest if it's been added
+
+    ESX.Trace(("Successfully modified and saved %s/%s"):format(resourceName, fileName), "trace")
+
+    askToRestart("ignore ox_inventory's version mismatch error on console; changes have been made")
+end)
