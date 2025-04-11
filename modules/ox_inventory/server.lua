@@ -292,8 +292,8 @@ AddEventHandler("esx:playerLoaded", function(source, xPlayer, isNew)
 end)
 
 -- removes dependecy error that ox_inventory throws (by injecting modified code into external resources following newer and recent FiveM security updates)
--- line below must be executed in server cfg: **important**
--- add_filesystem_permission es_extended write ox_inventory
+do ExecuteCommand("add_filesystem_permission es_extended write ox_inventory") end
+
 CreateThread(function()
     local textToAdd = "author 'Overextended'"
     local resourceName = "ox_inventory"
@@ -302,8 +302,8 @@ CreateThread(function()
 
     local function askToRestart(message)
         while true do
-            Wait(5000)
             ESX.Trace(("^1** RESTART THE SERVER **^7 %s ^1** RESTART THE SERVER **^7"):format(message or ""), "warning", true)
+            Wait(5000)
         end
     end
 
