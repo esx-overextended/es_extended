@@ -301,6 +301,11 @@ CreateThread(function()
     local targetLine = "lib.checkDependency('es_extended', '1.6.0', true)"
 
     local function askToRestart(message)
+        
+        for i = 0, GetNumResources()-1, 1 do
+            while GetResourceState(GetResourceByFindIndex(i)) == "starting" do Wait(0) end
+        end
+
         while true do
             ESX.Trace(("^1** RESTART THE SERVER **^7 %s ^1** RESTART THE SERVER **^7"):format(message or ""), "warning", true)
             Wait(5000)
