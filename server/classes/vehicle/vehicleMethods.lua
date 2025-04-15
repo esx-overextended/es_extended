@@ -175,6 +175,7 @@ local xVehicleMethods = {
             end
 
             Core.Vehicles[entity] = nil                   -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehicleEntitiesByVin[vin] = nil          -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehiclesPropertiesQueue[entity] = nil    -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.UnregisterVehiclePropertiesEvent(entity) -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 

@@ -92,6 +92,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata, properties)
 
     Core.Vehicles[xVehicle.entity] = xVehicle
+    Core.VehicleEntitiesByVin[xVehicle.vin] = xVehicle.entity
     Core.RegisterVehiclePropertiesEvent(xVehicle.entity)
 
     Core.TriggerEventHooks("onVehicleCreate", { xVehicle = xVehicle })
@@ -321,6 +322,13 @@ end
 ---@return xVehicle?
 function ESX.GetVehicle(vehicleEntity)
     return Core.Vehicles[vehicleEntity]
+end
+
+---Returns an instance of xVehicle for the given vin.
+---@param vin string
+---@return xVehicle?
+function ESX.GetVehicleFromVin(vin)
+    return ESX.GetVehicle(Core.VehicleEntitiesByVin[vin])
 end
 
 ---Return all vehicle data.
