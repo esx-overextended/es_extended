@@ -177,6 +177,7 @@ local xVehicleMethods = {
             Core.Vehicles[entity] = nil                   -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehicleEntitiesByVin[vin] = nil          -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehicleEntitiesByNetId[netId] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehicleEntitiesByPlate[plate] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehiclesPropertiesQueue[entity] = nil    -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.UnregisterVehiclePropertiesEvent(entity) -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
@@ -233,12 +234,24 @@ local xVehicleMethods = {
     ---@param self xVehicle
     setPlate = function(self)
         ---@param newPlate string
+        ---@return boolean
         return function(newPlate)
-            self.plate = ("%-8s"):format(newPlate)
+            local _newPlate = ("%-8s"):format(newPlate)
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { _newPlate, self.id }) --[[@as number]]
 
-            Entity(self.entity).state:set("plate", self.plate, true)
+            if dbResponse > 0 then
+                Core.VehicleEntitiesByPlate[self.plate] = nil
+                Core.VehicleEntitiesByPlate[_newPlate] = self.entity
+
+                self.plate = _newPlate
+
+                Entity(self.entity).state:set("plate", self.plate, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 
