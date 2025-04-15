@@ -207,12 +207,19 @@ local xVehicleMethods = {
     ---@param self xVehicle
     setOwner = function(self)
         ---@param newOwner? string
+        ---@return boolean
         return function(newOwner)
-            self.owner = newOwner
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id }) --[[@as number]]
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id })
+            if dbResponse > 0 then
+                self.owner = newOwner
 
-            Entity(self.entity).state:set("owner", self.owner, true)
+                Entity(self.entity).state:set("owner", self.owner, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 
@@ -221,12 +228,19 @@ local xVehicleMethods = {
     setGroup = function(self)
         ---Updates the current vehicle group
         ---@param newGroup? string
+        ---@return boolean
         return function(newGroup)
-            self.group = newGroup
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { newGroup or nil --[[to make sure "false" is not being sent]], self.id }) --[[@as number]]
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { self.group or nil --[[to make sure "false" is not being sent]], self.id })
+            if dbResponse > 0 then
+                self.group = newGroup
 
-            Entity(self.entity).state:set("group", self.group, true)
+                Entity(self.entity).state:set("group", self.group, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 
