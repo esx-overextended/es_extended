@@ -175,6 +175,11 @@ local xVehicleMethods = {
             end
 
             Core.Vehicles[entity] = nil                   -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            ---@diagnostic disable-next-line: need-check-nil
+            Core.VehicleEntitiesById[id] = nil            -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehicleEntitiesByVin[vin] = nil          -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehicleEntitiesByNetId[netId] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            Core.VehicleEntitiesByPlate[plate] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehiclesPropertiesQueue[entity] = nil    -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.UnregisterVehiclePropertiesEvent(entity) -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
 
@@ -204,12 +209,19 @@ local xVehicleMethods = {
     ---@param self xVehicle
     setOwner = function(self)
         ---@param newOwner? string
+        ---@return boolean
         return function(newOwner)
-            self.owner = newOwner
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id }) --[[@as number]]
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `owner` = ? WHERE `id` = ?", { self.owner or nil --[[to make sure "false" is not being sent]], self.id })
+            if dbResponse > 0 then
+                self.owner = newOwner
 
-            Entity(self.entity).state:set("owner", self.owner, true)
+                Entity(self.entity).state:set("owner", self.owner, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 
@@ -218,12 +230,19 @@ local xVehicleMethods = {
     setGroup = function(self)
         ---Updates the current vehicle group
         ---@param newGroup? string
+        ---@return boolean
         return function(newGroup)
-            self.group = newGroup
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { newGroup or nil --[[to make sure "false" is not being sent]], self.id }) --[[@as number]]
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `job` = ? WHERE `id` = ?", { self.group or nil --[[to make sure "false" is not being sent]], self.id })
+            if dbResponse > 0 then
+                self.group = newGroup
 
-            Entity(self.entity).state:set("group", self.group, true)
+                Entity(self.entity).state:set("group", self.group, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 
@@ -231,12 +250,24 @@ local xVehicleMethods = {
     ---@param self xVehicle
     setPlate = function(self)
         ---@param newPlate string
+        ---@return boolean
         return function(newPlate)
-            self.plate = ("%-8s"):format(newPlate)
+            local _newPlate = ("%-8s"):format(newPlate)
 
-            MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { self.plate, self.id })
+            local dbResponse = MySQL.prepare.await("UPDATE `owned_vehicles` SET `plate` = ? WHERE `id` = ?", { _newPlate, self.id }) --[[@as number]]
 
-            Entity(self.entity).state:set("plate", self.plate, true)
+            if dbResponse > 0 then
+                Core.VehicleEntitiesByPlate[self.plate] = nil
+                Core.VehicleEntitiesByPlate[_newPlate] = self.entity
+
+                self.plate = _newPlate
+
+                Entity(self.entity).state:set("plate", self.plate, true)
+
+                return true
+            end
+
+            return false
         end
     end,
 

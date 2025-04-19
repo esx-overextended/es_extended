@@ -9,6 +9,10 @@ Core.DatabaseConnected = false
 Core.PlayersByCid = {} --[[@type table<string, xPlayer> ]]
 Core.PlayersByIdentifier = {} --[[@type table<string, xPlayer> ]]
 Core.Vehicles = {} --[[@type table<number, xVehicle> ]]
+Core.VehicleEntitiesById = {} --[[@type table<number, number> ]]
+Core.VehicleEntitiesByVin = {} --[[@type table<string, number> ]]
+Core.VehicleEntitiesByNetId = {} --[[@type table<number, number> ]]
+Core.VehicleEntitiesByPlate = {} --[[@type table<string, number> ]]
 Core.ResourceExport = exports[cache.resource]
 
 AddEventHandler("esx:getSharedObject", function(cb)
