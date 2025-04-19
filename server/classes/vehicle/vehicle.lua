@@ -92,6 +92,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata, properties)
 
     Core.Vehicles[xVehicle.entity] = xVehicle
+    Core.VehicleEntitiesById[xVehicle.id] = xVehicle.entity
     Core.VehicleEntitiesByVin[xVehicle.vin] = xVehicle.entity
     Core.VehicleEntitiesByNetId[xVehicle.netId] = xVehicle.entity
     Core.VehicleEntitiesByPlate[xVehicle.plate] = xVehicle.entity
@@ -324,6 +325,13 @@ end
 ---@return xVehicle?
 function ESX.GetVehicle(vehicleEntity)
     return Core.Vehicles[vehicleEntity]
+end
+
+---Returns an instance of xVehicle for the given id.
+---@param id number
+---@return xVehicle?
+function ESX.GetVehicleFromId(id)
+    return ESX.GetVehicle(Core.VehicleEntitiesById[id])
 end
 
 ---Returns an instance of xVehicle for the given vin.

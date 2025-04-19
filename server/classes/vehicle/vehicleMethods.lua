@@ -175,6 +175,8 @@ local xVehicleMethods = {
             end
 
             Core.Vehicles[entity] = nil                   -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
+            ---@diagnostic disable-next-line: need-check-nil
+            Core.VehicleEntitiesById[id] = nil            -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehicleEntitiesByVin[vin] = nil          -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehicleEntitiesByNetId[netId] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
             Core.VehicleEntitiesByPlate[plate] = nil      -- maybe I should use entityRemoved event instead(but that might create race condition, no?)
