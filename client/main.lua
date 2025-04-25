@@ -498,11 +498,11 @@ lib.onCache("ped", function(value)
     TriggerEvent("esx:restoreLoadout")
 end)
 
-local vehicleDbId, vehicleEntity, vehicleNetId
+local vehicleDbId, vehicleEntity, vehicleNetId, vehicleVinNo
 local isMonitorVehiclePropertiesThreadActive = false
 
 local function syncVehicleProperties()
-    if not vehicleDbId then return end -- not a persistent vehicle spawned by the framework
+    if not vehicleVinNo then return end -- not a persistent vehicle spawned by the framework
 
     TriggerServerEvent(("esx:updateVehicleNetId%sProperties"):format(vehicleNetId), vehicleDbId, ESX.Game.GetVehicleProperties(vehicleEntity))
 end
@@ -524,9 +524,11 @@ end
 
 lib.onCache("seat", function(newSeat)
     if newSeat == -1 then
-        vehicleEntity = cache.vehicle
-        vehicleDbId   = Entity(vehicleEntity).state.id
-        vehicleNetId  = NetworkGetNetworkIdFromEntity(vehicleEntity)
+        local statebag = Entity(vehicleEntity).state
+        vehicleEntity  = cache.vehicle
+        vehicleDbId    = statebag.id
+        vehicleVinNo   = statebag.vin
+        vehicleNetId   = NetworkGetNetworkIdFromEntity(vehicleEntity)
 
         monitorVehiclePropertiesThread()
     elseif cache.seat == -1 then
