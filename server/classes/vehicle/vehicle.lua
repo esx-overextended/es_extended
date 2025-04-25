@@ -92,7 +92,7 @@ local function spawnVehicle(id, owner, group, plate, vin, model, script, metadat
     local xVehicle = createExtendedVehicle(id, owner, group, NetworkGetNetworkIdFromEntity(entity), entity, model, plate, vin, script, metadata, properties)
 
     Core.Vehicles[xVehicle.entity] = xVehicle
-    Core.VehicleEntitiesById[xVehicle.id] = xVehicle.entity
+    if xVehicle.id then Core.VehicleEntitiesById[xVehicle.id] = xVehicle.entity end
     Core.VehicleEntitiesByVin[xVehicle.vin] = xVehicle.entity
     Core.VehicleEntitiesByNetId[xVehicle.netId] = xVehicle.entity
     Core.VehicleEntitiesByPlate[xVehicle.plate] = xVehicle.entity
