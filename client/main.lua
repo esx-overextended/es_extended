@@ -529,9 +529,7 @@ end
 
 lib.onCache("seat", function(newSeat)
     if newSeat == -1 then
-        if not NetworkGetEntityIsNetworked(cache.vehicle) then
-            return
-        end
+        if not NetworkGetEntityIsNetworked(cache.vehicle) then return end
 
         vehicleEntity                    = cache.vehicle
         local statebag                   = Entity(vehicleEntity).state

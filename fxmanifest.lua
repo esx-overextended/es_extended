@@ -3,7 +3,7 @@ game "gta5"
 lua54 "yes"
 
 description "ESX Overextended"
-version "0.5.1"
+version "0.5.2"
 
 shared_scripts {
     "@ox_lib/init.lua",
