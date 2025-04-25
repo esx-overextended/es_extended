@@ -171,7 +171,7 @@ end
 ---@param vehicleEntity number
 function Core.UnregisterVehiclePropertiesEvent(vehicleEntity)
     if not Core.RegisteredVehiclePropertiesEvent[vehicleEntity] then
-        return ESX.Trace(("Tried to unregister properties listener for vehicle entity Id of %s, but it does not even exist!"):format(vehicleEntity), "warning", true)
+        return ESX.Trace(("Tried to unregister properties listener for vehicle entity Id of %s, but it does not even exist!"):format(vehicleEntity), "warning")
     end
 
     RemoveEventHandler(Core.RegisteredVehiclePropertiesEvent[vehicleEntity])

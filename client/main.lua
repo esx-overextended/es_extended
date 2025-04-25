@@ -498,11 +498,16 @@ lib.onCache("ped", function(value)
     TriggerEvent("esx:restoreLoadout")
 end)
 
+local vehicleStatebagChangeHandlers = {}
 local vehicleDbId, vehicleEntity, vehicleNetId, vehicleVinNo
 local isMonitorVehiclePropertiesThreadActive = false
 
 local function syncVehicleProperties()
-    if not vehicleVinNo then return end -- not a persistent vehicle spawned by the framework
+    if not vehicleVinNo or -- not a persistent vehicle spawned by the framework
+        not DoesEntityExist(vehicleEntity)
+    then
+        return
+    end
 
     TriggerServerEvent(("esx:updateVehicleNetId%sProperties"):format(vehicleNetId), vehicleDbId, ESX.Game.GetVehicleProperties(vehicleEntity))
 end
@@ -524,15 +529,28 @@ end
 
 lib.onCache("seat", function(newSeat)
     if newSeat == -1 then
-        local statebag = Entity(vehicleEntity).state
-        vehicleEntity  = cache.vehicle
-        vehicleDbId    = statebag.id
-        vehicleVinNo   = statebag.vin
-        vehicleNetId   = NetworkGetNetworkIdFromEntity(vehicleEntity)
+        vehicleEntity                    = cache.vehicle
+        local statebag                   = Entity(vehicleEntity).state
+        vehicleDbId                      = statebag.id
+        vehicleVinNo                     = statebag.vin
+        vehicleNetId                     = NetworkGetNetworkIdFromEntity(vehicleEntity)
 
-        monitorVehiclePropertiesThread()
-    elseif cache.seat == -1 then
-        syncVehicleProperties()
-        vehicleDbId, vehicleEntity, vehicleNetId = nil, nil, nil
+        -- register statebag listeners because of a delay in FiveM itself syncing statebag updates from server to clients in a case like executing /car (wrapping player to the spawned vehicle before statebag synchronization)
+        vehicleStatebagChangeHandlers[1] = AddStateBagChangeHandler("id", ("entity:%s"):format(vehicleNetId), function(_, _, value)
+            vehicleDbId = value
+        end)
+        vehicleStatebagChangeHandlers[2] = AddStateBagChangeHandler("vin", ("entity:%s"):format(vehicleNetId), function(_, _, value)
+            vehicleVinNo = value
+        end)
+
+        return monitorVehiclePropertiesThread()
     end
+
+    syncVehicleProperties()
+
+    -- remove statebag listeners
+    RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[1])
+    RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[2])
+
+    vehicleDbId, vehicleEntity, vehicleNetId, vehicleVinNo = nil, nil, nil, nil
 end)
