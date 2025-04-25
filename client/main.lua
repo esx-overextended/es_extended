@@ -529,6 +529,10 @@ end
 
 lib.onCache("seat", function(newSeat)
     if newSeat == -1 then
+        if not NetworkGetEntityIsNetworked(cache.vehicle) then
+            return
+        end
+
         vehicleEntity                    = cache.vehicle
         local statebag                   = Entity(vehicleEntity).state
         vehicleDbId                      = statebag.id
@@ -543,14 +547,14 @@ lib.onCache("seat", function(newSeat)
             vehicleVinNo = value
         end)
 
-        return monitorVehiclePropertiesThread()
+        monitorVehiclePropertiesThread()
+    elseif cache.seat == -1 then
+        syncVehicleProperties()
+
+        -- remove statebag listeners
+        RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[1])
+        RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[2])
+
+        vehicleDbId, vehicleEntity, vehicleNetId, vehicleVinNo = nil, nil, nil, nil
     end
-
-    syncVehicleProperties()
-
-    -- remove statebag listeners
-    RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[1])
-    RemoveStateBagChangeHandler(vehicleStatebagChangeHandlers[2])
-
-    vehicleDbId, vehicleEntity, vehicleNetId, vehicleVinNo = nil, nil, nil, nil
 end)
