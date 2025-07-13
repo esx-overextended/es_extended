@@ -62,7 +62,7 @@ files {
 }
 
 dependencies {
-    "/server:9073",
-    "/gameBuild:3258",
+    "/server:16811",
+    "/gameBuild:3570",
     "oxmysql"
 }
