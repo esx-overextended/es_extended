@@ -114,6 +114,22 @@ else -- Server
                 end
             })
         end
+
+        --backward-compatibility with esx legacy
+        ---@param src number|string
+        ---@return xPlayer?
+        function ESX.Player(src)
+            ---@diagnostic disable-next-line: param-type-mismatch
+            return ESX.GetPlayerFromId(src) or ESX.GetPlayerFromIdentifier(src) or ESX.GetPlayerFromCid(src)
+        end
+
+        --backward-compatibility with esx legacy
+        ---@param key? string
+        ---@param val? string|string[]
+        ---@return xPlayer[], number
+        function ESX.ExtendedPlayers(key, val)
+            return ESX.GetExtendedPlayers(key, val)
+        end
     end
 
     do setupESX() end
