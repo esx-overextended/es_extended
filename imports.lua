@@ -99,20 +99,36 @@ else -- Server
 
     local function setupESX()
         local _GetPlayerFromId = ESX.GetPlayerFromId
+        local _GetPlayerFromCid = ESX.GetPlayerFromCid
+        local _GetPlayerFromIdentifier = ESX.GetPlayerFromIdentifier
 
         ESX.Jobs = setmetatable({}, jobsMT)
         ESX.Groups = setmetatable({}, groupsMT)
 
-        function ESX.GetPlayerFromId(playerId) ---@diagnostic disable-line: duplicate-set-field
-            local xPlayer = _GetPlayerFromId(playerId)
-
+        local function xPlayerize(xPlayer)
             return xPlayer and setmetatable(xPlayer, {
                 __index = function(self, index)
-                    if index == "coords" then return self.getCoords() end
+                    if index == "coords" then
+                        return self.getCoords()
+                    elseif index == "src" then --backward-compatibility with esx legacy's static player creation, duh!
+                        return self.source
+                    end
 
                     return rawget(self, index)
                 end
             })
+        end
+
+        function ESX.GetPlayerFromCid(cid) ---@diagnostic disable-line: duplicate-set-field
+            return xPlayerize(_GetPlayerFromCid(cid))
+        end
+
+        function ESX.GetPlayerFromId(playerId) ---@diagnostic disable-line: duplicate-set-field
+            return xPlayerize(_GetPlayerFromId(playerId))
+        end
+
+        function ESX.GetPlayerFromIdentifier(identifier) ---@diagnostic disable-line: duplicate-set-field
+            return xPlayerize(_GetPlayerFromIdentifier(identifier))
         end
 
         --backward-compatibility with esx legacy
@@ -128,7 +144,13 @@ else -- Server
         ---@param val? string|string[]
         ---@return xPlayer[], number
         function ESX.ExtendedPlayers(key, val)
-            return ESX.GetExtendedPlayers(key, val)
+            local xPlayers, count = ESX.GetExtendedPlayers(key, val)
+
+            for i = 1, count, 1 do
+                xPlayers[i] = xPlayerize(xPlayers[i])
+            end
+
+            return xPlayers, count
         end
     end
 
