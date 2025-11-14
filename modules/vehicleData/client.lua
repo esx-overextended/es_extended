@@ -158,7 +158,6 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     ESX.Trace(message, "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
 
-    DisplayRadar(false)
     SetEntityVisible(cache.ped, false, false)
     SetPlayerControl(cache.playerId, false, 1 << 8)
 
@@ -176,6 +175,15 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     RenderScriptCams(true, true, 1, true, true)
     CreateMobilePhone(1)
     CellCamActivate(true, true)
+
+    local shouldThreadRemainActive = true
+    Citizen.CreateThreadNow(function()
+        while shouldThreadRemainActive do
+            DisplayRadar(false)
+            Wait(0)
+        end
+    end)
+
     Wait(2000)
 
     for i = 1, numModels do
@@ -189,6 +197,43 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
                 local vehicle = spawnPreviewVehicle(hash, Config.VehicleParser.Position)
 
                 freezeEntity(true, vehicle, Config.VehicleParser.Position)
+
+                -- Keep camera Z-height, only move BACK in XY ====
+                local vehPos = Config.VehicleParser.Position
+                local min, max = GetModelDimensions(hash)
+                local size = vector3(max.x - min.x, max.y - min.y, max.z - min.z)
+                local radius = (#size / 2.0) * 1.18 -- bounding sphere + margin
+
+                -- ORIGINAL camera position (keep Z unchanged)
+                local camX = Config.VehicleParser.Cam.Coords.x
+                local camY = Config.VehicleParser.Cam.Coords.y
+                local camZ = Config.VehicleParser.Cam.Coords.z -- KEEP ORIGINAL Z!
+
+                -- Look at vehicle center (floor + half height)
+                local lookX = vehPos.x
+                local lookY = vehPos.y
+                local lookZ = vehPos.z + (size.z * 0.4)
+
+                -- XY distance only (ignore Z for positioning)
+                local dirX = lookX - camX
+                local dirY = lookY - camY
+                local xyDist = math.sqrt(dirX * dirX + dirY * dirY)
+
+                -- FOV-based required XY distance
+                local halfFovRad = math.rad(Config.VehicleParser.Cam.FOV * 0.65) -- wider effective FOV for height
+                local neededXYDist = radius / math.tan(halfFovRad)
+
+                if neededXYDist > xyDist then
+                    -- Move back ONLY in XY plane, keep original Z
+                    local scale = neededXYDist / xyDist
+                    camX = lookX - dirX * scale
+                    camY = lookY - dirY * scale
+                    -- camZ stays exactly Config.VehicleParser.Cam.Coords.z
+                end
+
+                SetCamCoord(cam, camX, camY, camZ)
+                PointCamAtCoord(cam, lookX, lookY, lookZ)
+                -- ==================================================
 
                 local make = GetMakeNameFromVehicleModel(hash)
 
@@ -295,6 +340,8 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     ESX.HideUI()
     ESX.Trace(message:format(numParsed), "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
+
+    shouldThreadRemainActive = false
 
     DisplayRadar(radarState)
     SetEntityVisible(cache.ped, true, false)
