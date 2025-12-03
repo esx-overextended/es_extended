@@ -143,14 +143,246 @@ local function setPedIntoVehicle(vehicleEntity)
     end
 end
 
+local activeCam = nil
+local initialCoords, initialRadarState = nil, nil
+
+local function setupPreviewCam()
+    if activeCam and DoesCamExist(activeCam) then return activeCam end
+
+    activeCam = CreateCamWithParams(
+        Config.VehicleParser.Cam.Name,
+        Config.VehicleParser.Cam.Coords.x,
+        Config.VehicleParser.Cam.Coords.y,
+        Config.VehicleParser.Cam.Coords.z,
+        Config.VehicleParser.Cam.Rotation.x,
+        Config.VehicleParser.Cam.Rotation.y,
+        Config.VehicleParser.Cam.Rotation.z,
+        Config.VehicleParser.Cam.FOV,
+        Config.VehicleParser.Cam.Active,
+        Config.VehicleParser.Cam.RotationOrder
+    )
+
+    PointCamAtCoord(activeCam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
+    SetCamActive(activeCam, true)
+    RenderScriptCams(true, true, 1, true, true)
+    CreateMobilePhone(1)
+    CellCamActivate(true, true)
+
+    return activeCam
+end
+
+local function cleanupPreviewCam()
+    if not activeCam then return end
+
+    DestroyMobilePhone()
+    CellCamActivate(false, false)
+    RenderScriptCams(false, false, 1, false, false)
+    DestroyAllCams(true)
+    ClearFocus()
+    SetCamActive(activeCam, false)
+
+    activeCam = nil
+end
+
+local function setupEnironment()
+    SetEntityVisible(cache.ped, false, false)
+    SetPlayerControl(cache.playerId, false, 1 << 8)
+
+    initialCoords = GetEntityCoords(cache.ped)
+    initialRadarState = not IsRadarHidden()
+
+    freezeEntity(true, cache.ped, Config.VehicleParser.Position)
+
+    setupPreviewCam()
+
+    Citizen.CreateThreadNow(function()
+        while activeCam do
+            DisplayRadar(false)
+            Wait(0)
+        end
+    end)
+end
+
+local function exitEnvironment()
+    cleanupPreviewCam()
+
+    DisplayRadar(initialRadarState) ---@diagnostic disable-line: param-type-mismatch
+    SetEntityVisible(cache.ped, true, false)
+    SetPlayerControl(cache.playerId, true, 0)
+    SetEntityCoords(cache.ped, initialCoords.x, initialCoords.y, initialCoords.z, false, false, false, false) ---@diagnostic disable-line: need-check-nil
+
+    freezeEntity(false, cache.ped)
+end
+
+local function generateVehicleData(model, params)
+    local vehicleData, vehicleStats
+    local hash = loadModel(model)
+
+    if hash then
+        local vehicle = spawnPreviewVehicle(hash, Config.VehicleParser.Position)
+
+        freezeEntity(true, vehicle, Config.VehicleParser.Position)
+
+        if params?.properties then
+            ESX.Game.SetVehicleProperties(vehicle, params.properties)
+        end
+
+        -- Keep camera Z-height, only move BACK in XY ====
+        local vehPos = Config.VehicleParser.Position
+        local min, max = GetModelDimensions(hash)
+        local size = vector3(max.x - min.x, max.y - min.y, max.z - min.z)
+        local radius = (#size / 2.0) * 1.18 -- bounding sphere + margin
+
+        -- ORIGINAL camera position (keep Z unchanged)
+        local camX = Config.VehicleParser.Cam.Coords.x
+        local camY = Config.VehicleParser.Cam.Coords.y
+        local camZ = Config.VehicleParser.Cam.Coords.z -- KEEP ORIGINAL Z!
+
+        -- Look at vehicle center (floor + half height)
+        local lookX = vehPos.x
+        local lookY = vehPos.y
+        local lookZ = vehPos.z + (size.z * 0.4)
+
+        -- XY distance only (ignore Z for positioning)
+        local dirX = lookX - camX
+        local dirY = lookY - camY
+        local xyDist = math.sqrt(dirX * dirX + dirY * dirY)
+
+        -- FOV-based required XY distance
+        local halfFovRad = math.rad(Config.VehicleParser.Cam.FOV * 0.65) -- wider effective FOV for height
+        local neededXYDist = radius / math.tan(halfFovRad)
+
+        if neededXYDist > xyDist then
+            -- Move back ONLY in XY plane, keep original Z
+            local scale = neededXYDist / xyDist
+            camX = lookX - dirX * scale
+            camY = lookY - dirY * scale
+            -- camZ stays exactly Config.VehicleParser.Cam.Coords.z
+        end
+
+        SetCamCoord(activeCam, camX, camY, camZ) ---@diagnostic disable-line: param-type-mismatch
+        PointCamAtCoord(activeCam, lookX, lookY, lookZ) ---@diagnostic disable-line: param-type-mismatch
+        -- ==================================================
+
+        local make = GetMakeNameFromVehicleModel(hash)
+
+        if make == "" then
+            local make2 = GetMakeNameFromVehicleModel(model:gsub("%A", ""))
+
+            if make2 ~= "CARNOTFOUND" then
+                make = make2
+            end
+        end
+
+        setPedIntoVehicle(vehicle)
+
+        local class = GetVehicleClass(vehicle)
+        local vType
+
+        if IsThisModelACar(hash) then
+            vType = "automobile"
+        elseif IsThisModelABicycle(hash) then
+            vType = "bicycle"
+        elseif IsThisModelABike(hash) then
+            vType = "bike"
+        elseif IsThisModelABoat(hash) then
+            vType = "boat"
+        elseif IsThisModelAHeli(hash) then
+            vType = "heli"
+        elseif IsThisModelAPlane(hash) then
+            vType = "plane"
+        elseif IsThisModelAQuadbike(hash) then
+            vType = "quadbike"
+        elseif IsThisModelAnAmphibiousCar(hash) then
+            vType = "amphibious_automobile"
+        elseif IsThisModelAnAmphibiousQuadbike(hash) then
+            vType = "amphibious_quadbike"
+        elseif IsThisModelATrain(hash) then
+            vType = "train"
+        else
+            vType = (class == 5 and "submarinecar") or (class == 14 and "submarine") or (class == 16 and "blimp") or "trailer"
+        end
+
+        local image
+        if params?.export then
+            local p = promise.new()
+
+            exports["screenshot-basic"]:requestScreenshot({
+                quality = 0.3,
+                encoding = "jpg"
+            }, function(data)
+                TriggerEvent('chat:addMessage', { template = '<img src="{0}" style="max-width: 300px;" />', args = { data } })
+                p:resolve(data)
+            end)
+
+            image = Citizen.Await(p)
+        else
+            image = ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", model) or ""
+        end
+
+        vehicleData = {
+            name = GetLabelText(GetDisplayNameFromVehicleModel(hash)),
+            make = make == "" and make or GetLabelText(make),
+            class = class,
+            seats = GetVehicleModelNumberOfSeats(hash),
+            weapons = DoesVehicleHaveWeapons(vehicle) or nil,
+            doors = GetNumberOfVehicleDoors(vehicle),
+            type = vType,
+            hash = hash,
+            image = image
+        }
+
+        vehicleStats = {
+            braking = ESX.Math.Round(GetVehicleModelMaxBraking(hash), 4),
+            acceleration = ESX.Math.Round(GetVehicleModelAcceleration(hash), 4),
+            speed = ESX.Math.Round(GetVehicleModelEstimatedMaxSpeed(hash), 4),
+            handling = ESX.Math.Round(GetVehicleModelEstimatedAgility(hash), 4),
+        }
+
+        if vType ~= "trailer" and vType ~= "train" then
+            for k, v in pairs(vehicleStats) do
+                vehicleData[k] = v
+            end
+        end
+
+        deleteEntity(vehicle)
+    end
+
+    return vehicleData, vehicleStats
+end
+
+exports("generateVehicleImage", function(entityId, params)
+    local image
+
+    if DoesEntityExist(entityId) then
+        params = params or {}
+        params.fade = params.fade ~= false
+
+        if params.fade then DoScreenFadeOut(0) end
+
+        local properties = ESX.Game.GetVehicleProperties(entityId)
+
+        setupEnironment()
+        Wait(2000)
+
+        if params.fade then DoScreenFadeIn(0) end
+        image = generateVehicleData(GetEntityModel(entityId), { export = true, properties = properties })?.image
+        if params.fade then DoScreenFadeOut(0) end
+
+        exitEnvironment()
+
+        if params.fade then DoScreenFadeIn(1000) end
+    end
+
+    return image
+end)
+
 ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     if not ESX.TriggerServerCallback("esx:isUserAdmin") then return end
 
     local models = GetAllVehicleModels()
     local numModels = #models
     local numParsed = 0
-    local coords = GetEntityCoords(cache.ped)
-    local radarState = not IsRadarHidden()
     local vehicleData, vehicleTopStats = {}, {}
     local message = ("Generating data from vehicle models (%s models loaded)"):format(numModels)
     local specifiedModel = params.model and params.model:lower()
@@ -158,31 +390,11 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     ESX.Trace(message, "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message }, "info", 5000)
 
-    SetEntityVisible(cache.ped, false, false)
-    SetPlayerControl(cache.playerId, false, 1 << 8)
-
-    freezeEntity(true, cache.ped, Config.VehicleParser.Position)
-
     local estimatedRemaining
     local startTime = GetGameTimer()
     message = "Generated vehicle data for %d" .. ("/%d models  \n"):format(numModels)
 
-    local cam = CreateCamWithParams(Config.VehicleParser.Cam.Name, Config.VehicleParser.Cam.Coords.x, Config.VehicleParser.Cam.Coords.y, Config.VehicleParser.Cam.Coords.z, Config.VehicleParser.Cam.Rotation.x,
-        Config.VehicleParser.Cam.Rotation.y, Config.VehicleParser.Cam.Rotation.z, Config.VehicleParser.Cam.FOV, Config.VehicleParser.Cam.Active, Config.VehicleParser.Cam.RotationOrder)
-
-    PointCamAtCoord(cam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
-    SetCamActive(cam, true)
-    RenderScriptCams(true, true, 1, true, true)
-    CreateMobilePhone(1)
-    CellCamActivate(true, true)
-
-    local shouldThreadRemainActive = true
-    Citizen.CreateThreadNow(function()
-        while shouldThreadRemainActive do
-            DisplayRadar(false)
-            Wait(0)
-        end
-    end)
+    setupEnironment()
 
     Wait(2000)
 
@@ -191,164 +403,43 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
         local isThisModelSpecified = specifiedModel == model
 
         if isThisModelSpecified or params?.processAll or (not specifiedModel and not params?.processAll and not ESX.GetVehicleData(model)) then
-            local hash = loadModel(model)
+            local _vehicleData, _vehicleStats = generateVehicleData(model)
 
-            if hash then
-                local vehicle = spawnPreviewVehicle(hash, Config.VehicleParser.Position)
+            if _vehicleData?.type ~= "trailer" and _vehicleData?.type ~= "train" then
+                local vGroup = (_vehicleData?.type == "heli" or _vehicleData?.type == "plane" or _vehicleData?.type == "blimp") and "air" or (_vehicleData?.type == "boat" or _vehicleData?.type == "submarine") and "sea" or "land"
+                local topTypeStats = vehicleTopStats[vGroup]
 
-                freezeEntity(true, vehicle, Config.VehicleParser.Position)
-
-                -- Keep camera Z-height, only move BACK in XY ====
-                local vehPos = Config.VehicleParser.Position
-                local min, max = GetModelDimensions(hash)
-                local size = vector3(max.x - min.x, max.y - min.y, max.z - min.z)
-                local radius = (#size / 2.0) * 1.18 -- bounding sphere + margin
-
-                -- ORIGINAL camera position (keep Z unchanged)
-                local camX = Config.VehicleParser.Cam.Coords.x
-                local camY = Config.VehicleParser.Cam.Coords.y
-                local camZ = Config.VehicleParser.Cam.Coords.z -- KEEP ORIGINAL Z!
-
-                -- Look at vehicle center (floor + half height)
-                local lookX = vehPos.x
-                local lookY = vehPos.y
-                local lookZ = vehPos.z + (size.z * 0.4)
-
-                -- XY distance only (ignore Z for positioning)
-                local dirX = lookX - camX
-                local dirY = lookY - camY
-                local xyDist = math.sqrt(dirX * dirX + dirY * dirY)
-
-                -- FOV-based required XY distance
-                local halfFovRad = math.rad(Config.VehicleParser.Cam.FOV * 0.65) -- wider effective FOV for height
-                local neededXYDist = radius / math.tan(halfFovRad)
-
-                if neededXYDist > xyDist then
-                    -- Move back ONLY in XY plane, keep original Z
-                    local scale = neededXYDist / xyDist
-                    camX = lookX - dirX * scale
-                    camY = lookY - dirY * scale
-                    -- camZ stays exactly Config.VehicleParser.Cam.Coords.z
+                if not topTypeStats then
+                    vehicleTopStats[vGroup] = {}
+                    topTypeStats = vehicleTopStats[vGroup]
                 end
 
-                SetCamCoord(cam, camX, camY, camZ)
-                PointCamAtCoord(cam, lookX, lookY, lookZ)
-                -- ==================================================
-
-                local make = GetMakeNameFromVehicleModel(hash)
-
-                if make == "" then
-                    local make2 = GetMakeNameFromVehicleModel(model:gsub("%A", ""))
-
-                    if make2 ~= "CARNOTFOUND" then
-                        make = make2
+                for k, v in pairs(_vehicleStats) do
+                    if not topTypeStats[k] or v > topTypeStats[k] then
+                        topTypeStats[k] = v
                     end
                 end
-
-                setPedIntoVehicle(vehicle)
-
-                local class = GetVehicleClass(vehicle)
-                local vType
-
-                if IsThisModelACar(hash) then
-                    vType = "automobile"
-                elseif IsThisModelABicycle(hash) then
-                    vType = "bicycle"
-                elseif IsThisModelABike(hash) then
-                    vType = "bike"
-                elseif IsThisModelABoat(hash) then
-                    vType = "boat"
-                elseif IsThisModelAHeli(hash) then
-                    vType = "heli"
-                elseif IsThisModelAPlane(hash) then
-                    vType = "plane"
-                elseif IsThisModelAQuadbike(hash) then
-                    vType = "quadbike"
-                elseif IsThisModelAnAmphibiousCar(hash) then
-                    vType = "amphibious_automobile"
-                elseif IsThisModelAnAmphibiousQuadbike(hash) then
-                    vType = "amphibious_quadbike"
-                elseif IsThisModelATrain(hash) then
-                    vType = "train"
-                else
-                    vType = (class == 5 and "submarinecar") or (class == 14 and "submarine") or (class == 16 and "blimp") or "trailer"
-                end
-
-                local image = ESX.TriggerServerCallback("esx:takeScreenshotFromVehicle", model) or ""
-
-                local data = {
-                    name = GetLabelText(GetDisplayNameFromVehicleModel(hash)),
-                    make = make == "" and make or GetLabelText(make),
-                    class = class,
-                    seats = GetVehicleModelNumberOfSeats(hash),
-                    weapons = DoesVehicleHaveWeapons(vehicle) or nil,
-                    doors = GetNumberOfVehicleDoors(vehicle),
-                    type = vType,
-                    hash = hash,
-                    image = image
-                }
-
-                local stats = {
-                    braking = ESX.Math.Round(GetVehicleModelMaxBraking(hash), 4),
-                    acceleration = ESX.Math.Round(GetVehicleModelAcceleration(hash), 4),
-                    speed = ESX.Math.Round(GetVehicleModelEstimatedMaxSpeed(hash), 4),
-                    handling = ESX.Math.Round(GetVehicleModelEstimatedAgility(hash), 4),
-                }
-
-                if vType ~= "trailer" and vType ~= "train" then
-                    local vGroup = (vType == "heli" or vType == "plane" or vType == "blimp") and "air" or (vType == "boat" or vType == "submarine") and "sea" or "land"
-                    local topTypeStats = vehicleTopStats[vGroup]
-
-                    if not topTypeStats then
-                        vehicleTopStats[vGroup] = {}
-                        topTypeStats = vehicleTopStats[vGroup]
-                    end
-
-                    for k, v in pairs(stats) do
-                        if not topTypeStats[k] or v > topTypeStats[k] then
-                            topTypeStats[k] = v
-                        end
-
-                        data[k] = v
-                    end
-                end
-
-                vehicleData[model] = data
-                numParsed += 1
-
-                deleteEntity(vehicle)
-
-                if isThisModelSpecified and not params.processAll then -- Server requests to generate data of only 1 specified model
-                    break
-                end
-
-                estimatedRemaining = (((GetGameTimer() - startTime) / 1000) / numParsed) * (numModels - numParsed)
-                estimatedRemaining = ("%s:%s"):format(string.format("%02d", math.floor(estimatedRemaining / 60)), string.format("%02d", math.floor(estimatedRemaining % 60)))
-
-                ESX.TextUI(("%sEstimated time remaining: %s"):format(message:format(numParsed), estimatedRemaining), "info")
             end
+
+            vehicleData[model] = _vehicleData
+            numParsed += 1
+
+            if isThisModelSpecified and not params.processAll then -- Server requests to generate data of only 1 specified model
+                break
+            end
+
+            estimatedRemaining = (((GetGameTimer() - startTime) / 1000) / numParsed) * (numModels - numParsed)
+            estimatedRemaining = ("%s:%s"):format(string.format("%02d", math.floor(estimatedRemaining / 60)), string.format("%02d", math.floor(estimatedRemaining % 60)))
+
+            ESX.TextUI(("%sEstimated time remaining: %s"):format(message:format(numParsed), estimatedRemaining), "info")
         end
     end
-
-    DestroyMobilePhone()
-    CellCamActivate(false, false)
-    RenderScriptCams(false, false, 1, false, false)
-    DestroyAllCams(true)
-    ClearFocus()
-    SetCamActive(cam, false)
 
     ESX.HideUI()
     ESX.Trace(message:format(numParsed), "info", true)
     ESX.ShowNotification({ "ESX-Overextended", message:format(numParsed, estimatedRemaining) }, "info", 5000)
 
-    shouldThreadRemainActive = false
-
-    DisplayRadar(radarState)
-    SetEntityVisible(cache.ped, true, false)
-    SetPlayerControl(cache.playerId, true, 0)
-    SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
-
-    freezeEntity(false, cache.ped)
+    exitEnvironment()
 
     return cb(vehicleData, vehicleTopStats)
 end)
