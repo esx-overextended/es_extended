@@ -1,4 +1,5 @@
 fx_version "cerulean"
+use_experimental_fxv2_oal "yes"
 game "gta5"
 lua54 "yes"
 
@@ -50,15 +51,10 @@ files {
     "files/vehicle-images/*.*",
 
     "html/ui.html",
-    "html/css/app.css",
-    "html/js/mustache.min.js",
-    "html/js/wrapper.js",
-    "html/js/app.js",
-    "html/fonts/pdown.ttf",
-    "html/fonts/bankgothic.ttf",
-    "html/img/accounts/bank.png",
-    "html/img/accounts/black_money.png",
-    "html/img/accounts/money.png"
+    "html/css/*.css",
+    "html/js/*.js",
+    "html/fonts/*.ttf",
+    "html/img/**/*.png"
 }
 
 dependencies {

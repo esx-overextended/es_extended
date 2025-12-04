@@ -1,13 +1,28 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="css/app.css" />
-  </head>
-  <body>
-    <div id="hud"></div>
-    <div id="inventory_notifications"></div>
 
-    <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
-    <script src="js/mustache.min.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <link rel="stylesheet" href="css/app.css" />
+
+  <!-- Blackout CSS -->
+  <link rel="stylesheet" href="css/blackout.css" />
+</head>
+
+<body>
+  <div id="hud"></div>
+  <div id="inventory_notifications"></div>
+
+  <!-- Blackout Overlay -->
+  <div id="blackout" class="hidden"></div>
+
+  <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+  <script src="js/mustache.min.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Blackout JS -->
+  <script src="js/blackout.js"></script>
+</body>
+
 </html>

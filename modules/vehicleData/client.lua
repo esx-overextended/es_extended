@@ -136,10 +136,12 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
 end
 
 ---@param vehicleEntity number
-local function setPedIntoVehicle(vehicleEntity)
-    while IsVehicleSeatFree(vehicleEntity, -1) do
+local function setPedIntoVehicle(vehicleEntity, seat)
+    seat = seat or -1
+
+    while DoesEntityExist(vehicleEntity) and IsVehicleSeatFree(vehicleEntity, seat) do
         Wait(0)
-        SetPedIntoVehicle(cache.ped, vehicleEntity, -1)
+        SetPedIntoVehicle(cache.ped, vehicleEntity, seat)
     end
 end
 
@@ -357,21 +359,30 @@ exports("generateVehicleImage", function(entityId, params)
     if DoesEntityExist(entityId) then
         params = params or {}
         params.fade = params.fade ~= false
+        local entityModel = GetEntityModel(entityId)
+        local currentVehicle, currentSeat = cache.vehicle and NetworkGetNetworkIdFromEntity(cache.vehicle), cache.seat
 
-        if params.fade then DoScreenFadeOut(0) end
+        if params.fade then
+            SendNUIMessage({ action = "showBlackout" })
+        end
 
         local properties = ESX.Game.GetVehicleProperties(entityId)
 
         setupEnironment()
         Wait(2000)
 
-        if params.fade then DoScreenFadeIn(0) end
-        image = generateVehicleData(GetEntityModel(entityId), { export = true, properties = properties })?.image
-        if params.fade then DoScreenFadeOut(0) end
+        image = generateVehicleData(entityModel, { export = true, properties = properties })?.image
 
         exitEnvironment()
+        Wait(2000)
 
-        if params.fade then DoScreenFadeIn(1000) end
+        if currentVehicle and NetworkDoesEntityExistWithNetworkId(currentVehicle) then
+            setPedIntoVehicle(NetworkGetEntityFromNetworkId(currentVehicle), currentSeat)
+        end
+
+        if params.fade then
+            SendNUIMessage({ action = "hideBlackout" })
+        end
     end
 
     return image

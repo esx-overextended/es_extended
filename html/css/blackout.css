@@ -1,0 +1,29 @@
+html,
+body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    background: transparent;
+}
+
+#blackout {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999999;
+    opacity: 1;
+    pointer-events: none;
+    display: none;
+    /* initially hidden */
+}
+
+/* enable transitions ONLY when .ready is added */
+#blackout.ready {
+    transition: opacity 1000ms ease;
+}
+
+/* hidden state (fade-out applies only if .ready exists) */
+#blackout.hidden {
+    opacity: 0;
+    display: none;
+}
