@@ -1,11 +1,3 @@
-html,
-body {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    background: transparent;
-}
-
 #blackout {
     position: fixed;
     inset: 0;
@@ -13,8 +5,10 @@ body {
     z-index: 9999999;
     opacity: 1;
     pointer-events: none;
-    display: none;
-    /* initially hidden */
+    transition: none;
+    /* off by default */
+
+    /* element always remains "displayed" so transitions can work */
 }
 
 /* enable transitions ONLY when .ready is added */
@@ -22,8 +16,7 @@ body {
     transition: opacity 1000ms ease;
 }
 
-/* hidden state (fade-out applies only if .ready exists) */
+/* hidden state - this triggers fade-out */
 #blackout.hidden {
     opacity: 0;
-    display: none;
 }
