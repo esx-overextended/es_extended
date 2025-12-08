@@ -166,9 +166,7 @@ local function setupPreviewCam()
 
     PointCamAtCoord(activeCam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
     SetCamActive(activeCam, true)
-    RenderScriptCams(true, true, 1, true, true)
-    CreateMobilePhone(1)
-    CellCamActivate(true, true)
+    RenderScriptCams(true, false, 0, true, true)
 
     return activeCam
 end
@@ -176,8 +174,6 @@ end
 local function cleanupPreviewCam()
     if not activeCam then return end
 
-    DestroyMobilePhone()
-    CellCamActivate(false, false)
     RenderScriptCams(false, false, 1, false, false)
     DestroyAllCams(true)
     ClearFocus()
@@ -187,6 +183,7 @@ local function cleanupPreviewCam()
 end
 
 local function setupEnironment()
+    SetEntityInvincible(cache.ped, true)
     SetEntityVisible(cache.ped, false, false)
     SetPlayerControl(cache.playerId, false, 1 << 8)
 
@@ -208,7 +205,8 @@ end
 local function exitEnvironment()
     cleanupPreviewCam()
 
-    DisplayRadar(initialRadarState) ---@diagnostic disable-line: param-type-mismatch
+    DisplayRadar(initialRadarState) ---@diagnostic disable-line: param-type-mismatch\
+    SetEntityInvincible(cache.ped, false)
     SetEntityVisible(cache.ped, true, false)
     SetPlayerControl(cache.playerId, true, 0)
     SetEntityCoords(cache.ped, initialCoords.x, initialCoords.y, initialCoords.z, false, false, false, false) ---@diagnostic disable-line: need-check-nil
@@ -369,16 +367,29 @@ exports("generateVehicleImage", function(entityId, params)
         local properties = ESX.Game.GetVehicleProperties(entityId)
 
         setupEnironment()
-        Wait(2000)
 
         image = generateVehicleData(entityModel, { export = true, properties = properties })?.image
 
         exitEnvironment()
-        Wait(2000)
 
-        if currentVehicle and NetworkDoesEntityExistWithNetworkId(currentVehicle) then
-            setPedIntoVehicle(NetworkGetEntityFromNetworkId(currentVehicle), currentSeat)
+        SetEntityInvincible(cache.ped, true)
+
+        if currentVehicle then
+            local wait = 0
+            local doesEntityExistWithNetworkId = false
+
+            while not doesEntityExistWithNetworkId and wait < 2000 do
+                Wait(0)
+                wait += 1
+                doesEntityExistWithNetworkId = NetworkDoesEntityExistWithNetworkId(currentVehicle)
+            end
+
+            if doesEntityExistWithNetworkId then
+                setPedIntoVehicle(NetworkGetEntityFromNetworkId(currentVehicle), currentSeat)
+            end
         end
+
+        SetEntityInvincible(cache.ped, false)
 
         if params.fade then
             SendNUIMessage({ action = "hideBlackout" })
@@ -406,8 +417,6 @@ ESX.RegisterClientCallback("esx:generateVehicleData", function(cb, params)
     message = "Generated vehicle data for %d" .. ("/%d models  \n"):format(numModels)
 
     setupEnironment()
-
-    Wait(2000)
 
     for i = 1, numModels do
         local model = models[i]:lower()
