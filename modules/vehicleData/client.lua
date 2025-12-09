@@ -59,6 +59,7 @@ local function freezeEntity(state, entity, atCoords)
 
         while not hasCollisionLoadedAroundEntity(entity) do
             RequestCollisionAtCoord(atCoords.x, atCoords.y, atCoords.z)
+            RequestAdditionalCollisionAtCoord(atCoords.x, atCoords.y, atCoords.z)
             Wait(0)
         end
     end
@@ -128,8 +129,11 @@ local function spawnPreviewVehicle(vehicleModel, atCoords)
 
     while not DoesEntityExist(vehicleEntity) do Wait(0) end
 
+    SetFocusEntity(vehicleEntity)
+    SetEntityLoadCollisionFlag(vehicleEntity, true)
     SetVehRadioStation(vehicleEntity, "OFF")
     SetVehicleNeedsToBeHotwired(vehicleEntity, false)
+    SetVehicleEngineOn(vehicleEntity, true, true, false)
     freezeEntity(true, vehicleEntity, atCoords)
 
     return vehicleEntity
@@ -140,8 +144,8 @@ local function setPedIntoVehicle(vehicleEntity, seat)
     seat = seat or -1
 
     while DoesEntityExist(vehicleEntity) and IsVehicleSeatFree(vehicleEntity, seat) do
-        Wait(0)
         SetPedIntoVehicle(cache.ped, vehicleEntity, seat)
+        Wait(0)
     end
 end
 
@@ -167,6 +171,8 @@ local function setupPreviewCam()
     PointCamAtCoord(activeCam, Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z + 0.65)
     SetCamActive(activeCam, true)
     RenderScriptCams(true, false, 0, true, true)
+    SetFocusArea(Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z, 0.0, 0.0, 0.0)
+    SetHdArea(Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z, 100.0)
 
     return activeCam
 end
@@ -174,6 +180,9 @@ end
 local function cleanupPreviewCam()
     if not activeCam then return end
 
+
+    ClearHdArea()
+    ClearFocus()
     RenderScriptCams(false, false, 1, false, false)
     DestroyAllCams(true)
     ClearFocus()
@@ -195,10 +204,15 @@ local function setupEnironment()
     setupPreviewCam()
 
     Citizen.CreateThreadNow(function()
+        local hours, minutes, seconds = GetClockHours(), GetClockMinutes(), GetClockSeconds()
+
         while activeCam do
             DisplayRadar(false)
+            NetworkOverrideClockTime(12, 0, 0)
             Wait(0)
         end
+
+        NetworkOverrideClockTime(hours, minutes, seconds)
     end)
 end
 
@@ -311,7 +325,7 @@ local function generateVehicleData(model, params)
                 quality = 0.3,
                 encoding = "jpg"
             }, function(data)
-                TriggerEvent('chat:addMessage', { template = '<img src="{0}" style="max-width: 300px;" />', args = { data } })
+                -- TriggerEvent('chat:addMessage', { template = '<img src="{0}" style="max-width: 300px;" />', args = { data } })
                 p:resolve(data)
             end)
 
@@ -362,6 +376,7 @@ exports("generateVehicleImage", function(entityId, params)
 
         if params.fade then
             SendNUIMessage({ action = "showBlackout" })
+            Wait(10)
         end
 
         local properties = ESX.Game.GetVehicleProperties(entityId)
