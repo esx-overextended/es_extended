@@ -174,6 +174,14 @@ local function setupPreviewCam()
     SetFocusArea(Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z, 0.0, 0.0, 0.0)
     SetHdArea(Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z, 100.0)
 
+    if NewLoadSceneStart(Config.VehicleParser.Position.x, Config.VehicleParser.Position.y, Config.VehicleParser.Position.z, 0, 0, 0, 100.0, 0) then
+        while not IsNewLoadSceneLoaded() do
+            Wait(0)
+        end
+
+        NewLoadSceneStop()
+    end
+
     return activeCam
 end
 
@@ -191,6 +199,12 @@ local function cleanupPreviewCam()
     activeCam = nil
 end
 
+local function setTime(hour, minute, second)
+    SetClockTime(hour, minute, second)
+    AdvanceClockTimeTo(hour, minute, second)
+    NetworkOverrideClockTime(hour, minute, second)
+end
+
 local function setupEnironment()
     SetEntityInvincible(cache.ped, true)
     SetEntityVisible(cache.ped, false, false)
@@ -199,20 +213,21 @@ local function setupEnironment()
     initialCoords = GetEntityCoords(cache.ped)
     initialRadarState = not IsRadarHidden()
 
-    freezeEntity(true, cache.ped, Config.VehicleParser.Position)
+    local f_hours, f_minutes, f_seconds = 12, 0, 0
+    local og_hours, og_minutes, og_seconds = GetClockHours(), GetClockMinutes(), GetClockSeconds()
 
+    setTime(f_hours, f_minutes, f_seconds)
+    freezeEntity(true, cache.ped, Config.VehicleParser.Position)
     setupPreviewCam()
 
     Citizen.CreateThreadNow(function()
-        local hours, minutes, seconds = GetClockHours(), GetClockMinutes(), GetClockSeconds()
-
         while activeCam do
             DisplayRadar(false)
-            NetworkOverrideClockTime(12, 0, 0)
+            setTime(f_hours, f_minutes, f_seconds)
             Wait(0)
         end
 
-        NetworkOverrideClockTime(hours, minutes, seconds)
+        setTime(og_hours, og_minutes, og_seconds)
     end)
 end
 
