@@ -1,7 +1,7 @@
 {
     "adder": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7,
@@ -54,7 +54,7 @@
         "seats": 4,
         "speed": 61.0891,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "akuma": {
         "acceleration": 0.4,
@@ -100,7 +100,7 @@
     },
     "alpha": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -123,7 +123,7 @@
         "make": "Buckingham",
         "name": "Alpha-Z1",
         "seats": 1,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "ambulance": {
@@ -153,7 +153,7 @@
         "seats": 6,
         "speed": 47.2565,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "annihilator2": {
         "acceleration": 5.292,
@@ -168,7 +168,7 @@
         "seats": 6,
         "speed": 52.7096,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "apc": {
         "acceleration": 0.21,
@@ -183,7 +183,7 @@
         "seats": 4,
         "speed": 23.0063,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "ardent": {
         "acceleration": 0.285,
@@ -198,7 +198,7 @@
         "seats": 2,
         "speed": 47.791,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "armytanker": {
         "class": 11,
@@ -300,6 +300,20 @@
         "speed": 42.8105,
         "type": "automobile"
     },
+    "astrale": {
+        "acceleration": 0.32,
+        "braking": 0.66,
+        "class": 5,
+        "doors": 4,
+        "handling": 0.775,
+        "hash": 1596736441,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/astrale.jpg",
+        "make": "Pfister",
+        "name": "Astrale",
+        "seats": 2,
+        "speed": 49.5982,
+        "type": "automobile"
+    },
     "astron": {
         "acceleration": 0.324,
         "braking": 0.48,
@@ -330,7 +344,7 @@
     },
     "avarus": {
         "acceleration": 0.27,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.65,
@@ -355,7 +369,7 @@
         "seats": 3,
         "speed": 95.9834,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "avenger2": {
         "acceleration": 8.82,
@@ -370,7 +384,7 @@
         "seats": 3,
         "speed": 95.9834,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "avenger3": {
         "acceleration": 8.82,
@@ -385,7 +399,7 @@
         "seats": 3,
         "speed": 95.9834,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "avenger4": {
         "acceleration": 8.82,
@@ -400,7 +414,7 @@
         "seats": 3,
         "speed": 95.9834,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "avisa": {
         "acceleration": 10.5,
@@ -413,7 +427,7 @@
         "make": "Kraken",
         "name": "Avisa",
         "seats": 4,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "bagger": {
@@ -465,7 +479,7 @@
         "make": "Gallivanter",
         "name": "Baller",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller3": {
@@ -479,7 +493,7 @@
         "make": "Gallivanter",
         "name": "Baller LE",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller4": {
@@ -493,7 +507,7 @@
         "make": "Gallivanter",
         "name": "Baller LE LWB",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller5": {
@@ -507,7 +521,7 @@
         "make": "Gallivanter",
         "name": "Baller LE (Armored)",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller6": {
@@ -521,7 +535,7 @@
         "make": "Gallivanter",
         "name": "Baller LE LWB (Armored)",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "baller7": {
@@ -554,7 +568,7 @@
     },
     "banshee": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.82,
@@ -568,7 +582,7 @@
     },
     "banshee2": {
         "acceleration": 0.3475,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7275,
@@ -610,7 +624,7 @@
     },
     "barracks2": {
         "acceleration": 0.23,
-        "braking": 1.0,
+        "braking": 1,
         "class": 19,
         "doors": 3,
         "handling": 0.61,
@@ -649,7 +663,7 @@
         "seats": 4,
         "speed": 39.938,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "bati": {
         "acceleration": 0.3,
@@ -723,7 +737,7 @@
     },
     "bestiagts": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.7,
@@ -863,7 +877,7 @@
     },
     "blazer": {
         "acceleration": 0.2,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.58,
@@ -891,7 +905,7 @@
     },
     "blazer3": {
         "acceleration": 0.2,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.58,
@@ -905,7 +919,7 @@
     },
     "blazer4": {
         "acceleration": 0.25,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.63,
@@ -919,7 +933,7 @@
     },
     "blazer5": {
         "acceleration": 0.272,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.652,
@@ -930,7 +944,7 @@
         "seats": 1,
         "speed": 40.8773,
         "type": "quadbike",
-        "weapons": 1
+        "weapons": true
     },
     "blimp": {
         "acceleration": 5.684,
@@ -943,7 +957,7 @@
         "make": "",
         "name": "Atomic Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blimp2": {
@@ -957,7 +971,7 @@
         "make": "",
         "name": "Xero Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blimp3": {
@@ -971,7 +985,7 @@
         "make": "",
         "name": "Blimp",
         "seats": 4,
-        "speed": 70.0,
+        "speed": 70,
         "type": "blimp"
     },
     "blista": {
@@ -1018,7 +1032,7 @@
     },
     "bmx": {
         "acceleration": 0.16,
-        "braking": 3.0,
+        "braking": 3,
         "class": 13,
         "doors": 1,
         "handling": 0.54,
@@ -1101,7 +1115,7 @@
         "seats": 6,
         "speed": 36.5148,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "boor": {
         "acceleration": 0.267,
@@ -1186,7 +1200,7 @@
         "seats": 5,
         "speed": 39.4684,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "boxville6": {
         "acceleration": 0.11,
@@ -1423,7 +1437,7 @@
         "make": "Albany",
         "name": "Fränken Stange",
         "seats": 4,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "btype3": {
@@ -1498,7 +1512,7 @@
     },
     "buffalo3": {
         "acceleration": 0.31,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 6,
         "handling": 0.69,
@@ -1549,7 +1563,7 @@
         "make": "HVY",
         "name": "Dozer",
         "seats": 1,
-        "speed": 5.0,
+        "speed": 5,
         "type": "automobile"
     },
     "bullet": {
@@ -1663,7 +1677,7 @@
         "seats": 4,
         "speed": 57.9072,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "buzzard2": {
         "acceleration": 5.39,
@@ -1678,7 +1692,7 @@
         "seats": 4,
         "speed": 57.9072,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "cablecar": {
         "class": 21,
@@ -1773,7 +1787,7 @@
         "seats": 5,
         "speed": 38.6133,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "caracara2": {
         "acceleration": 0.27,
@@ -1998,7 +2012,7 @@
         "seats": 2,
         "speed": 37.2117,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "cerberus2": {
         "acceleration": 0.19,
@@ -2013,7 +2027,7 @@
         "seats": 2,
         "speed": 37.2117,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "cerberus3": {
         "acceleration": 0.19,
@@ -2028,7 +2042,7 @@
         "seats": 2,
         "speed": 37.2117,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "champion": {
         "acceleration": 0.359,
@@ -2127,11 +2141,11 @@
         "seats": 2,
         "speed": 22.5872,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "chimera": {
         "acceleration": 0.275,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 0,
         "handling": 0.655,
@@ -2436,7 +2450,7 @@
         "seats": 2,
         "speed": 61.3214,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "contender": {
         "acceleration": 0.26,
@@ -2575,7 +2589,7 @@
         "make": "",
         "name": "Cruiser",
         "seats": 1,
-        "speed": 15.0,
+        "speed": 15,
         "type": "bicycle"
     },
     "crusader": {
@@ -2762,7 +2776,7 @@
     },
     "deveste": {
         "acceleration": 0.42,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.85,
@@ -2845,7 +2859,7 @@
         "type": "automobile"
     },
     "dinghy": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2857,10 +2871,10 @@
         "seats": 4,
         "speed": 41.6667,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "dinghy2": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2874,7 +2888,7 @@
         "type": "boat"
     },
     "dinghy3": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2886,10 +2900,10 @@
         "seats": 4,
         "speed": 41.6667,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "dinghy4": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2901,10 +2915,10 @@
         "seats": 4,
         "speed": 41.6667,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "dinghy5": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -2916,7 +2930,7 @@
         "seats": 5,
         "speed": 41.6667,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "dloader": {
         "acceleration": 0.17,
@@ -3009,7 +3023,7 @@
         "make": "Vapid",
         "name": "Pisswasser Dominator",
         "seats": 2,
-        "speed": 49.0,
+        "speed": 49,
         "type": "automobile"
     },
     "dominator3": {
@@ -3140,7 +3154,7 @@
     },
     "drafter": {
         "acceleration": 0.342,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.722,
@@ -3177,7 +3191,7 @@
         "make": "Dinka",
         "name": "Chavos V6",
         "seats": 4,
-        "speed": 44.0,
+        "speed": 44,
         "type": "automobile"
     },
     "driftcheburek": {
@@ -3220,6 +3234,20 @@
         "name": "Dominator FX",
         "seats": 2,
         "speed": 44.3333,
+        "type": "automobile"
+    },
+    "driftdominator9": {
+        "acceleration": 0.7108,
+        "braking": 0.93,
+        "class": 4,
+        "doors": 4,
+        "handling": 1.0908,
+        "hash": -855850193,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftdominator9.jpg",
+        "make": "Vapid",
+        "name": "Dominator GT",
+        "seats": 2,
+        "speed": 45.3333,
         "type": "automobile"
     },
     "drifteuros": {
@@ -3334,6 +3362,20 @@
         "speed": 44.6667,
         "type": "automobile"
     },
+    "driftkeitora": {
+        "acceleration": 0.6075,
+        "braking": 0.285,
+        "class": 11,
+        "doors": 3,
+        "handling": 0.9875,
+        "hash": -1555091703,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftkeitora.jpg",
+        "make": "Shitzu",
+        "name": "Keitora",
+        "seats": 2,
+        "speed": 44.12,
+        "type": "automobile"
+    },
     "driftl352": {
         "acceleration": 0.716,
         "braking": 0.32,
@@ -3376,6 +3418,20 @@
         "speed": 46.2667,
         "type": "automobile"
     },
+    "driftrt3000": {
+        "acceleration": 0.71,
+        "braking": 1,
+        "class": 6,
+        "doors": 4,
+        "handling": 1.09,
+        "hash": 1730644782,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftrt3000.jpg",
+        "make": "Dinka",
+        "name": "RT3000",
+        "seats": 2,
+        "speed": 44.3333,
+        "type": "automobile"
+    },
     "driftsentinel": {
         "acceleration": 0.716,
         "braking": 0.85,
@@ -3386,6 +3442,20 @@
         "image": "https://cfx-nui-es_extended/files/vehicle-images/driftsentinel.jpg",
         "make": "Ubermacht",
         "name": "Sentinel Classic Widebody",
+        "seats": 2,
+        "speed": 44.6667,
+        "type": "automobile"
+    },
+    "driftsentinel2": {
+        "acceleration": 0.71,
+        "braking": 0.9,
+        "class": 3,
+        "doors": 4,
+        "handling": 1.09,
+        "hash": -1006198950,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/driftsentinel2.jpg",
+        "make": "Ubermacht",
+        "name": "Sentinel XS",
         "seats": 2,
         "speed": 44.6667,
         "type": "automobile"
@@ -3585,11 +3655,11 @@
         "seats": 2,
         "speed": 38.876,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "dune4": {
         "acceleration": 0.324,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.704,
@@ -3603,7 +3673,7 @@
     },
     "dune5": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 0,
         "handling": 0.7,
@@ -3659,7 +3729,7 @@
     },
     "elegy": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -3771,7 +3841,7 @@
     },
     "entity2": {
         "acceleration": 0.355,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.735,
@@ -3785,7 +3855,7 @@
     },
     "entity3": {
         "acceleration": 0.3545,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.7845,
@@ -4188,7 +4258,7 @@
         "seats": 8,
         "speed": 39.2959,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "fixter": {
         "acceleration": 0.135,
@@ -4206,7 +4276,7 @@
     },
     "flashgt": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.7,
@@ -4260,6 +4330,20 @@
         "speed": 52.8,
         "type": "automobile"
     },
+    "fmj2": {
+        "acceleration": 0.3875,
+        "braking": 0.87,
+        "class": 7,
+        "doors": 3,
+        "handling": 0.8425,
+        "hash": -1007324375,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/fmj2.jpg",
+        "make": "Vapid",
+        "name": "FMJ MK V",
+        "seats": 2,
+        "speed": 51.916,
+        "type": "automobile"
+    },
     "forklift": {
         "acceleration": 0.18,
         "braking": 0.3,
@@ -4271,7 +4355,7 @@
         "make": "HVY",
         "name": "Forklift",
         "seats": 1,
-        "speed": 10.0,
+        "speed": 10,
         "type": "automobile"
     },
     "formula": {
@@ -4447,7 +4531,7 @@
         "seats": 4,
         "speed": 56.6681,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "frogger2": {
         "acceleration": 5.488,
@@ -4462,7 +4546,7 @@
         "seats": 4,
         "speed": 56.6681,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "fugitive": {
         "acceleration": 0.2,
@@ -4480,7 +4564,7 @@
     },
     "furia": {
         "acceleration": 0.365,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.745,
@@ -4494,7 +4578,7 @@
     },
     "furoregt": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.715,
@@ -4531,7 +4615,7 @@
         "make": "Karin",
         "name": "Futo",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "automobile"
     },
     "futo2": {
@@ -4648,7 +4732,7 @@
     },
     "gb200": {
         "acceleration": 0.315,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.695,
@@ -4824,6 +4908,20 @@
         "speed": 45.8691,
         "type": "automobile"
     },
+    "gt750": {
+        "acceleration": 0.332,
+        "braking": 0.47,
+        "class": 5,
+        "doors": 4,
+        "handling": 0.712,
+        "hash": 1380582820,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/gt750.jpg",
+        "make": "Grotti",
+        "name": "GT750",
+        "seats": 2,
+        "speed": 49.7165,
+        "type": "automobile"
+    },
     "guardian": {
         "acceleration": 0.21,
         "braking": 0.6,
@@ -4893,7 +4991,7 @@
         "seats": 3,
         "speed": 20.9333,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "handler": {
         "acceleration": 0.14,
@@ -4918,7 +5016,7 @@
         "hash": 1580292663,
         "image": "https://cfx-nui-es_extended/files/vehicle-images/hardy.jpg",
         "make": "Annis",
-        "name": "Hardy",
+        "name": "Hardy Way",
         "seats": 4,
         "speed": 47.561,
         "type": "automobile"
@@ -4995,7 +5093,7 @@
     },
     "hexer": {
         "acceleration": 0.26,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.64,
@@ -5046,7 +5144,7 @@
         "make": "Buckingham",
         "name": "Howard NX-25",
         "seats": 1,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "hunter": {
@@ -5062,7 +5160,7 @@
         "seats": 2,
         "speed": 58.5543,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "huntley": {
         "acceleration": 0.265,
@@ -5105,11 +5203,11 @@
         "seats": 1,
         "speed": 109.7643,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "ignus": {
         "acceleration": 0.3835,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.7635,
@@ -5333,7 +5431,7 @@
     },
     "innovation": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.7,
@@ -5342,7 +5440,7 @@
         "make": "LCC",
         "name": "Innovation",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "bike"
     },
     "insurgent": {
@@ -5358,7 +5456,7 @@
         "seats": 9,
         "speed": 35.4436,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "insurgent2": {
         "acceleration": 0.24,
@@ -5387,7 +5485,7 @@
         "seats": 9,
         "speed": 35.4436,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "intruder": {
         "acceleration": 0.2,
@@ -5475,7 +5573,7 @@
     },
     "issi7": {
         "acceleration": 0.305,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.685,
@@ -5499,6 +5597,20 @@
         "name": "Issi Rally",
         "seats": 4,
         "speed": 48.2089,
+        "type": "automobile"
+    },
+    "itali2": {
+        "acceleration": 0.3,
+        "braking": 0.6,
+        "class": 5,
+        "doors": 4,
+        "handling": 0.68,
+        "hash": 893780296,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/itali2.jpg",
+        "make": "Grotti",
+        "name": "Itali Classic",
+        "seats": 2,
+        "speed": 49.6692,
         "type": "automobile"
     },
     "italigtb": {
@@ -5596,7 +5708,7 @@
         "make": "Dewbauchee",
         "name": "JB 700",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "jb7002": {
@@ -5610,7 +5722,7 @@
         "make": "Dewbauchee",
         "name": "JB 700W",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "jester": {
@@ -5698,7 +5810,7 @@
         "type": "plane"
     },
     "jetmax": {
-        "acceleration": 17.0,
+        "acceleration": 17,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -5708,7 +5820,7 @@
         "make": "Shitzu",
         "name": "Jetmax",
         "seats": 2,
-        "speed": 45.0,
+        "speed": 45,
         "type": "boat"
     },
     "journey": {
@@ -5769,7 +5881,7 @@
     },
     "kalahari": {
         "acceleration": 0.26,
-        "braking": 1.0,
+        "braking": 1,
         "class": 9,
         "doors": 4,
         "handling": 0.64,
@@ -5823,6 +5935,20 @@
         "speed": 44.6584,
         "type": "automobile"
     },
+    "keitora": {
+        "acceleration": 0.1185,
+        "braking": 0.285,
+        "class": 11,
+        "doors": 3,
+        "handling": 0.4985,
+        "hash": -402415705,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/keitora.jpg",
+        "make": "Shitzu",
+        "name": "Keitora",
+        "seats": 2,
+        "speed": 25.5579,
+        "type": "automobile"
+    },
     "khamelion": {
         "acceleration": 0.15,
         "braking": 0.9,
@@ -5850,7 +5976,7 @@
         "seats": 4,
         "speed": 18.1221,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "komoda": {
         "acceleration": 0.367,
@@ -5877,9 +6003,9 @@
         "make": "RUNE",
         "name": "Kosatka",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine",
-        "weapons": 1
+        "weapons": true
     },
     "krieger": {
         "acceleration": 0.374,
@@ -5992,7 +6118,7 @@
         "seats": 1,
         "speed": 91.2871,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "le7b": {
         "acceleration": 0.371,
@@ -6049,7 +6175,7 @@
         "seats": 5,
         "speed": 39.2704,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "lm87": {
         "acceleration": 0.3765,
@@ -6067,7 +6193,7 @@
     },
     "locust": {
         "acceleration": 0.334,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.714,
@@ -6080,7 +6206,7 @@
         "type": "automobile"
     },
     "longfin": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -6092,6 +6218,20 @@
         "seats": 4,
         "speed": 46.6667,
         "type": "boat"
+    },
+    "luiva": {
+        "acceleration": 0.38,
+        "braking": 0.75,
+        "class": 7,
+        "doors": 3,
+        "handling": 0.76,
+        "hash": -938068410,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/luiva.jpg",
+        "make": "Progen",
+        "name": "Luiva",
+        "seats": 2,
+        "speed": 54.0819,
+        "type": "automobile"
     },
     "lurcher": {
         "acceleration": 0.29,
@@ -6137,7 +6277,7 @@
     },
     "lynx": {
         "acceleration": 0.315,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.695,
@@ -6258,7 +6398,7 @@
         "make": "Dinka",
         "name": "Marquis",
         "seats": 4,
-        "speed": 10.0,
+        "speed": 10,
         "type": "boat"
     },
     "marshall": {
@@ -6316,7 +6456,7 @@
         "seats": 4,
         "speed": 54.0675,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "maverick2": {
         "acceleration": 5.096,
@@ -6331,7 +6471,7 @@
         "seats": 4,
         "speed": 54.0675,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "menacer": {
         "acceleration": 0.2,
@@ -6346,7 +6486,7 @@
         "seats": 5,
         "speed": 31.794,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "mesa": {
         "acceleration": 0.17,
@@ -6469,7 +6609,7 @@
         "seats": 1,
         "speed": 9.7297,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "minivan": {
         "acceleration": 0.15,
@@ -6540,7 +6680,7 @@
         "seats": 3,
         "speed": 76.7957,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "molotok": {
         "acceleration": 14.7,
@@ -6555,7 +6695,7 @@
         "seats": 1,
         "speed": 91.2871,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "monroe": {
         "acceleration": 0.28,
@@ -6568,7 +6708,7 @@
         "make": "Pegassi",
         "name": "Monroe",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "monster": {
@@ -6811,7 +6951,7 @@
     },
     "nero": {
         "acceleration": 0.3375,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.7175,
@@ -6878,7 +7018,7 @@
         "seats": 4,
         "speed": 36.833,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "nimbus": {
         "acceleration": 8.134,
@@ -6896,7 +7036,7 @@
     },
     "ninef": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.71,
@@ -6910,7 +7050,7 @@
     },
     "ninef2": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.71,
@@ -6949,7 +7089,7 @@
         "seats": 1,
         "speed": 87.7058,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "novak": {
         "acceleration": 0.3,
@@ -6967,7 +7107,7 @@
     },
     "omnis": {
         "acceleration": 0.305,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 3,
         "handling": 0.685,
@@ -6981,7 +7121,7 @@
     },
     "omnisegt": {
         "acceleration": 0.58,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 6,
         "handling": 0.96,
@@ -7034,7 +7174,7 @@
         "seats": 1,
         "speed": 48.4978,
         "type": "bike",
-        "weapons": 1
+        "weapons": true
     },
     "oppressor2": {
         "acceleration": 0.38,
@@ -7049,7 +7189,7 @@
         "seats": 1,
         "speed": 47.0927,
         "type": "bike",
-        "weapons": 1
+        "weapons": true
     },
     "oracle": {
         "acceleration": 0.26,
@@ -7165,7 +7305,7 @@
     },
     "paragon": {
         "acceleration": 0.329,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.709,
@@ -7190,7 +7330,7 @@
         "seats": 2,
         "speed": 44.828,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "paragon3": {
         "acceleration": 0.33,
@@ -7208,7 +7348,7 @@
     },
     "pariah": {
         "acceleration": 0.321,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.701,
@@ -7273,9 +7413,9 @@
         "make": "",
         "name": "Kurtz 31 Patrol Boat",
         "seats": 4,
-        "speed": 40.0,
+        "speed": 40,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "pbus": {
         "acceleration": 0.14,
@@ -7542,6 +7682,34 @@
         "seats": 1,
         "speed": 27.152,
         "type": "bike"
+    },
+    "polbuffalo": {
+        "acceleration": 0.29,
+        "braking": 0.9,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.67,
+        "hash": 287906327,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/polbuffalo.jpg",
+        "make": "Bravado",
+        "name": "Buffalo Cruiser",
+        "seats": 4,
+        "speed": 46.2816,
+        "type": "automobile"
+    },
+    "polbuffalo6": {
+        "acceleration": 0.3425,
+        "braking": 0.95,
+        "class": 18,
+        "doors": 6,
+        "handling": 0.7225,
+        "hash": 617517171,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/polbuffalo6.jpg",
+        "make": "Bravado",
+        "name": "Buffalo STX Pursuit",
+        "seats": 4,
+        "speed": 48.308,
+        "type": "automobile"
     },
     "polcaracara": {
         "acceleration": 0.27,
@@ -7836,7 +8004,7 @@
         "seats": 4,
         "speed": 56.5962,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "polterminus": {
         "acceleration": 0.269,
@@ -7965,7 +8133,7 @@
         "type": "automobile"
     },
     "predator": {
-        "acceleration": 14.0,
+        "acceleration": 14,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -7975,9 +8143,9 @@
         "make": "",
         "name": "Police Predator",
         "seats": 4,
-        "speed": 40.0,
+        "speed": 40,
         "type": "boat",
-        "weapons": 1
+        "weapons": true
     },
     "premier": {
         "acceleration": 0.2,
@@ -8070,9 +8238,9 @@
         "make": "Buckingham",
         "name": "Pyro",
         "seats": 2,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "r300": {
         "acceleration": 0.3288,
@@ -8129,7 +8297,7 @@
         "seats": 1,
         "speed": 103.975,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "raketrailer": {
         "class": 11,
@@ -8185,7 +8353,7 @@
     },
     "rapidgt": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.74,
@@ -8199,7 +8367,7 @@
     },
     "rapidgt2": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.74,
@@ -8518,7 +8686,7 @@
         "seats": 2,
         "speed": 18.3333,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "riata": {
         "acceleration": 0.25,
@@ -8561,7 +8729,7 @@
         "seats": 6,
         "speed": 35.9341,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "ripley": {
         "acceleration": 0.16,
@@ -8602,7 +8770,7 @@
         "make": "Western",
         "name": "Rogue",
         "seats": 2,
-        "speed": 100.0,
+        "speed": 100,
         "type": "plane"
     },
     "romero": {
@@ -8621,7 +8789,7 @@
     },
     "rrocket": {
         "acceleration": 0.382,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 0,
         "handling": 0.762,
@@ -8635,7 +8803,7 @@
     },
     "rt3000": {
         "acceleration": 0.312,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.692,
@@ -8691,7 +8859,7 @@
     },
     "ruiner2": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 4,
         "doors": 4,
         "handling": 0.71,
@@ -8702,7 +8870,7 @@
         "seats": 2,
         "speed": 49.7632,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "ruiner3": {
         "acceleration": 0.28,
@@ -8888,7 +9056,7 @@
     },
     "sanctus": {
         "acceleration": 0.405,
-        "braking": 1.0,
+        "braking": 1,
         "class": 8,
         "doors": 1,
         "handling": 0.785,
@@ -8941,7 +9109,7 @@
         "seats": 4,
         "speed": 65.1953,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "savestra": {
         "acceleration": 0.2375,
@@ -9038,7 +9206,7 @@
         "make": "Benefactor",
         "name": "Schafter V12",
         "seats": 4,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "schafter4": {
@@ -9066,7 +9234,7 @@
         "make": "Benefactor",
         "name": "Schafter V12 (Armored)",
         "seats": 4,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "schafter6": {
@@ -9138,7 +9306,7 @@
         "seats": 2,
         "speed": 49.3536,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "scrap": {
         "acceleration": 0.13,
@@ -9350,6 +9518,20 @@
         "speed": 50.4563,
         "type": "automobile"
     },
+    "sentinel6": {
+        "acceleration": 0.295,
+        "braking": 0.65,
+        "class": 1,
+        "doors": 6,
+        "handling": 0.675,
+        "hash": -358638792,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/sentinel6.jpg",
+        "make": "Ubermacht",
+        "name": "Sentinel XS4",
+        "seats": 4,
+        "speed": 46.548,
+        "type": "automobile"
+    },
     "serrano": {
         "acceleration": 0.2,
         "braking": 0.4,
@@ -9366,7 +9548,7 @@
     },
     "seven70": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.715,
@@ -9394,7 +9576,7 @@
     },
     "sheava": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.71,
@@ -9604,7 +9786,7 @@
     },
     "specter": {
         "acceleration": 0.32,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 2,
         "handling": 0.7,
@@ -9631,7 +9813,7 @@
         "type": "automobile"
     },
     "speeder": {
-        "acceleration": 16.0,
+        "acceleration": 16,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -9811,7 +9993,7 @@
         "seats": 1,
         "speed": 87.5,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "stinger": {
         "acceleration": 0.26,
@@ -9966,11 +10148,11 @@
         "seats": 1,
         "speed": 70.7107,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "stromberg": {
         "acceleration": 0.29,
-        "braking": 1.0,
+        "braking": 1,
         "class": 5,
         "doors": 2,
         "handling": 0.67,
@@ -9981,7 +10163,7 @@
         "seats": 2,
         "speed": 45.8691,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "stryder": {
         "acceleration": 0.36,
@@ -10012,7 +10194,7 @@
         "type": "plane"
     },
     "submersible": {
-        "acceleration": 8.0,
+        "acceleration": 8,
         "braking": 0.4,
         "class": 14,
         "doors": 1,
@@ -10022,11 +10204,11 @@
         "make": "",
         "name": "Submersible",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "submersible2": {
-        "acceleration": 10.0,
+        "acceleration": 10,
         "braking": 0.4,
         "class": 14,
         "doors": 1,
@@ -10036,7 +10218,7 @@
         "make": "",
         "name": "Kraken",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "submarine"
     },
     "sugoi": {
@@ -10097,7 +10279,7 @@
     },
     "sultanrs": {
         "acceleration": 0.33,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.71,
@@ -10167,7 +10349,7 @@
     },
     "surano": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.72,
@@ -10363,7 +10545,7 @@
     },
     "taipan": {
         "acceleration": 0.357,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.737,
@@ -10416,7 +10598,7 @@
         "seats": 2,
         "speed": 45.8049,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "tampa4": {
         "acceleration": 0.37,
@@ -10489,7 +10671,7 @@
         "seats": 3,
         "speed": 38.4289,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "technical2": {
         "acceleration": 0.25,
@@ -10504,7 +10686,7 @@
         "seats": 3,
         "speed": 39.6139,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "technical3": {
         "acceleration": 0.2,
@@ -10519,11 +10701,11 @@
         "seats": 3,
         "speed": 38.4289,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "tempesta": {
         "acceleration": 0.36,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.74,
@@ -10576,7 +10758,7 @@
         "seats": 2,
         "speed": 30.7185,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "terminus": {
         "acceleration": 0.269,
@@ -10717,11 +10899,11 @@
         "seats": 16,
         "speed": 79.9059,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "toreador": {
         "acceleration": 0.3,
-        "braking": 1.0,
+        "braking": 1,
         "class": 5,
         "doors": 4,
         "handling": 0.68,
@@ -10732,7 +10914,7 @@
         "seats": 4,
         "speed": 46.997,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "torero": {
         "acceleration": 0.3,
@@ -10847,7 +11029,7 @@
         "type": "automobile"
     },
     "toro": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10861,7 +11043,7 @@
         "type": "boat"
     },
     "toro2": {
-        "acceleration": 18.0,
+        "acceleration": 18,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -10913,7 +11095,7 @@
         "make": "",
         "name": "Tow Truck",
         "seats": 2,
-        "speed": 35.0,
+        "speed": 35,
         "type": "automobile"
     },
     "towtruck2": {
@@ -11039,7 +11221,7 @@
         "name": "Mobile Operations Center",
         "seats": 3,
         "type": "trailer",
-        "weapons": 1
+        "weapons": true
     },
     "trailerlogs": {
         "class": 11,
@@ -11120,7 +11302,7 @@
         "name": "Anti-Aircraft Trailer",
         "seats": 1,
         "type": "trailer",
-        "weapons": 1
+        "weapons": true
     },
     "trash": {
         "acceleration": 0.13,
@@ -11171,7 +11353,7 @@
         "make": "",
         "name": "Whippet Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "tribike2": {
@@ -11185,7 +11367,7 @@
         "make": "",
         "name": "Endurex Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "tribike3": {
@@ -11199,7 +11381,7 @@
         "make": "",
         "name": "Tri-Cycles Race Bike",
         "seats": 1,
-        "speed": 21.0,
+        "speed": 21,
         "type": "bicycle"
     },
     "trophytruck": {
@@ -11231,7 +11413,7 @@
         "type": "automobile"
     },
     "tropic": {
-        "acceleration": 13.0,
+        "acceleration": 13,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -11245,7 +11427,7 @@
         "type": "boat"
     },
     "tropic2": {
-        "acceleration": 13.0,
+        "acceleration": 13,
         "braking": 0.4,
         "class": 14,
         "doors": 0,
@@ -11283,7 +11465,7 @@
         "make": "",
         "name": "Tug",
         "seats": 1,
-        "speed": 6.0,
+        "speed": 6,
         "type": "boat"
     },
     "tula": {
@@ -11299,7 +11481,7 @@
         "seats": 5,
         "speed": 69.3676,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "tulip": {
         "acceleration": 0.32,
@@ -11393,7 +11575,7 @@
     },
     "tyrant": {
         "acceleration": 0.34,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.72,
@@ -11477,7 +11659,7 @@
     },
     "vacca": {
         "acceleration": 0.3,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 4,
         "handling": 0.68,
@@ -11544,7 +11726,7 @@
         "seats": 4,
         "speed": 54.7262,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "valkyrie2": {
         "acceleration": 5.194,
@@ -11559,7 +11741,7 @@
         "seats": 4,
         "speed": 54.7262,
         "type": "heli",
-        "weapons": 1
+        "weapons": true
     },
     "vamos": {
         "acceleration": 0.33,
@@ -11619,7 +11801,7 @@
     },
     "verlierer2": {
         "acceleration": 0.335,
-        "braking": 1.0,
+        "braking": 1,
         "class": 6,
         "doors": 4,
         "handling": 0.715,
@@ -11628,7 +11810,7 @@
         "make": "Bravado",
         "name": "Verlierer",
         "seats": 2,
-        "speed": 50.0,
+        "speed": 50,
         "type": "automobile"
     },
     "verus": {
@@ -11684,7 +11866,7 @@
         "make": "Dinka",
         "name": "Veto Classic",
         "seats": 1,
-        "speed": 25.0,
+        "speed": 25,
         "type": "automobile"
     },
     "veto2": {
@@ -11756,7 +11938,7 @@
         "seats": 2,
         "speed": 52.2429,
         "type": "automobile",
-        "weapons": 1
+        "weapons": true
     },
     "vindicator": {
         "acceleration": 0.263,
@@ -11870,6 +12052,20 @@
         "speed": 27.48,
         "type": "automobile"
     },
+    "vivanite2": {
+        "acceleration": 0.1095,
+        "braking": 0.78,
+        "class": 17,
+        "doors": 6,
+        "handling": 0.5895,
+        "hash": 507621923,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/vivanite2.jpg",
+        "make": "Karin",
+        "name": "Vivanite",
+        "seats": 4,
+        "speed": 27.48,
+        "type": "automobile"
+    },
     "volatol": {
         "acceleration": 6.37,
         "braking": 5.1138,
@@ -11883,7 +12079,7 @@
         "seats": 4,
         "speed": 80.2793,
         "type": "plane",
-        "weapons": 1
+        "weapons": true
     },
     "volatus": {
         "acceleration": 5.39,
@@ -11901,7 +12097,7 @@
     },
     "voltic": {
         "acceleration": 0.18,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.56,
@@ -11915,7 +12111,7 @@
     },
     "voltic2": {
         "acceleration": 0.18,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 3,
         "handling": 0.56,
@@ -12120,7 +12316,7 @@
         "make": "Vapid",
         "name": "Winky",
         "seats": 3,
-        "speed": 30.0,
+        "speed": 30,
         "type": "automobile"
     },
     "wolfsbane": {
@@ -12176,7 +12372,7 @@
         "make": "Benefactor",
         "name": "XLS",
         "seats": 4,
-        "speed": 44.0,
+        "speed": 44,
         "type": "automobile"
     },
     "xls2": {
@@ -12190,7 +12386,21 @@
         "make": "Benefactor",
         "name": "XLS (Armored)",
         "seats": 4,
-        "speed": 44.0,
+        "speed": 44,
+        "type": "automobile"
+    },
+    "xtreme": {
+        "acceleration": 0.2325,
+        "braking": 0.9,
+        "class": 7,
+        "doors": 3,
+        "handling": 0.6125,
+        "hash": -1778998583,
+        "image": "https://cfx-nui-es_extended/files/vehicle-images/xtreme.jpg",
+        "make": "Pfister",
+        "name": "X-treme",
+        "seats": 2,
+        "speed": 42.6114,
         "type": "automobile"
     },
     "yosemite": {
@@ -12349,7 +12559,7 @@
     },
     "zentorno": {
         "acceleration": 0.354,
-        "braking": 1.0,
+        "braking": 1,
         "class": 7,
         "doors": 2,
         "handling": 0.734,
